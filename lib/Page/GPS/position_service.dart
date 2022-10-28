@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/GPS/location_service.dart';
+import 'package:geo_app/Page/GPS/position_model.dart';
 import 'package:geo_app/Page/Record/record_button.dart';
 import 'package:location/location.dart';
 
@@ -13,7 +14,14 @@ class PositionService extends HookWidget {
     final position = useState<LocationData?>(null);
 
     useEffect(() {
-      location.onLocationChanged.listen((event) => position.value = event);
+      location.onLocationChanged.listen((event) {
+        position.value = event;
+        PositionModel positionModel = PositionModel(
+          latitude: position.value!.latitude,
+          longitude: position.value!.longitude,
+          altitude: position.value!.altitude,
+        );
+      });
       return () {};
     }, [record, position]);
 
