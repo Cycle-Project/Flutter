@@ -3,6 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/GPS/location_service.dart';
 import 'package:geo_app/Page/GPS/position_model.dart';
 import 'package:geo_app/Page/Record/record_button.dart';
+import 'package:geo_app/Page/map/map_widget.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class PositionService extends HookWidget {
@@ -32,15 +34,8 @@ class PositionService extends HookWidget {
       children: [
         ColoredBox(
           color: const Color.fromARGB(255, 171, 171, 171),
-          child: Center(
-            child: Text(
-              'latitude: ${position.value!.latitude} \n'
-              'longitude: ${position.value!.longitude} \n'
-              'altitude: ${position.value!.altitude} \n'
-              'speed: ${position.value!.speed} \n'
-              'heading: ${position.value!.heading}',
-              style: const TextStyle(fontSize: 32),
-            ),
+          child: MapWidget(
+            locationData: position.value,
           ),
         ),
         Align(
@@ -59,3 +54,15 @@ class PositionService extends HookWidget {
     );
   }
 }
+
+/*
+Text(
+              'latitude: ${position.value!.latitude} \n'
+              'longitude: ${position.value!.longitude} \n'
+              'altitude: ${position.value!.altitude} \n'
+              'speed: ${position.value!.speed} \n'
+              'heading: ${position.value!.heading}',
+              style: const TextStyle(fontSize: 32),
+            ),
+
+*/
