@@ -4,7 +4,6 @@ import 'package:geo_app/Page/GPS/location_service.dart';
 import 'package:geo_app/Page/GPS/position_model.dart';
 import 'package:geo_app/Page/Record/record_button.dart';
 import 'package:geo_app/Page/map/map_widget.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class PositionService extends HookWidget {

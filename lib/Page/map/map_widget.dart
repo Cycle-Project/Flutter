@@ -11,15 +11,11 @@ class MapWidget extends HookWidget {
   final LocationData? locationData;
 
   MapWidget({
-    required this.locationData,
     super.key,
+    required this.locationData,
   });
 
   final Completer<GoogleMapController> _controller = Completer();
-  MapType currentMapType = MapType.normal;
-
-  List<LatLng> polylineCoordinates = [];
-  LocationData? currentLocation;
 
   BitmapDescriptor sourceIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor destinationIcon = BitmapDescriptor.defaultMarker;
@@ -30,61 +26,102 @@ class MapWidget extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentMapType = useState(MapType.normal);
+    final polylineCoordinates = useState(<LatLng>[]);
+
+    void getCurrentLocation() async {
+      GoogleMapController googleMapController = await _controller.future;
+      googleMapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(
+              locationData!.latitude!,
+              locationData!.longitude!,
+            ),
+            zoom: 16,
+          ),
+        ),
+      );
+    }
+
+    void setCustomMarkerIcon() async {
+      sourceIcon = await BitmapDescriptor.fromAssetImage(
+          ImageConfiguration.empty, "assets/Pin_source.png");
+      destinationIcon = await BitmapDescriptor.fromAssetImage(
+          ImageConfiguration.empty, "assets/Pin_destination.png");
+      currentLocationIcon = await BitmapDescriptor.fromAssetImage(
+          ImageConfiguration.empty, "assets/Badge.png");
+    }
+
+    void getPolyPoints() async {
+      PolylinePoints polylinePoints = PolylinePoints();
+
+      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        google_api_key,
+        PointLatLng(MapWidget.sourceLocation.latitude,
+            MapWidget.sourceLocation.longitude),
+        PointLatLng(
+            MapWidget.destination.latitude, MapWidget.destination.longitude),
+      );
+
+      if (result.points.isNotEmpty) {
+        for (var point in result.points) {
+          polylineCoordinates.value
+              .add(LatLng(point.latitude, point.longitude));
+        }
+      }
+    }
+
     useEffect(() {
       getCurrentLocation();
       setCustomMarkerIcon();
       getPolyPoints();
-    });
+      return () {};
+    }, []);
 
-    return currentLocation == null
-        ? const Center(
-            child: CircularProgressIndicator.adaptive(),
-          )
-        : Stack(
-            children: [
-              GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(
-                    currentLocation!.latitude!,
-                    currentLocation!.longitude!,
-                  ),
-                  zoom: 16,
-                ),
-                mapType: currentMapType,
-                onMapCreated: ((mapController) {
-                  _controller.complete(mapController);
-                }),
-                markers: {
-                  Marker(
-                    markerId: const MarkerId("currentLocation"),
-                    position: LatLng(
-                      currentLocation!.latitude!,
-                      currentLocation!.longitude!,
-                    ),
-                    icon: currentLocationIcon,
-                  ),
-                },
-                polylines: {
-                  Polyline(
-                    polylineId: const PolylineId("route"),
-                    points: polylineCoordinates,
-                    color: Colors.red,
-                    width: 10,
-                  ),
-                },
-              ),
-
-            ],
-          );
+    if (locationData == null) {
+      return const Center(child: CircularProgressIndicator.adaptive());
+    }
+    return GoogleMap(
+      initialCameraPosition: CameraPosition(
+        target: LatLng(
+          locationData!.latitude!,
+          locationData!.longitude!,
+        ),
+        zoom: 16,
+      ),
+      mapType: currentMapType.value,
+      onMapCreated: ((mapController) {
+        _controller.complete(mapController);
+      }),
+      markers: {
+        Marker(
+          markerId: const MarkerId("currentLocation"),
+          position: LatLng(
+            locationData!.latitude!,
+            locationData!.longitude!,
+          ),
+          icon: currentLocationIcon,
+        ),
+      },
+      polylines: {
+        Polyline(
+          polylineId: const PolylineId("route"),
+          points: polylineCoordinates.value,
+          color: Colors.red,
+          width: 10,
+        ),
+      },
+    );
   }
 }
 
-class MapFloatButtons extends StatelessWidget {
+/* class MapFloatButtons extends StatelessWidget {
   const MapFloatButtons({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return  Container(
+    return Container(
       padding: const EdgeInsets.only(top: 24, right: 12),
       alignment: Alignment.topRight,
       child: Column(
@@ -132,65 +169,10 @@ class MapFloatButtons extends StatelessWidget {
 
 extension MapWidgetExtension on MapWidget {
   void changeMapType() {
-    currentMapType =
-        currentMapType == MapType.normal ? MapType.satellite : MapType.normal;
+    currentMapType.value = currentMapType.value == MapType.normal
+        ? MapType.satellite
+        : MapType.normal;
   }
 
-  void getCurrentLocation() async {
-    Location location = Location();
-
-    await location.getLocation().then((value) {
-      currentLocation = value;
-    });
-
-    GoogleMapController googleMapController = await _controller.future;
-
-    location.onLocationChanged.listen((newLoc) {
-      currentLocation = newLoc;
-
-      googleMapController.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: LatLng(newLoc.latitude!, newLoc.longitude!),
-          ),
-        ),
-      );
-    });
-  }
-
-  void setCustomMarkerIcon() {
-    BitmapDescriptor.fromAssetImage(
-            ImageConfiguration.empty, "assets/Pin_source.png")
-        .then((icon) {
-      sourceIcon = icon;
-    });
-    BitmapDescriptor.fromAssetImage(
-            ImageConfiguration.empty, "assets/Pin_destination.png")
-        .then((icon) {
-      destinationIcon = icon;
-    });
-
-    BitmapDescriptor.fromAssetImage(
-            ImageConfiguration.empty, "assets/Badge.png")
-        .then((icon) {
-      currentLocationIcon = icon;
-    });
-  }
-
-  void getPolyPoints() async {
-    PolylinePoints polylinePoints = PolylinePoints();
-
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      google_api_key,
-      PointLatLng(MapWidget.sourceLocation.latitude,
-          MapWidget.sourceLocation.longitude),
-      PointLatLng(
-          MapWidget.destination.latitude, MapWidget.destination.longitude),
-    );
-
-    if (result.points.isNotEmpty) {
-      result.points.forEach((PointLatLng point) =>
-          polylineCoordinates.add(LatLng(point.latitude, point.longitude)));
-    }
-  }
-}
+  
+} */
