@@ -3,8 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/GPS/location_service.dart';
 import 'package:geo_app/Page/GPS/position_model.dart';
 import 'package:geo_app/Page/Record/record_button.dart';
+import 'package:geo_app/Page/map/map_provider.dart';
 import 'package:geo_app/Page/map/map_widget.dart';
 import 'package:location/location.dart';
+import 'package:provider/provider.dart';
 
 class PositionService extends HookWidget {
   const PositionService({Key? key}) : super(key: key);
@@ -33,8 +35,11 @@ class PositionService extends HookWidget {
       children: [
         ColoredBox(
           color: const Color.fromARGB(255, 171, 171, 171),
-          child: MapWidget(
-            locationData: position.value,
+          child: ChangeNotifierProvider<MapsProvider>(
+            create: (context) => MapsProvider(locationData: position),
+            child: MapWidget(
+              locationData: position.value,
+            ),
           ),
         ),
         Align(

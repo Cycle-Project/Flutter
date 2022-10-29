@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geo_app/Page/map/map_provider.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:provider/provider.dart';
 
 class MapWidget extends HookWidget {
   final LocationData? locationData;
@@ -82,36 +84,47 @@ class MapWidget extends HookWidget {
     if (locationData == null) {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
-    return GoogleMap(
-      initialCameraPosition: CameraPosition(
-        target: LatLng(
-          locationData!.latitude!,
-          locationData!.longitude!,
-        ),
-        zoom: 16,
-      ),
-      mapType: currentMapType.value,
-      onMapCreated: ((mapController) {
-        _controller.complete(mapController);
-      }),
-      markers: {
-        Marker(
-          markerId: const MarkerId("currentLocation"),
-          position: LatLng(
-            locationData!.latitude!,
-            locationData!.longitude!,
+
+    final vaaaaay = useState("ammmunaaaaaa");
+
+    return SafeArea(
+      child: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: LatLng(
+                locationData!.latitude!,
+                locationData!.longitude!,
+              ),
+              zoom: 16,
+            ),
+            mapType: currentMapType.value,
+            onMapCreated: ((mapController) {
+              _controller.complete(mapController);
+            }),
+            markers: {
+              Marker(
+                markerId: const MarkerId("currentLocation"),
+                position: LatLng(
+                  locationData!.latitude!,
+                  locationData!.longitude!,
+                ),
+                icon: currentLocationIcon,
+              ),
+            },
+            polylines: {
+              Polyline(
+                polylineId: const PolylineId("route"),
+                points: polylineCoordinates.value,
+                color: Colors.red,
+                width: 10,
+              ),
+            },
           ),
-          icon: currentLocationIcon,
-        ),
-      },
-      polylines: {
-        Polyline(
-          polylineId: const PolylineId("route"),
-          points: polylineCoordinates.value,
-          color: Colors.red,
-          width: 10,
-        ),
-      },
+          Text(Provider.of<MapsProvider>(context, listen: false)
+              .locationData.value!.longitude!.toString()),
+        ],
+      ),
     );
   }
 }
