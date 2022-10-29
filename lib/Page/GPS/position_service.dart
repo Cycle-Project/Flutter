@@ -5,6 +5,7 @@ import 'package:geo_app/Page/GPS/position_model.dart';
 import 'package:geo_app/Page/Record/record_button.dart';
 import 'package:geo_app/Page/map/map_provider.dart';
 import 'package:geo_app/Page/map/map_widget.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 
@@ -13,48 +14,78 @@ class PositionService extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+
+
     final record = useState(false);
-    final position = useState<LocationData?>(null);
+    final currentLocation = useState<LocationData?>(null);
+    final sourceLocation = useState<LocationData?>(null);
+    final destination = useState<LocationData?>(null);
+    final polylineCoordinates = useState(<LatLng>[]);
+
 
     useEffect(() {
       location.onLocationChanged.listen((event) {
-        position.value = event;
+        currentLocation.value = event;
         PositionModel positionModel = PositionModel(
-          latitude: position.value!.latitude,
-          longitude: position.value!.longitude,
-          altitude: position.value!.altitude,
+          latitude: currentLocation.value!.latitude,
+          longitude: currentLocation.value!.longitude,
+          altitude: currentLocation.value!.altitude,
         );
       });
       return () {};
-    }, [record, position]);
+    }, [record, currentLocation]);
 
-    if (position.value == null) {
+    if (currentLocation.value == null) {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
-    return Stack(
-      children: [
-        ColoredBox(
-          color: const Color.fromARGB(255, 171, 171, 171),
-          child: ChangeNotifierProvider<MapsProvider>(
-            create: (context) => MapsProvider(locationData: position),
-            child: MapWidget(
-              locationData: position.value,
-            ),
+    return ChangeNotifierProvider<MapsProvider>(
+      create: (context) => MapsProvider(
+        currentLocation: currentLocation,
+        sourceLocation: sourceLocation,
+        destination: destination,
+        polylineCoordinates: polylineCoordinates,
+
+      ),
+      child: Stack(
+        children: [
+          ColoredBox(
+            color: const Color.fromARGB(255, 171, 171, 171),
+            child: MapWidget(),
           ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: GestureDetector(
-              onTap: () => record.value = !record.value,
-              child: RecordButton(
-                isRecording: record.value,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Builder(
+                builder: (context) {
+                  MapsProvider mapsProvider = Provider.of<MapsProvider>(context, listen: false);
+                  return GestureDetector(
+                    onTap: () async {
+                      record.value = !record.value;
+                      if (record.value && currentLocation.value != null) {
+                        LocationData locat = LocationData.fromMap({
+                          'latitude': 39.753226,
+                          'longitude': 30.493691
+                        });
+                        mapsProvider.sourceLocation.value = locat;
+                        mapsProvider.destination.value = currentLocation.value;
+
+                      } else {
+                        mapsProvider.sourceLocation.value = null;
+                        mapsProvider.destination.value = null;
+                      }
+                      await mapsProvider.getPolyPoints();
+                    },
+                    child: RecordButton(
+                      isRecording: record.value,
+                    ),
+                  );
+                }
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
