@@ -10,11 +10,9 @@ import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 
 class MapWidget extends HookWidget {
-  final LocationData? locationData;
 
   MapWidget({
     super.key,
-    required this.locationData,
   });
 
   final Completer<GoogleMapController> _controller = Completer();
@@ -23,13 +21,23 @@ class MapWidget extends HookWidget {
   BitmapDescriptor destinationIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker;
 
-  static const LatLng sourceLocation = LatLng(39.753226, 30.493691);
-  static const LatLng destination = LatLng(39.751031, 30.474830);
+  //static const LatLng sourceLocation = LatLng(39.753226, 30.493691);
+  //static const LatLng destination = LatLng(39.751031, 30.474830);
 
   @override
   Widget build(BuildContext context) {
+
+    MapsProvider mapsProvider = Provider.of<MapsProvider>(context, listen: false);
+
+    LocationData? currentLocation = mapsProvider
+        .currentLocation.value;
+
+    LocationData? sourceLocation = mapsProvider.sourceLocation.value;
+    LocationData? destination = mapsProvider.destination.value;
+
+    List<LatLng> polylineCoordinates = mapsProvider.polylineCoordinates.value;
+
     final currentMapType = useState(MapType.normal);
-    final polylineCoordinates = useState(<LatLng>[]);
 
     void getCurrentLocation() async {
       GoogleMapController googleMapController = await _controller.future;
@@ -37,8 +45,8 @@ class MapWidget extends HookWidget {
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: LatLng(
-              locationData!.latitude!,
-              locationData!.longitude!,
+              currentLocation!.latitude!,
+              currentLocation.longitude!,
             ),
             zoom: 16,
           ),
@@ -55,81 +63,75 @@ class MapWidget extends HookWidget {
           ImageConfiguration.empty, "assets/Badge.png");
     }
 
-    void getPolyPoints() async {
-      PolylinePoints polylinePoints = PolylinePoints();
 
-      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        google_api_key,
-        PointLatLng(MapWidget.sourceLocation.latitude,
-            MapWidget.sourceLocation.longitude),
-        PointLatLng(
-            MapWidget.destination.latitude, MapWidget.destination.longitude),
-      );
-
-      if (result.points.isNotEmpty) {
-        for (var point in result.points) {
-          polylineCoordinates.value
-              .add(LatLng(point.latitude, point.longitude));
-        }
-      }
-    }
 
     useEffect(() {
       getCurrentLocation();
       setCustomMarkerIcon();
-      getPolyPoints();
       return () {};
     }, []);
 
-    if (locationData == null) {
+    if (currentLocation == null) {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
 
-    final vaaaaay = useState("ammmunaaaaaa");
-
-    return SafeArea(
-      child: Stack(
-        children: [
-          GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: LatLng(
-                locationData!.latitude!,
-                locationData!.longitude!,
-              ),
-              zoom: 16,
+    return Stack(
+      children: [
+        GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: LatLng(
+              currentLocation.latitude!,
+              currentLocation.longitude!,
             ),
-            mapType: currentMapType.value,
-            onMapCreated: ((mapController) {
-              _controller.complete(mapController);
-            }),
-            markers: {
-              Marker(
-                markerId: const MarkerId("currentLocation"),
-                position: LatLng(
-                  locationData!.latitude!,
-                  locationData!.longitude!,
-                ),
-                icon: currentLocationIcon,
-              ),
-            },
-            polylines: {
-              Polyline(
-                polylineId: const PolylineId("route"),
-                points: polylineCoordinates.value,
-                color: Colors.red,
-                width: 10,
-              ),
-            },
+            zoom: 16,
           ),
-          Text(Provider.of<MapsProvider>(context, listen: false)
-              .locationData.value!.longitude!.toString()),
-        ],
-      ),
+          mapType: currentMapType.value,
+          onMapCreated: ((mapController) {
+            _controller.complete(mapController);
+          }),
+          markers: {
+            Marker(
+              markerId: const MarkerId("currentLocation"),
+              position: LatLng(
+                currentLocation.latitude!,
+                currentLocation.longitude!,
+              ),
+              icon: currentLocationIcon,
+            ),
+            if (sourceLocation != null) Marker(
+              markerId: const MarkerId("sourceLocation"),
+              position: LatLng(
+                sourceLocation.latitude!,
+                sourceLocation.longitude!,
+              ),
+              icon: sourceIcon,
+            ),
+            if (destination != null) Marker(
+              markerId: const MarkerId("destination"),
+              position: LatLng(
+                destination.latitude!,
+                destination.longitude!,
+              ),
+              icon: destinationIcon,
+            ),
+          },
+          polylines: {
+            Polyline(
+              polylineId: const PolylineId("route"),
+              points: polylineCoordinates,
+              color: Colors.red,
+              width: 10,
+            ),
+          },
+        ),
+        Text(Provider.of<MapsProvider>(context, listen: false)
+            .currentLocation.value!.longitude!.toString()),
+      ],
     );
   }
 }
 
-/* class MapFloatButtons extends StatelessWidget {
+/*class MapFloatButtons extends StatelessWidget {
   const MapFloatButtons({Key? key}) : super(key: key);
 
   @override
