@@ -1,1 +1,1 @@
-const google_api_key = "AIzaSyCvEfA8vvWW0eyeCq76_K_tra0lB_K4D_0";
+const googleApiKey = "AIzaSyCvEfA8vvWW0eyeCq76_K_tra0lB_K4D_0";

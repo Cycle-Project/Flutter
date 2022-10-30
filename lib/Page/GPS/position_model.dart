@@ -1,14 +1,25 @@
+import 'package:location/location.dart';
+
 class PositionModel {
   double? latitude;
   double? longitude;
   double? altitude;
 
-  PositionModel({this.latitude, this.longitude, this.altitude});
+  PositionModel({
+    this.latitude = 0,
+    this.longitude = 0,
+    this.altitude = 0,
+  });
 
   PositionModel.fromJson(Map<String, dynamic> json) {
     latitude = json['latitude'];
     longitude = json['longitude'];
     altitude = json['altitude'];
+  }
+  PositionModel.fromLocationData(LocationData locationData) {
+    latitude = locationData.latitude;
+    longitude = locationData.longitude;
+    altitude = locationData.altitude;
   }
 
   Map<String, dynamic> toJson() {
@@ -18,4 +29,9 @@ class PositionModel {
       "altitude": altitude,
     };
   }
+
+  void setFromLocationData(LocationData locationData) => this
+    ..latitude = locationData.latitude
+    ..longitude = locationData.longitude
+    ..altitude = locationData.altitude;
 }
