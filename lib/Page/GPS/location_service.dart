@@ -7,6 +7,7 @@ Location location = Location();
 
 class LocationService extends HookWidget {
   const LocationService({Key? key}) : super(key: key);
+  static var route = MaterialPageRoute(builder: (_) => const LocationService());
 
   @override
   Widget build(BuildContext context) {
