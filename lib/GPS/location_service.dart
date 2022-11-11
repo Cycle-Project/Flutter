@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/Page/GPS/position_service.dart';
+import 'package:geo_app/GPS/position_service.dart';
+import 'package:geo_app/Page/utilities/constants.dart';
 import 'package:location/location.dart';
 
 Location location = Location();
 
 class LocationService extends HookWidget {
   const LocationService({Key? key}) : super(key: key);
-  static var route = MaterialPageRoute(builder: (_) => const LocationService());
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +34,11 @@ class LocationService extends HookWidget {
       return () {};
     }, [permissionGranted, serviceEnabled]);
 
-    return permissionGranted.value && serviceEnabled.value
-        ? const PositionService()
-        : const SizedBox();
+    return Scaffold(
+      backgroundColor: backgroundColor,
+      body: permissionGranted.value && serviceEnabled.value
+          ? const PositionService()
+          : const SizedBox(),
+    );
   }
 }

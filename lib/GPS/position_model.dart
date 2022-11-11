@@ -1,3 +1,4 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class PositionModel {
@@ -20,6 +21,10 @@ class PositionModel {
     latitude = locationData.latitude;
     longitude = locationData.longitude;
     altitude = locationData.altitude;
+  }
+  PositionModel.fromLatLng(LatLng latLng) {
+    latitude = latLng.latitude;
+    longitude = latLng.longitude;
   }
 
   Map<String, dynamic> toJson() {
