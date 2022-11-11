@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:geo_app/Page/Login/login_page.dart';
+import 'package:geo_app/Page/Enterance/enterance_page.dart';
 
 main() {
   runApp(const App());
@@ -12,7 +12,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: Scaffold(
-        body: LoginPage(),
+        body: EnterancePage(),
       ),
       debugShowCheckedModeBanner: false,
     );
