@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geo_app/GPS/position_model.dart';
 import 'package:geo_app/Page/LandingPage/map/map_provider.dart';
 import 'package:geo_app/components/special_card.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -26,6 +27,7 @@ class MapWidget extends HookWidget {
       }
     });
   }
+
   //static const LatLng sourceLocation = LatLng(39.753226, 30.493691);
   //static const LatLng destination = LatLng(39.751031, 30.474830);
   late BitmapDescriptor sourceIcon;
@@ -83,7 +85,12 @@ class MapWidget extends HookWidget {
         mapsProvider.currentLocation!.latitude!,
         mapsProvider.currentLocation!.longitude!,
       ));
+
+
+      mapsProvider.destination = PositionModel(latitude: 39.753341, longitude: 30.494186);
+      mapsProvider.sourceLocation = PositionModel(latitude: 39.752092, longitude: 30.592252);
       handleMarkers();
+      Future.microtask(() async => await mapsProvider.getPolyPoints());
       return () {};
     }, [
       mapsProvider.currentLocation,
@@ -106,14 +113,17 @@ class MapWidget extends HookWidget {
                   zoom: 16,
                 ),
                 onMapCreated: (map) => controller.complete(map),
+
                 onTap: (latLng) {
                   shouldRecord.value = false;
-                  markers.value.add(Marker(
-                    markerId: const MarkerId("mark"),
-                    position: latLng,
-                    icon: destinationIcon,
-                    infoWindow: const InfoWindow(title: "Marked Location"),
-                  ));
+                  markers.value.add(
+                    Marker(
+                      markerId: const MarkerId("mark"),
+                      position: latLng,
+                      icon: destinationIcon,
+                      infoWindow: const InfoWindow(title: "Marked Location"),
+                    ),
+                  );
                   zoomToLocation(latLng);
                 },
                 zoomGesturesEnabled: true,
@@ -125,7 +135,7 @@ class MapWidget extends HookWidget {
                   Polyline(
                     polylineId: const PolylineId("route"),
                     points: mapsProvider.polylineCoordinates,
-                    color: Colors.purple[600]!,
+                    color: Colors.deepPurpleAccent,
                     width: 10,
                   ),
                 },
