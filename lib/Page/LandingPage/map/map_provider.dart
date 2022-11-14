@@ -41,7 +41,7 @@ class MapsProvider extends ChangeNotifier {
       destination =
           PositionModel.fromLatLng(const LatLng(39.751031, 30.474830));
 
-      await getPolyPoints();
+      //await getPolyPoints();
     }
     notifyListeners();
   }
@@ -58,7 +58,9 @@ class MapsProvider extends ChangeNotifier {
     if (result.points.isNotEmpty) {
       for (var point in result.points) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        notifyListeners();
       }
     }
+    notifyListeners();
   }
 }
