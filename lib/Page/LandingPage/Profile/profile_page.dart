@@ -100,7 +100,7 @@ class ProfilePage extends StatelessWidget {
                 child: SpecialCard(
                   backgroundColor: Colors.grey[100]!,
                   shadowColor: loginBackgroundColor.withOpacity(.6),
-                  size: const Size(double.infinity, 60),
+                  height: 60,
                   child: Row(
                     children: [
                       Expanded(

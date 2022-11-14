@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 class SpecialCard extends StatelessWidget {
   const SpecialCard({
     Key? key,
-    this.size,
+    this.width,
+    this.height,
     this.backgroundColor = Colors.white,
     this.shadowColor = Colors.grey,
     required this.child,
   }) : super(key: key);
 
-  final Size? size;
+  final double? width;
+  final double? height;
   final Widget child;
   final Color backgroundColor;
   final Color shadowColor;
@@ -17,8 +19,8 @@ class SpecialCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size?.width,
-      height: size?.height,
+      width: width,
+      height: height,
       margin: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: backgroundColor,
