@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 
-class ImageAvatar extends StatelessWidget {
-  const ImageAvatar({
+class IconAvatar extends StatelessWidget {
+  const IconAvatar({
     Key? key,
     this.size = 50,
-    this.color = Colors.grey,
-    this.haveBorder = false,
+    this.imageSize = 40,
     required this.fileName,
     required this.onTap,
   }) : super(key: key);
 
   final double size;
-  final Color color;
-  final bool haveBorder;
+  final double imageSize;
   final String fileName;
   final Function() onTap;
 
@@ -27,12 +25,10 @@ class ImageAvatar extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(size),
         ),
-        child: Container(
-          margin: haveBorder ? const EdgeInsets.all(4) : EdgeInsets.zero,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-            image: DecorationImage(image: AssetImage(fileName)),
+        child: Center(
+          child: SizedBox.square(
+            dimension: imageSize,
+            child: Image.asset(fileName),
           ),
         ),
       ),

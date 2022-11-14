@@ -4,7 +4,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/GPS/position_model.dart';
 import 'package:geo_app/Page/LandingPage/map/map_provider.dart';
 import 'package:geo_app/components/special_card.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -33,6 +32,7 @@ class MapWidget extends HookWidget {
   late BitmapDescriptor sourceIcon;
   late BitmapDescriptor destinationIcon;
   late BitmapDescriptor currentLocationIcon;
+  late GoogleMapController googleMapController;
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +40,11 @@ class MapWidget extends HookWidget {
     final controller = Completer<GoogleMapController>();
     final markers = useState<Set<Marker>>({});
     final shouldRecord = useState(true);
+    final visible = useState(true);
 
-    zoomToLocation(LatLng? target) async {
-      GoogleMapController googleMapController = await controller.future;
+    Future<void> zoomToLocation(LatLng? target) async {
       if (target != null) {
-        googleMapController.animateCamera(
+        await googleMapController.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
               target: target,
@@ -55,7 +55,7 @@ class MapWidget extends HookWidget {
       }
     }
 
-    handleMarkers() {
+/*     handleMarkers() {
       if (mapsProvider.sourceLocation != null) {
         markers.value.add(Marker(
           markerId: const MarkerId("sourceLocation"),
@@ -78,21 +78,20 @@ class MapWidget extends HookWidget {
           infoWindow: const InfoWindow(title: "Destination"),
         ));
       }
-    }
+    } */
 
     useEffect(() {
-      zoomToLocation(LatLng(
-        mapsProvider.currentLocation!.latitude!,
-        mapsProvider.currentLocation!.longitude!,
-      ));
-
-
-      mapsProvider.destination = PositionModel(latitude: 39.753341, longitude: 30.494186);
-      mapsProvider.sourceLocation = PositionModel(latitude: 39.752092, longitude: 30.592252);
-      handleMarkers();
-      Future.microtask(() async => await mapsProvider.getPolyPoints());
+      Future.microtask(() async {
+        googleMapController = await controller.future;
+        await zoomToLocation(LatLng(
+          mapsProvider.currentLocation!.latitude!,
+          mapsProvider.currentLocation!.longitude!,
+        ));
+      });
+      //handleMarkers();
       return () {};
     }, [
+      controller,
       mapsProvider.currentLocation,
       mapsProvider.sourceLocation,
       mapsProvider.destination,
@@ -113,18 +112,20 @@ class MapWidget extends HookWidget {
                   zoom: 16,
                 ),
                 onMapCreated: (map) => controller.complete(map),
-
-                onTap: (latLng) {
+                onCameraIdle: () => visible.value = true,
+                onCameraMove: (_) => visible.value = false,
+                onTap: (latLng) async {
                   shouldRecord.value = false;
                   markers.value.add(
                     Marker(
                       markerId: const MarkerId("mark"),
                       position: latLng,
-                      icon: destinationIcon,
+                      icon: sourceIcon,
                       infoWindow: const InfoWindow(title: "Marked Location"),
                     ),
                   );
-                  zoomToLocation(latLng);
+                  await zoomToLocation(latLng);
+                  mapsProvider.setPoints(latLng);
                 },
                 zoomGesturesEnabled: true,
                 zoomControlsEnabled: false,
@@ -136,18 +137,51 @@ class MapWidget extends HookWidget {
                     polylineId: const PolylineId("route"),
                     points: mapsProvider.polylineCoordinates,
                     color: Colors.deepPurpleAccent,
-                    width: 10,
+                    width: 4,
                   ),
                 },
               ),
-              AnimatedOpacity(
-                duration: const Duration(seconds: 1),
-                opacity: shouldRecord.value ? 1 : 0,
+              Visibility(
+                visible: visible.value,
+                child: SafeArea(
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10, right: 10),
+                      child: InkWell(
+                        onTap: () async {
+                          await zoomToLocation(LatLng(
+                            mapsProvider.currentLocation!.latitude!,
+                            mapsProvider.currentLocation!.longitude!,
+                          ));
+                        },
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: Colors.deepPurple[400]!,
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                          child: const Padding(
+                            padding: EdgeInsets.all(12),
+                            child: Icon(
+                              Icons.my_location_rounded,
+                              size: 22,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Visibility(
+                visible: visible.value && shouldRecord.value,
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: SpecialCard(
-                    shadowColor: Colors.black.withOpacity(.4),
-                    size: const Size(double.maxFinite, 80),
+                    backgroundColor: Colors.red,
+                    shadowColor: Colors.transparent,
+                    height: 60,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
@@ -155,30 +189,27 @@ class MapWidget extends HookWidget {
                       ),
                       child: Row(
                         children: [
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Icon(
+                                Icons.circle,
+                                size: 20,
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 20),
                           const Expanded(
                             child: Text(
                               "Record My Route",
                               style: TextStyle(
                                 fontSize: 20,
-                              ),
-                            ),
-                          ),
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            child: Container(
-                              margin: const EdgeInsets.all(4),
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                              child: const Icon(
-                                Icons.circle,
-                                size: 20,
-                                color: Colors.red,
                               ),
                             ),
                           ),
@@ -188,14 +219,14 @@ class MapWidget extends HookWidget {
                   ),
                 ),
               ),
-              AnimatedOpacity(
-                duration: const Duration(seconds: 1),
-                opacity: shouldRecord.value ? 0 : 1,
+              Visibility(
+                visible: visible.value && !shouldRecord.value,
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: SpecialCard(
-                    shadowColor: Colors.black.withOpacity(.4),
-                    size: const Size(double.maxFinite, 80),
+                    backgroundColor: Colors.blue,
+                    shadowColor: Colors.transparent,
+                    height: 60,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20,
@@ -203,11 +234,27 @@ class MapWidget extends HookWidget {
                       ),
                       child: Row(
                         children: [
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(40),
+                            ),
+                            child: const Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Icon(
+                                Icons.route,
+                                size: 20,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 20),
                           const Expanded(
                             child: Text(
                               "Plan Route",
                               style: TextStyle(
                                 fontSize: 20,
+                                color: Colors.white,
                               ),
                             ),
                           ),
@@ -218,27 +265,20 @@ class MapWidget extends HookWidget {
                                     element.markerId == const MarkerId("mark"),
                               );
                               shouldRecord.value = true;
+                              mapsProvider.setPoints(null);
                             },
-                            child: const Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Icon(
-                                Icons.close,
-                                size: 20,
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
                                 color: Colors.red,
+                                borderRadius: BorderRadius.circular(40),
                               ),
-                            ),
-                          ),
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Icon(
-                                Icons.route,
-                                size: 20,
-                                color: Colors.white,
+                              child: const Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Icon(
+                                  Icons.close_outlined,
+                                  size: 20,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),

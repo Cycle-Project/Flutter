@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/GPS/location_service.dart';
 import 'package:geo_app/Page/Enterance/Page/login_or_signup_page.dart';
 import 'package:geo_app/Page/Enterance/enterance_header.dart';
-import 'package:geo_app/components/image_avatar.dart';
+import 'package:geo_app/components/icon_avatar.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 
 class EnterancePage extends HookWidget {
@@ -37,15 +37,15 @@ class EnterancePage extends HookWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ImageAvatar(
-                          color: Colors.white,
+                        IconAvatar(
                           fileName: 'assets/icon/google.png',
+                          imageSize: 32,
                           onTap: () => login(context),
                         ),
                         const SizedBox(width: 10),
-                        ImageAvatar(
-                          color: Colors.white,
+                        IconAvatar(
                           fileName: 'assets/icon/facebook.png',
+                          imageSize: 32,
                           onTap: () => login(context),
                         ),
                       ],

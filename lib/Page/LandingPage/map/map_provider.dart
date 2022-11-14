@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
@@ -46,21 +48,36 @@ class MapsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getPolyPoints() async {
-    PolylinePoints polylinePoints = PolylinePoints();
-
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      googleApiKey,
-      PointLatLng(sourceLocation!.latitude!, sourceLocation!.longitude!),
-      PointLatLng(destination!.latitude!, destination!.longitude!),
-    );
-
-    if (result.points.isNotEmpty) {
-      for (var point in result.points) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-        notifyListeners();
+  Future<void> getPolyPoints({bool isCurrent = true}) async {
+    try {
+      if (destination != null) {
+        PolylinePoints polylinePoints = PolylinePoints();
+        PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+          googleApiKey,
+          (isCurrent
+              ? PointLatLng(
+                  currentLocation!.latitude!, currentLocation!.longitude!)
+              : PointLatLng(
+                  sourceLocation!.latitude!, sourceLocation!.longitude!)),
+          PointLatLng(destination!.latitude!, destination!.longitude!),
+        );
+        polylineCoordinates = [];
+        if (result.points.isNotEmpty) {
+          for (var point in result.points) {
+            polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+          }
+        }
+      } else {
+        polylineCoordinates = [];
       }
+      notifyListeners();
+    } catch (e) {
+      print(e);
     }
-    notifyListeners();
+  }
+
+  Future<void> setPoints(LatLng? latLng) async {
+    destination = latLng != null ? PositionModel.fromLatLng(latLng) : null;
+    await getPolyPoints();
   }
 }
