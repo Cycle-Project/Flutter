@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/Page/LandingPage/map/map_provider.dart';
 import 'package:geo_app/components/special_card.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PlanRoute extends HookWidget {
   const PlanRoute({
@@ -33,7 +31,9 @@ class PlanRoute extends HookWidget {
               backgroundColor: Colors.blue,
               shadowColor: Colors.transparent,
               height: 60,
-              borderRadius: !enlarge.value ? BorderRadius.circular(10) : const BorderRadius.vertical(top: Radius.circular(10)),
+              borderRadius: !enlarge.value
+                  ? BorderRadius.circular(10)
+                  : const BorderRadius.vertical(top: Radius.circular(10)),
               child: Row(
                 children: [
                   Padding(

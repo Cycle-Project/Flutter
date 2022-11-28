@@ -20,7 +20,7 @@ class EnterancePage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: loginBackgroundColor,
+      backgroundColor: bluishGrey,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
