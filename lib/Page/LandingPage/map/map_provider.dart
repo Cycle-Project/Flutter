@@ -59,6 +59,7 @@ class MapsProvider extends ChangeNotifier {
                   currentLocation!.latitude!, currentLocation!.longitude!)
               : PointLatLng(
                   sourceLocation!.latitude!, sourceLocation!.longitude!)),
+          travelMode: TravelMode.walking,
           PointLatLng(destination!.latitude!, destination!.longitude!),
         );
         polylineCoordinates = [];
