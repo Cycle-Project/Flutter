@@ -48,6 +48,7 @@ class PlanRoute extends HookWidget {
               shadowColor: Colors.transparent,
               height: 60,
               borderRadius: pageState.value == PlanPages.none
+
                   ? BorderRadius.circular(10)
                   : const BorderRadius.vertical(top: Radius.circular(10)),
               child: Row(
