@@ -4,6 +4,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geo_app/Page/LandingPage/map/components/plan_route.dart';
+import 'package:geo_app/Page/LandingPage/map/components/record_route.dart';
 import 'package:geo_app/Page/LandingPage/map/map_provider.dart';
 import 'package:geo_app/components/special_card.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -55,31 +57,6 @@ class MapWidget extends HookWidget {
       }
     }
 
-/*     handleMarkers() {
-      if (mapsProvider.sourceLocation != null) {
-        markers.value.add(Marker(
-          markerId: const MarkerId("sourceLocation"),
-          position: LatLng(
-            mapsProvider.sourceLocation!.latitude!,
-            mapsProvider.sourceLocation!.longitude!,
-          ),
-          icon: sourceIcon,
-          infoWindow: const InfoWindow(title: "Source"),
-        ));
-      }
-      if (mapsProvider.destination != null) {
-        markers.value.add(Marker(
-          markerId: const MarkerId("destination"),
-          position: LatLng(
-            mapsProvider.destination!.latitude!,
-            mapsProvider.destination!.longitude!,
-          ),
-          icon: destinationIcon,
-          infoWindow: const InfoWindow(title: "Destination"),
-        ));
-      }
-    } */
-
     useEffect(() {
       Future.microtask(() async {
         googleMapController = await controller.future;
@@ -88,7 +65,6 @@ class MapWidget extends HookWidget {
           mapsProvider.currentLocation!.longitude!,
         ));
       });
-      //handleMarkers();
       return () {};
     }, [
       controller,
@@ -146,149 +122,73 @@ class MapWidget extends HookWidget {
                 child: SafeArea(
                   child: Align(
                     alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 10, right: 10),
-                      child: InkWell(
-                        onTap: () async {
-                          await zoomToLocation(LatLng(
-                            mapsProvider.currentLocation!.latitude!,
-                            mapsProvider.currentLocation!.longitude!,
-                          ));
-                        },
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: Colors.deepPurple[400]!,
-                            borderRadius: BorderRadius.circular(40),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(12),
-                            child: Icon(
-                              Icons.my_location_rounded,
-                              size: 22,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
+                    child: _MyPosition(
+                      onTap: () async {
+                        await zoomToLocation(LatLng(
+                          mapsProvider.currentLocation!.latitude!,
+                          mapsProvider.currentLocation!.longitude!,
+                        ));
+                      },
                     ),
                   ),
                 ),
               ),
               Visibility(
                 visible: visible.value && shouldRecord.value,
-                child: Align(
+                child: const Align(
                   alignment: Alignment.bottomCenter,
-                  child: SpecialCard(
-                    backgroundColor: Colors.red,
-                    shadowColor: Colors.transparent,
-                    height: 60,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
-                      ),
-                      child: Row(
-                        children: [
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Icon(
-                                Icons.circle,
-                                size: 20,
-                                color: Colors.red,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                          const Expanded(
-                            child: Text(
-                              "Record My Route",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  child: RecordRoute(),
                 ),
               ),
               Visibility(
                 visible: visible.value && !shouldRecord.value,
                 child: Align(
                   alignment: Alignment.bottomCenter,
-                  child: SpecialCard(
-                    backgroundColor: Colors.blue,
-                    shadowColor: Colors.transparent,
-                    height: 60,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10,
-                      ),
-                      child: Row(
-                        children: [
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Icon(
-                                Icons.route,
-                                size: 20,
-                                color: Colors.blue,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 20),
-                          const Expanded(
-                            child: Text(
-                              "Plan Route",
-                              style: TextStyle(
-                                fontSize: 20,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              markers.value.removeWhere(
-                                (element) =>
-                                    element.markerId == const MarkerId("mark"),
-                              );
-                              shouldRecord.value = true;
-                              mapsProvider.setPoints(null);
-                            },
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                              child: const Padding(
-                                padding: EdgeInsets.all(10),
-                                child: Icon(
-                                  Icons.close_outlined,
-                                  size: 20,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  child: PlanRoute(
+                    onRemove: () {
+                      markers.value.removeWhere(
+                        (element) => element.markerId == const MarkerId("mark"),
+                      );
+                      shouldRecord.value = true;
+                      mapsProvider.setPoints(null);
+                    },
                   ),
                 ),
               ),
             ],
           );
+  }
+}
+
+class _MyPosition extends StatelessWidget {
+  const _MyPosition({
+    Key? key,
+    required this.onTap,
+  }) : super(key: key);
+
+  final Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, right: 10),
+      child: InkWell(
+        onTap: onTap,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.deepPurple[400]!,
+            borderRadius: BorderRadius.circular(40),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.all(12),
+            child: Icon(
+              Icons.my_location_rounded,
+              size: 22,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
