@@ -23,6 +23,7 @@ class ProfilePage extends StatelessWidget {
           SpecialCard(
             backgroundColor: Colors.grey[300]!,
             shadowColor: loginBackgroundColor.withOpacity(.6),
+            borderRadius: BorderRadius.circular(10),
             child: Padding(
               padding: const EdgeInsets.all(12),
               child: SizedBox(
@@ -101,6 +102,7 @@ class ProfilePage extends StatelessWidget {
                   backgroundColor: Colors.grey[100]!,
                   shadowColor: loginBackgroundColor.withOpacity(.6),
                   height: 60,
+                  borderRadius: BorderRadius.circular(10),
                   child: Row(
                     children: [
                       Expanded(
