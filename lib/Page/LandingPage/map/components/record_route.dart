@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/components/special_card.dart';
 
-class RecordRoute extends StatelessWidget {
+class RecordRoute extends HookWidget {
   const RecordRoute({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final enlarge = useState(false);
+    
     return SpecialCard(
       backgroundColor: Colors.red,
       shadowColor: Colors.transparent,
       height: 60,
+      borderRadius: BorderRadius.circular(20),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 20,
