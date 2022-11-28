@@ -7,6 +7,7 @@ class SpecialCard extends StatelessWidget {
     this.height,
     this.backgroundColor = Colors.white,
     this.shadowColor = Colors.grey,
+    required this.borderRadius,
     required this.child,
   }) : super(key: key);
 
@@ -15,26 +16,28 @@ class SpecialCard extends StatelessWidget {
   final Widget child;
   final Color backgroundColor;
   final Color shadowColor;
+  final BorderRadius borderRadius;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: width,
       height: height,
-      margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: shadowColor,
-            blurRadius: 2,
-            spreadRadius: 2,
-            offset: const Offset(2.5, 3),
-          )
-        ],
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: borderRadius,
+          boxShadow: [
+            BoxShadow(
+              color: shadowColor,
+              blurRadius: 2,
+              spreadRadius: 2,
+              offset: const Offset(2.5, 3),
+            )
+          ],
+        ),
+        child: child,
       ),
-      child: child,
     );
   }
 }
