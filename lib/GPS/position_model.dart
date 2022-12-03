@@ -27,6 +27,13 @@ class PositionModel {
     longitude = latLng.longitude;
   }
 
+  LatLng get latLng {
+    return LatLng(
+      latitude!,
+      longitude!,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       "latitude": latitude,

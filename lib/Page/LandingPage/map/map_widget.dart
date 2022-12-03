@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/LandingPage/map/components/plan_route.dart';
 import 'package:geo_app/Page/LandingPage/map/components/record_route.dart';
-import 'package:geo_app/Page/LandingPage/map/map_provider.dart';
-import 'package:geo_app/components/special_card.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -69,8 +69,7 @@ class MapWidget extends HookWidget {
     }, [
       controller,
       mapsProvider.currentLocation,
-      mapsProvider.sourceLocation,
-      mapsProvider.destination,
+      mapsProvider.mapAction,
       markers.value,
     ]);
 
@@ -91,6 +90,9 @@ class MapWidget extends HookWidget {
                 onCameraIdle: () => visible.value = true,
                 onCameraMove: (_) => visible.value = false,
                 onTap: (latLng) async {
+                  if (mapsProvider.mapAction != null) return;
+
+                  /// TODO : map act tamamla 😘
                   shouldRecord.value = false;
                   markers.value.add(
                     Marker(
@@ -101,13 +103,23 @@ class MapWidget extends HookWidget {
                     ),
                   );
                   await zoomToLocation(latLng);
-                  mapsProvider.setPoints(latLng);
+                  (mapsProvider.mapAction as PlanRouteProvider)
+                      .setPoints(latLng);
                 },
                 zoomGesturesEnabled: true,
                 zoomControlsEnabled: false,
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
-                markers: markers.value,
+                markers: {
+                  ...markers.value,
+                  if (mapsProvider.record)
+                    Marker(
+                      markerId: const MarkerId("source"),
+                      position: mapsProvider.sourceLocation!.latLng,
+                      icon: sourceIcon,
+                      infoWindow: const InfoWindow(title: "Source Location"),
+                    ),
+                },
                 polylines: {
                   Polyline(
                     polylineId: const PolylineId("route"),

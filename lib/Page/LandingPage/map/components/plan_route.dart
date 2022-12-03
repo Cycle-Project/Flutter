@@ -1,10 +1,8 @@
 import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/Page/LandingPage/map/components/route_model.dart';
-import 'package:geo_app/Page/LandingPage/map/map_provider.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/components/special_card.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 enum PlanPages {
@@ -48,7 +46,6 @@ class PlanRoute extends HookWidget {
               shadowColor: Colors.transparent,
               height: 60,
               borderRadius: pageState.value == PlanPages.none
-
                   ? BorderRadius.circular(10)
                   : const BorderRadius.vertical(top: Radius.circular(10)),
               child: Row(
@@ -110,17 +107,16 @@ class PlanRoute extends HookWidget {
               height: 150,
               child: ListView.builder(
                 itemCount: 2,
-                itemBuilder: (context, index) =>
-                    _ListItem(
-                        indexText: index == 0 ? "A: " : "B: ",
-                        indexDestination: index == 0
-                            ? chooseStartLabel.value
-                            : chooseDestinationLabel.value,
-                        onTap: () {
-                          pageState.value = pageState.value == PlanPages.first
-                              ? PlanPages.second
-                              : PlanPages.first;
-                        }),
+                itemBuilder: (context, index) => _ListItem(
+                    indexText: index == 0 ? "A: " : "B: ",
+                    indexDestination: index == 0
+                        ? chooseStartLabel.value
+                        : chooseDestinationLabel.value,
+                    onTap: () {
+                      pageState.value = pageState.value == PlanPages.first
+                          ? PlanPages.second
+                          : PlanPages.first;
+                    }),
               ),
             ),
           if (pageState.value == PlanPages.second)
@@ -235,10 +231,7 @@ class _ListItem extends StatelessWidget {
                 borderRadius: BorderRadius.circular(5),
                 color: Colors.green,
               ),
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width * .5,
+              width: MediaQuery.of(context).size.width * .5,
               child: Container(
                 margin: const EdgeInsets.only(left: 12.0),
                 child: Text(indexDestination,
