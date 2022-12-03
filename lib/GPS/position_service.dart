@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/LandingPage/landing_page.dart';
-import 'package:geo_app/Page/LandingPage/map/map_provider.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:provider/provider.dart';
 
 class PositionService extends HookWidget {
