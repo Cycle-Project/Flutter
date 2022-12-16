@@ -23,6 +23,8 @@ class RecordRoute extends HookWidget {
       child: GestureDetector(
         onTap: () async {
           await provider.changeRecordingStatus();
+          mapsProvider.mapAction =
+              RecordRouteProvider(mapsProvider: mapsProvider);
         },
         child: Padding(
           padding: const EdgeInsets.all(8.0),

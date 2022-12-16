@@ -8,6 +8,7 @@ import 'package:geo_app/Page/LandingPage/map/components/plan_route.dart';
 import 'package:geo_app/Page/LandingPage/map/components/record_route.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/record_route_provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -90,10 +91,23 @@ class MapWidget extends HookWidget {
                 onCameraIdle: () => visible.value = true,
                 onCameraMove: (_) => visible.value = false,
                 onTap: (latLng) async {
-                  if (mapsProvider.mapAction != null) return;
-
                   /// TODO : map act tamamla 😘
+                  /* await showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: Text(mapsProvider.mapAction.toString()),
+                    ),
+                  ).then((value) async => ); */
+
                   shouldRecord.value = false;
+                  if (mapsProvider.mapAction is! PlanRouteProvider) {
+                    mapsProvider.mapAction =
+                        PlanRouteProvider(mapsProvider: mapsProvider);
+                  }
+                  if (mapsProvider.mapAction is PlanRouteProvider) {
+                    (mapsProvider.mapAction as PlanRouteProvider)
+                        .setPoints(latLng);
+                  }
                   markers.value.add(
                     Marker(
                       markerId: const MarkerId("mark"),
@@ -103,8 +117,6 @@ class MapWidget extends HookWidget {
                     ),
                   );
                   await zoomToLocation(latLng);
-                  (mapsProvider.mapAction as PlanRouteProvider)
-                      .setPoints(latLng);
                 },
                 zoomGesturesEnabled: true,
                 zoomControlsEnabled: false,
@@ -112,13 +124,17 @@ class MapWidget extends HookWidget {
                 myLocationButtonEnabled: false,
                 markers: {
                   ...markers.value,
-                  if (mapsProvider.record)
-                    Marker(
-                      markerId: const MarkerId("source"),
-                      position: mapsProvider.sourceLocation!.latLng,
-                      icon: sourceIcon,
-                      infoWindow: const InfoWindow(title: "Source Location"),
-                    ),
+                  if (mapsProvider.mapAction is RecordRouteProvider)
+                    if ((mapsProvider.mapAction as RecordRouteProvider).record)
+                      Marker(
+                        markerId: const MarkerId("source"),
+                        infoWindow: const InfoWindow(title: "Source Location"),
+                        icon: sourceIcon,
+                        position:
+                            (mapsProvider.mapAction as RecordRouteProvider)
+                                .sourceLocation!
+                                .latLng,
+                      ),
                 },
                 polylines: {
                   Polyline(
@@ -162,7 +178,8 @@ class MapWidget extends HookWidget {
                         (element) => element.markerId == const MarkerId("mark"),
                       );
                       shouldRecord.value = true;
-                      mapsProvider.setPoints(null);
+                      (mapsProvider.mapAction as PlanRouteProvider)
+                          .setPoints(null);
                     },
                   ),
                 ),
