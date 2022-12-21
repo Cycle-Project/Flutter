@@ -29,7 +29,7 @@ class RecordRouteProvider extends MapAction {
     if (record) {
       destination = PositionModel.fromLocationData(currentLocation!);
       // TODO : send destination to service
-      await getPolyPoints(isCurrent: false);
+      await getPolyPoints();
     }
   }
 }

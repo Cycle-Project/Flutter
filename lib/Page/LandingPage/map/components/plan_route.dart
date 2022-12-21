@@ -1,7 +1,9 @@
 import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geo_app/GPS/position_model.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
 import 'package:geo_app/components/special_card.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +29,7 @@ class PlanRoute extends HookWidget {
     final chooseStartLabel = useState("Choose Start");
     final chooseDestinationLabel = useState("Choose Destination");
     final pageState = useState(PlanPages.none);
+    final pinIndex = useState(0);
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -113,9 +116,8 @@ class PlanRoute extends HookWidget {
                         ? chooseStartLabel.value
                         : chooseDestinationLabel.value,
                     onTap: () {
-                      pageState.value = pageState.value == PlanPages.first
-                          ? PlanPages.second
-                          : PlanPages.first;
+                      pageState.value = PlanPages.second;
+                      pinIndex.value = index;
                     }),
               ),
             ),
@@ -143,28 +145,49 @@ class PlanRoute extends HookWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         _CircleIconButton(
-                            icon: const Icon(Icons.my_location,
-                                color: Colors.black),
-                            onPressed: () {
-                              chooseStartLabel.value = "Current Location";
-                              chooseDestinationLabel.value = "Current Location";
-
-                              pageState.value = PlanPages.first;
-                            }),
+                          icon: const Icon(Icons.my_location,
+                              color: Colors.black),
+                          onPressed: () {
+                            if (pinIndex.value == 0) {
+                              /// source
+                              (mapsProvider.mapAction as PlanRouteProvider)
+                                ..state = MyState.PinStart
+                                ..sourceLocation =
+                                    PositionModel.fromLocationData(
+                                        mapsProvider.currentLocation!);
+                            }
+                            else if (pinIndex.value == 1) {
+                              /// destination
+                              (mapsProvider.mapAction as PlanRouteProvider)
+                                ..state = MyState.PinEnd
+                                ..destination =
+                                    PositionModel.fromLocationData(
+                                        mapsProvider.currentLocation!);
+                            }
+                            chooseStartLabel.value = "Current Location";
+                            chooseDestinationLabel.value = "Current Location";
+                            pageState.value = PlanPages.first;
+                          },
+                        ),
                         _CircleIconButton(
-                            icon: const Icon(Icons.map, color: Colors.blue),
-                            onPressed: () {
-                              chooseStartLabel.value = "Waypoint";
-                              chooseDestinationLabel.value = "Current Location";
-                              pageState.value = PlanPages.first;
-                            }),
+                          icon: const Icon(Icons.map, color: Colors.blue),
+                          onPressed: () {
+                            (mapsProvider.mapAction as PlanRouteProvider)
+                                .isDestination = false;
+                            chooseStartLabel.value = "Waypoint";
+                            chooseDestinationLabel.value = "Current Location";
+                            pageState.value = PlanPages.first;
+                          },
+                        ),
                         const _CircleIconButton(
-                            icon: Icon(Icons.favorite, color: Colors.green)),
+                          icon: Icon(Icons.favorite, color: Colors.green),
+                        ),
                         _CircleIconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () {
-                              pageState.value = PlanPages.first;
-                            }),
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            pageState.value = PlanPages.first;
+                          },
+                        ),
                       ],
                     ),
                   ),
