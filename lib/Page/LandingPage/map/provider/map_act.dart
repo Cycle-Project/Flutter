@@ -19,21 +19,15 @@ abstract class MapAction extends ChangeNotifier {
 
   onLocationChanged(LocationData? currentLocation);
 
-  Future<void> getPolyPoints({bool isCurrent = true}) async {
+  Future<void> getPolyPoints() async {
     try {
       if (destination != null) {
         PolylinePoints polylinePoints = PolylinePoints();
         PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
           googleApiKey,
-          (isCurrent
-              ? PointLatLng(
-                  mapsProvider.currentLocation!.latitude!,
-                  mapsProvider.currentLocation!.longitude!,
-                )
-              : PointLatLng(
-                  sourceLocation!.latitude!, sourceLocation!.longitude!)),
-          travelMode: TravelMode.walking,
+          PointLatLng(sourceLocation!.latitude!, sourceLocation!.longitude!),
           PointLatLng(destination!.latitude!, destination!.longitude!),
+          travelMode: TravelMode.walking,
         );
         mapsProvider.polylineCoordinates = [];
         if (result.points.isNotEmpty) {

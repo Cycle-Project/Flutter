@@ -107,6 +107,12 @@ class MapWidget extends HookWidget {
                   if (mapsProvider.mapAction is PlanRouteProvider) {
                     (mapsProvider.mapAction as PlanRouteProvider)
                         .setPoints(latLng);
+                    if ((mapsProvider.mapAction as PlanRouteProvider)
+                            .isDestination ==
+                        false) {
+                      (mapsProvider.mapAction as PlanRouteProvider)
+                          .isDestination = true;
+                    }
                   }
                   markers.value.add(
                     Marker(
