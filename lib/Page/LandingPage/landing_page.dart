@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/LandingPage/Discover/discover_page.dart';
 import 'package:geo_app/Page/LandingPage/Profile/profile_page.dart';
-import 'package:geo_app/Page/LandingPage/map/map_widget.dart';
+import 'package:geo_app/Page/LandingPage/map/map_page.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 
 class LandingPage extends HookWidget {
@@ -24,10 +24,10 @@ class LandingPage extends HookWidget {
       body: TabBarView(
         controller: tabController,
         physics: const NeverScrollableScrollPhysics(),
-        children: [
-          const DiscoverPage(),
-          MapWidget(),
-          const ProfilePage(),
+        children: const [
+          DiscoverPage(),
+          MapPage(),
+          ProfilePage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
