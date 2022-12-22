@@ -8,10 +8,12 @@ class PlanRoute extends HookWidget {
     required this.size,
     required this.enlargedSize,
     required this.onTap,
+    required this.onBack,
   }) : super(key: key);
 
   final Size size, enlargedSize;
   final Function(bool) onTap;
+  final bool onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class PlanRoute extends HookWidget {
     const fadeTime = 250;
 
     return InkWell(
-      onTap: () {
+      onTap: onBack ? null : () {
         isOpen.value = !isOpen.value;
         onTap(isOpen.value);
         currentSize.value = isOpen.value ? enlargedSize : size;

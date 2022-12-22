@@ -8,10 +8,12 @@ class RecordRoute extends HookWidget {
     required this.size,
     required this.enlargedSize,
     required this.onTap,
+    required this.onBack,
   }) : super(key: key);
 
   final Size size, enlargedSize;
   final Function(bool) onTap;
+  final bool onBack;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class RecordRoute extends HookWidget {
     const fadeTime = 250;
 
     return InkWell(
-      onTap: () {
+      onTap: onBack ? null : () {
         record.value = !record.value;
         onTap(record.value);
         currentSize.value = record.value ? enlargedSize : size;

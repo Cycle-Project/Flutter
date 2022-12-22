@@ -6,11 +6,13 @@ import 'package:geo_app/Page/LandingPage/map/map_widget.dart';
 
 class MapPage extends HookWidget {
   const MapPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final smallSize = Size(size.width * .5 - 14, 60);
     final mediumSize = Size(size.width, 200);
+    final largeSize = Size(size.width, size.height * .7);
     final opened = useState(0);
 
     return Stack(
@@ -19,10 +21,11 @@ class MapPage extends HookWidget {
         MapWidget(),
         AnimatedOpacity(
           opacity: opened.value != 2 ? 1 : 0,
-          duration: const Duration(milliseconds: 200),
+          duration: Duration(milliseconds: 100),
           child: Align(
             alignment: Alignment.bottomLeft,
             child: RecordRoute(
+              onBack: opened.value == 2,
               enlargedSize: mediumSize,
               size: smallSize,
               onTap: (open) {
@@ -33,11 +36,12 @@ class MapPage extends HookWidget {
         ),
         AnimatedOpacity(
           opacity: opened.value != 1 ? 1 : 0,
-          duration: const Duration(milliseconds: 200),
+          duration: Duration(milliseconds: 100),
           child: Align(
             alignment: Alignment.bottomRight,
             child: PlanRoute(
-              enlargedSize: mediumSize,
+              onBack: opened.value == 1,
+              enlargedSize: largeSize,
               size: smallSize,
               onTap: (open) {
                 opened.value = open ? 2 : 0;
