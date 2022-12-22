@@ -6,25 +6,30 @@ class PlanRoute extends HookWidget {
   const PlanRoute({
     Key? key,
     required this.size,
+    required this.enlargedSize,
     required this.onTap,
   }) : super(key: key);
 
-  final Size size;
+  final Size size, enlargedSize;
   final Function(bool) onTap;
 
   @override
   Widget build(BuildContext context) {
-    final open = useState(false);
+    final isOpen = useState(false);
+    final currentSize = useState(size);
+    const fadeTime = 250;
+
     return InkWell(
       onTap: () {
-        open.value = !open.value;
-        onTap(open.value);
+        isOpen.value = !isOpen.value;
+        onTap(isOpen.value);
+        currentSize.value = isOpen.value ? enlargedSize : size;
       },
       child: MapCard(
-        fadeTime: 400,
+        fadeTime: fadeTime,
         backgroundColor: Colors.blue,
+        size: currentSize.value,
         text: "Plan",
-        size: size,
         prefix: const DecoratedBox(
           decoration: BoxDecoration(
             color: Colors.white,

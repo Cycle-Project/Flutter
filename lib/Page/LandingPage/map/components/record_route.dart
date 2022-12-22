@@ -6,25 +6,29 @@ class RecordRoute extends HookWidget {
   const RecordRoute({
     Key? key,
     required this.size,
+    required this.enlargedSize,
     required this.onTap,
   }) : super(key: key);
 
-  final Size size;
+  final Size size, enlargedSize;
   final Function(bool) onTap;
 
   @override
   Widget build(BuildContext context) {
     final record = useState(false);
+    final currentSize = useState(size);
+    const fadeTime = 250;
 
     return InkWell(
       onTap: () {
         record.value = !record.value;
         onTap(record.value);
+        currentSize.value = record.value ? enlargedSize : size;
       },
       child: MapCard(
-        fadeTime: 200,
+        fadeTime: fadeTime,
         backgroundColor: Colors.red,
-        size: size,
+        size: currentSize.value,
         prefix: DecoratedBox(
           decoration: const BoxDecoration(
             color: Colors.white,

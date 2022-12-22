@@ -11,37 +11,36 @@ class MapPage extends HookWidget {
     final size = MediaQuery.of(context).size;
     final smallSize = Size(size.width * .5 - 14, 60);
     final mediumSize = Size(size.width, 200);
-
-    final recordSize = useState(smallSize);
-    final planSize = useState(smallSize);
     final opened = useState(0);
 
     return Stack(
       fit: StackFit.expand,
       children: [
         MapWidget(),
-        Visibility(
-          visible: opened.value != 2,
+        AnimatedOpacity(
+          opacity: opened.value != 2 ? 1 : 0,
+          duration: const Duration(milliseconds: 200),
           child: Align(
             alignment: Alignment.bottomLeft,
             child: RecordRoute(
-              size: recordSize.value,
+              enlargedSize: mediumSize,
+              size: smallSize,
               onTap: (open) {
                 opened.value = open ? 1 : 0;
-                recordSize.value = open ? mediumSize : smallSize;
               },
             ),
           ),
         ),
-        Visibility(
-          visible: opened.value != 1,
+        AnimatedOpacity(
+          opacity: opened.value != 1 ? 1 : 0,
+          duration: const Duration(milliseconds: 200),
           child: Align(
             alignment: Alignment.bottomRight,
             child: PlanRoute(
-              size: planSize.value,
+              enlargedSize: mediumSize,
+              size: smallSize,
               onTap: (open) {
                 opened.value = open ? 2 : 0;
-                planSize.value = open ? size : smallSize;
               },
             ),
           ),
