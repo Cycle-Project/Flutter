@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/LandingPage/map/components/map_card.dart';
-import 'package:lottie/lottie.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/record_route_provider.dart';
+import 'package:provider/provider.dart';
 
 class RecordRoute extends HookWidget {
   const RecordRoute({
@@ -18,25 +19,37 @@ class RecordRoute extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final recordProvider = Provider.of<RecordRouteProvider>(context);
     final record = useState(false);
     final currentSize = useState(size);
     const fadeTime = 150;
 
-    return InkWell(
-      onTap: onBack
-          ? null
-          : () {
-              record.value = !record.value;
-              onTap(record.value);
-              currentSize.value = record.value ? enlargedSize : size;
-            },
-      child: MapCard(
-        fadeTime: fadeTime,
-        backgroundColor: Colors.red,
-        size: currentSize.value,
-        /*prefix: ,
-        text: ,*/
-        child: _RecordChild(isOpen: record.value),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        onTap: onBack
+            ? null
+            : () {
+                record.value = !record.value;
+                recordProvider.changeRecordingStatus(isRecording: record.value);
+                showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    content: Text("Record :${record.value}"),
+                  ),
+                );
+                onTap(record.value);
+                currentSize.value = record.value ? enlargedSize : size;
+              },
+        child: ClipRect(
+          clipBehavior: Clip.hardEdge,
+          child: MapCard(
+            fadeTime: fadeTime,
+            backgroundColor: Colors.red,
+            size: currentSize.value,
+            child: _RecordChild(isOpen: record.value),
+          ),
+        ),
       ),
     );
   }
@@ -51,26 +64,13 @@ class _RecordChild extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final recordProvider = Provider.of<RecordRouteProvider>(context);
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        SizedBox.expand(),
-        Positioned(
-          top: 0,
-          bottom: 0,
-          left: -50,
-          child: AnimatedScale(
-            scale: 4,
-            duration: Duration(milliseconds: 1),
-            child: Lottie.asset(
-              "assets/lottie/109393-recording.json",
-              width: 200,
-              height: 200,
-            ),
-          ),
-        ),
+        const SizedBox.expand(),
         Align(
-          alignment: Alignment(-1, 0),
+          alignment: const Alignment(-1, 0),
           child: Row(
             children: [
               DecoratedBox(
@@ -80,19 +80,18 @@ class _RecordChild extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(10),
-                  //Lottie.asset("assets/lottie/109393-recording.json")
                   child: Icon(
                     isOpen ? Icons.pause : Icons.circle,
-                    size: 20,
+                    size: isOpen ? 30 : 20,
                     color: Colors.red,
                   ),
                 ),
               ),
-              SizedBox(width: 20),
-              const Expanded(
+              const SizedBox(width: 20),
+              Expanded(
                 child: Text(
-                  "Record",
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+                  isOpen ? "Recording..." : "Record",
+                  style: const TextStyle(fontSize: 20, color: Colors.white),
                 ),
               ),
             ],

@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geo_app/GPS/position_model.dart';
@@ -7,14 +9,17 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 abstract class MapAction extends ChangeNotifier {
-  PositionModel? sourceLocation;
+  PositionModel? source;
+  bool isSourcePinned, isDestinationPinned;
   PositionModel? destination;
   MapsProvider mapsProvider;
 
   MapAction({
     required this.mapsProvider,
-    this.sourceLocation,
+    this.source,
     this.destination,
+    this.isSourcePinned = false,
+    this.isDestinationPinned = false,
   });
 
   onLocationChanged(LocationData? currentLocation);
@@ -25,7 +30,7 @@ abstract class MapAction extends ChangeNotifier {
         PolylinePoints polylinePoints = PolylinePoints();
         PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
           googleApiKey,
-          PointLatLng(sourceLocation!.latitude!, sourceLocation!.longitude!),
+          PointLatLng(source!.latitude!, source!.longitude!),
           PointLatLng(destination!.latitude!, destination!.longitude!),
           travelMode: TravelMode.walking,
         );
