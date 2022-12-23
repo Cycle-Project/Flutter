@@ -1,7 +1,11 @@
+import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/LandingPage/map/components/map_card.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 class PlanRoute extends HookWidget {
   const PlanRoute({
@@ -44,7 +48,7 @@ class PlanRoute extends HookWidget {
   }
 }
 
-class _PlanChild extends StatelessWidget {
+class _PlanChild extends HookWidget {
   const _PlanChild({
     Key? key,
     required this.isOpen,
@@ -55,21 +59,31 @@ class _PlanChild extends StatelessWidget {
   final Function() onTap, onClose;
 
   dialog(context, index) {
-    return showGeneralDialog(
+    String? returnValue = "";
+    showGeneralDialog(
       context: context,
       barrierLabel: 'Dialog',
-      transitionDuration: Duration(milliseconds: 400),
+      transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (_, __, ___) => Scaffold(
         appBar: AppBar(
           title: Text(index == 1 ? "Source" : "Destination"),
         ),
-        body: Text(index.toString()),
+        body: index == 1
+            ? _SourceLocation(
+                sourceLocationDelegate: (str) {
+                  Navigator.of(context).pop(str);
+                },
+              )
+            : _DestinationLocation(),
       ),
-    );
+    ).then((value) => returnValue = value.toString());
+    return returnValue;
   }
 
   @override
   Widget build(BuildContext context) {
+    final sourceText = useState("");
+    final destinationText = useState("");
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -83,16 +97,22 @@ class _PlanChild extends StatelessWidget {
             child: Column(
               children: [
                 InkWell(
-                  onTap: () => dialog(context, 1),
+                  onTap: () {
+                    sourceText.value = dialog(context, 1);
+                  },
                   child: _LocationButton(
                     name: "Source",
+                    text: sourceText.value,
                   ),
                 ),
                 SizedBox(height: 20),
                 InkWell(
-                  onTap: () => dialog(context, 2),
+                  onTap: () {
+                    destinationText.value = dialog(context, 2);
+                  },
                   child: _LocationButton(
                     name: "Destination",
+                    text: destinationText.value,
                   ),
                 ),
               ],
@@ -142,12 +162,14 @@ class _LocationButton extends HookWidget {
   const _LocationButton({
     Key? key,
     required this.name,
+    required this.text,
   }) : super(key: key);
   final String name;
+  final String text;
 
   @override
   Widget build(BuildContext context) {
-    final _controller = useTextEditingController();
+    final _controller = useTextEditingController(text: text);
     return SizedBox(
       height: 50,
       child: TextField(
@@ -218,6 +240,91 @@ class _PlanButton extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _SourceLocation extends StatelessWidget {
+  _SourceLocation({
+    Key? key,
+    required this.sourceLocationDelegate,
+  }) : super(key: key);
+
+  TextEditingController textSearchController = TextEditingController();
+  final Function(String) sourceLocationDelegate;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: AnimSearchBar(
+            closeSearchOnSuffixTap: true,
+            autoFocus: true,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.white,
+            helpText: "Place or Address",
+            textController: textSearchController,
+            onSuffixTap: () {
+              textSearchController.clear();
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _CircleIconButton(
+                  icon: const Icon(Icons.my_location, color: Colors.black),
+                  onPressed: () {
+                    sourceLocationDelegate("Konum");
+                  }),
+              _CircleIconButton(
+                  icon: const Icon(Icons.map, color: Colors.blue),
+                  onPressed: () {}),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DestinationLocation extends StatelessWidget {
+  const _DestinationLocation({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.blue,
+      child: Text("destination location"),
+    );
+  }
+}
+
+class _CircleIconButton extends StatelessWidget {
+  const _CircleIconButton({
+    Key? key,
+    required this.icon,
+    this.onPressed,
+  }) : super(key: key);
+
+  final Icon icon;
+  final Function()? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.greenAccent,
+      ),
+      child: IconButton(
+        onPressed: onPressed,
+        icon: icon,
       ),
     );
   }
