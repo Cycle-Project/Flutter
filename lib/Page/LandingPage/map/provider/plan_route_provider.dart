@@ -6,42 +6,43 @@ import 'package:location/location.dart';
 class PlanRouteProvider extends MapAction {
   PlanRouteProvider({
     required super.mapsProvider,
-    this.isDestination = true,
-    this.state = MyState.PinStart,
   });
 
-  bool isDestination;
-  MyState state;
-
-  setPoints(LatLng? latLng) async {
-    switch(state) {
-      case MyState.None:
-        if (isDestination) {
-          destination = latLng != null ? PositionModel.fromLatLng(latLng) : null;
-        } else {
-          sourceLocation = latLng != null ? PositionModel.fromLatLng(latLng) : null;
-        }
-        break;
-      case MyState.PinStart:
-        sourceLocation = PositionModel.fromLocationData(mapsProvider.currentLocation!);
-        destination = latLng != null ? PositionModel.fromLatLng(latLng) : null;
-        break;
-      case MyState.PinEnd:
-        destination = PositionModel.fromLocationData(mapsProvider.currentLocation!);
-        sourceLocation = latLng != null ? PositionModel.fromLatLng(latLng) : null;
-        break;
+  setSource({bool isPinned = false, LatLng? newSorce}) async {
+    if (!isSourcePinned && newSorce != null && !isPinned) {
+      isSourcePinned = false;
+      source = PositionModel.fromLatLng(newSorce);
+    } else if (isPinned) {
+      isSourcePinned = true;
+    } else {
+      return;
     }
+    mapsProvider.mapAction = this;
+    await getPolyPoints();
+  }
+
+  setDestination({bool isPinned = false, LatLng? newDestination}) async {
+    if (!isDestinationPinned && newDestination != null && !isPinned) {
+      isDestinationPinned = false;
+      destination = PositionModel.fromLatLng(newDestination);
+    } else if (isPinned) {
+      isDestinationPinned = true;
+    } else {
+      return;
+    }
+    mapsProvider.mapAction = this;
     await getPolyPoints();
   }
 
   @override
-  onLocationChanged(LocationData? currentLocation) {
-    if(state == MyState.PinStart) {
-      sourceLocation = PositionModel.fromLocationData(mapsProvider.currentLocation!);
-    } else if(state == MyState.PinEnd) {
-      destination = PositionModel.fromLocationData(mapsProvider.currentLocation!);
+  onLocationChanged(LocationData? currentLocation) async {
+    if (isSourcePinned) {
+      source = PositionModel.fromLocationData(mapsProvider.currentLocation!);
     }
+    if (isDestinationPinned) {
+      destination =
+          PositionModel.fromLocationData(mapsProvider.currentLocation!);
+    }
+    await getPolyPoints();
   }
 }
-
-enum MyState { PinStart, PinEnd, None }

@@ -13,11 +13,12 @@ class RecordRouteProvider extends MapAction {
   changeRecordingStatus({bool? isRecording}) {
     record = isRecording ?? !record;
     if (!record || mapsProvider.currentLocation == null) {
-      sourceLocation = null;
+      source = null;
       destination = null;
       mapsProvider.polylineCoordinates = [];
     } else {
-      sourceLocation = destination = PositionModel.fromLocationData(
+      mapsProvider.mapAction = this;
+      source = destination = PositionModel.fromLocationData(
         mapsProvider.currentLocation!,
       );
     }

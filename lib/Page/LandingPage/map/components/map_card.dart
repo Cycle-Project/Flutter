@@ -15,24 +15,21 @@ class MapCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: SafeArea(
-        child: AnimatedContainer(
-          duration: Duration(milliseconds: fadeTime),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: backgroundColor,
+    return SafeArea(
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: fadeTime),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: backgroundColor,
+        ),
+        height: size.height,
+        width: size.width,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 10,
           ),
-          height: size.height,
-          width: size.width,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 10,
-            ),
-            child: child,
-          ),
+          child: child,
         ),
       ),
     );
