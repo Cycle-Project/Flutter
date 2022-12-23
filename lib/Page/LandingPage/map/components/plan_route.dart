@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/LandingPage/map/components/map_card.dart';
+import 'package:lottie/lottie.dart';
 
 class PlanRoute extends HookWidget {
   const PlanRoute({
@@ -21,189 +22,203 @@ class PlanRoute extends HookWidget {
     final currentSize = useState(size);
     const fadeTime = 250;
 
+    tap() {
+      isOpen.value = !isOpen.value;
+      onTap(isOpen.value);
+      currentSize.value = isOpen.value ? enlargedSize : size;
+    }
+
     return InkWell(
-      onTap: onBack ? null : () {
-        isOpen.value = !isOpen.value;
-        onTap(isOpen.value);
-        currentSize.value = isOpen.value ? enlargedSize : size;
-      },
+      onTap: onBack || isOpen.value ? null : tap,
       child: MapCard(
         fadeTime: fadeTime,
         backgroundColor: Colors.blue,
         size: currentSize.value,
-        text: "Plan",
-        prefix: const DecoratedBox(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(10),
-            child: Icon(
-              Icons.route,
-              size: 20,
-              color: Colors.blue,
-            ),
-          ),
+        child: _PlanChild(
+          isOpen: isOpen.value,
+          onTap: tap,
+          onClose: tap,
         ),
       ),
     );
   }
 }
-/* if (pageState.value == PlanPages.first)
-          Container(
-            color: Colors.lightGreen,
-            height: 150,
-            child: ListView.builder(
-              itemCount: 2,
-              itemBuilder: (context, index) => _ListItem(
-                  indexText: index == 0 ? "A: " : "B: ",
-                  indexDestination: index == 0
-                      ? chooseStartLabel.value
-                      : chooseDestinationLabel.value,
-                  onTap: () {
-                    pageState.value = PlanPages.second;
-                    pinIndex.value = index;
-                  }),
-            ),
-          ),
-        if (pageState.value == PlanPages.second)
-          Container(
-            height: 160,
-            color: Colors.lightGreen,
+
+class _PlanChild extends StatelessWidget {
+  const _PlanChild({
+    Key? key,
+    required this.isOpen,
+    required this.onTap,
+    required this.onClose,
+  }) : super(key: key);
+  final bool isOpen;
+  final Function() onTap, onClose;
+
+  dialog(context, index) {
+    return showGeneralDialog(
+      context: context,
+      barrierLabel: 'Dialog',
+      transitionDuration: Duration(milliseconds: 400),
+      pageBuilder: (_, __, ___) => Scaffold(
+        appBar: AppBar(
+          title: Text(index == 1 ? "Source" : "Destination"),
+        ),
+        body: Text(index.toString()),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        const SizedBox.expand(),
+        Positioned(
+          top: 16,
+          left: 0,
+          right: 0,
+          child: Visibility(
+            visible: isOpen,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: AnimSearchBar(
-                    width: 400,
-                    color: Colors.white,
-                    helpText: "Place or Address",
-                    textController: textSearchController,
-                    onSuffixTap: () {
-                      textSearchController.clear();
-                    },
+                InkWell(
+                  onTap: () => dialog(context, 1),
+                  child: _LocationButton(
+                    name: "Source",
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _CircleIconButton(
-                        icon:
-                            const Icon(Icons.my_location, color: Colors.black),
-                        onPressed: () {
-                          if (pinIndex.value == 0) {
-                            /// source
-                            (mapsProvider.mapAction as PlanRouteProvider)
-                              ..state = MyState.PinStart
-                              ..sourceLocation = PositionModel.fromLocationData(
-                                  mapsProvider.currentLocation!);
-                          } else if (pinIndex.value == 1) {
-                            /// destination
-                            (mapsProvider.mapAction as PlanRouteProvider)
-                              ..state = MyState.PinEnd
-                              ..destination = PositionModel.fromLocationData(
-                                  mapsProvider.currentLocation!);
-                          }
-                          chooseStartLabel.value = "Current Location";
-                          chooseDestinationLabel.value = "Current Location";
-                          pageState.value = PlanPages.first;
-                        },
-                      ),
-                      _CircleIconButton(
-                        icon: const Icon(Icons.map, color: Colors.blue),
-                        onPressed: () {
-                          (mapsProvider.mapAction as PlanRouteProvider)
-                              .isDestination = false;
-                          chooseStartLabel.value = "Waypoint";
-                          chooseDestinationLabel.value = "Current Location";
-                          pageState.value = PlanPages.first;
-                        },
-                      ),
-                      const _CircleIconButton(
-                        icon: Icon(Icons.favorite, color: Colors.green),
-                      ),
-                      _CircleIconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          pageState.value = PlanPages.first;
-                        },
-                      ),
-                    ],
+                SizedBox(height: 20),
+                InkWell(
+                  onTap: () => dialog(context, 2),
+                  child: _LocationButton(
+                    name: "Destination",
                   ),
                 ),
               ],
             ),
-          ) */
+          ),
+        ),
+        Align(
+          alignment: Alignment(0, .72),
+          child: Visibility(
+            visible: isOpen,
+            child: InkWell(
+              onTap: onClose,
+              child: Row(
+                children: const [
+                  SizedBox(width: 10),
+                  Icon(
+                    Icons.keyboard_arrow_left_rounded,
+                    color: Colors.white,
+                    size: 32,
+                  ),
+                  Text(
+                    "Cancel",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        AnimatedAlign(
+          alignment: isOpen ? Alignment(.75, .85) : Alignment(0, 1),
+          duration: Duration(milliseconds: 300),
+          child: InkWell(
+            onTap: onTap,
+            child: _PlanButton(isOpen: isOpen),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
-class _CircleIconButton extends StatelessWidget {
-  const _CircleIconButton({
+class _LocationButton extends HookWidget {
+  const _LocationButton({
     Key? key,
-    required this.icon,
-    this.onPressed,
+    required this.name,
   }) : super(key: key);
-
-  final Icon icon;
-  final Function()? onPressed;
+  final String name;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white70,
-      ),
-      child: IconButton(
-        onPressed: onPressed,
-        icon: icon,
+    final _controller = useTextEditingController();
+    return SizedBox(
+      height: 50,
+      child: TextField(
+        enabled: false,
+        controller: _controller,
+        decoration: InputDecoration(
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            labelText: name,
+            labelStyle: TextStyle(color: Colors.white)),
       ),
     );
   }
 }
 
-class _ListItem extends StatelessWidget {
-  _ListItem({
+class _PlanButton extends StatelessWidget {
+  const _PlanButton({
     Key? key,
-    required this.indexText,
-    required this.indexDestination,
-    required this.onTap,
+    required this.isOpen,
   }) : super(key: key);
-
-  final indexText;
-  final indexDestination;
-  final Function() onTap;
-
-  TextStyle style = const TextStyle(
-      color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold);
+  final bool isOpen;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(indexText, style: style),
-        const SizedBox(width: 15),
-        GestureDetector(
-            onTap: onTap,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5),
-                color: Colors.green,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: isOpen ? Colors.white : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: SizedBox(
+        width: 180,
+        child: Row(
+          children: [
+            DecoratedBox(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
               ),
-              width: MediaQuery.of(context).size.width * .5,
-              child: Container(
-                margin: const EdgeInsets.only(left: 12.0),
-                child: Text(indexDestination,
-                    textAlign: TextAlign.start, style: style),
+              child: Padding(
+                padding: EdgeInsets.all(isOpen ? 15 : 10),
+                child: Icon(
+                  Icons.route,
+                  size: isOpen ? 35 : 20,
+                  color: Colors.blue,
+                ),
               ),
-            )),
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Icons.headset_off_rounded, color: Colors.white),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: SizedBox(
+                height: 40,
+                child: Center(
+                  child: Text(
+                    "Plan",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: isOpen ? Colors.blue : Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

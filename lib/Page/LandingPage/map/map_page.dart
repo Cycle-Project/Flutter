@@ -11,7 +11,7 @@ class MapPage extends HookWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final smallSize = Size(size.width * .5 - 14, 60);
-    final mediumSize = Size(size.width, 200);
+    final mediumSize = Size(size.width, size.height * .32);
     final largeSize = Size(size.width, size.height * .7);
     final opened = useState(0);
 
@@ -41,7 +41,7 @@ class MapPage extends HookWidget {
             alignment: Alignment.bottomRight,
             child: PlanRoute(
               onBack: opened.value == 1,
-              enlargedSize: largeSize,
+              enlargedSize: mediumSize,
               size: smallSize,
               onTap: (open) {
                 opened.value = open ? 2 : 0;
