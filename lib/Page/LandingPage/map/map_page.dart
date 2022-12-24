@@ -34,7 +34,12 @@ class MapPage extends HookWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          MapWidget(),
+          MapWidget(
+            shouldAddMark: (latLng) {
+              return opened.value == 2;
+            },
+            shouldClearMark: opened.value != 2,
+          ),
           AnimatedOpacity(
             opacity: opened.value != 2 ? 1 : 0,
             duration: const Duration(milliseconds: 100),

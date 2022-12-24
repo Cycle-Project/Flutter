@@ -9,7 +9,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 class MapWidget extends HookWidget {
-  MapWidget({Key? key}) : super(key: key) {
+  MapWidget({
+    Key? key,
+    required this.shouldClearMark,
+    required this.shouldAddMark,
+  }) : super(key: key) {
     Future.microtask(() async {
       const size = Size(120, 120);
       const config = ImageConfiguration(size: size);
@@ -25,6 +29,8 @@ class MapWidget extends HookWidget {
       }
     });
   }
+  final bool Function(LatLng) shouldAddMark;
+  final bool shouldClearMark;
 
   late BitmapDescriptor sourceIcon;
   late BitmapDescriptor destinationIcon;
@@ -36,6 +42,7 @@ class MapWidget extends HookWidget {
     final mapsProvider = Provider.of<MapsProvider>(context);
     final controller = Completer<GoogleMapController>();
     final markers = useState<Set<Marker>>({});
+    const markId = MarkerId("mark");
 
     Future<void> zoomToLocation(LatLng? target) async {
       if (target != null) {
@@ -50,16 +57,23 @@ class MapWidget extends HookWidget {
       }
     }
 
-    onTap(latLng) async {
-      markers.value.add(
-        Marker(
-          markerId: const MarkerId("mark"),
-          position: latLng,
-          icon: sourceIcon,
-          infoWindow: const InfoWindow(title: "Marked Location"),
-        ),
-      );
-      await zoomToLocation(latLng);
+    if (shouldClearMark) {
+      markers.value.removeWhere((e) => e.markerId == markId);
+    }
+
+    onTapMap(latLng) async {
+      bool shouldMark = shouldAddMark(latLng);
+      if (shouldMark) {
+        markers.value.add(
+          Marker(
+            markerId: markId,
+            position: latLng,
+            icon: sourceIcon,
+            infoWindow: const InfoWindow(title: "Marked Location"),
+          ),
+        );
+        await zoomToLocation(latLng);
+      }
     }
 
     getCurrentLocation() => LatLng(
@@ -84,7 +98,7 @@ class MapWidget extends HookWidget {
         zoom: 16,
       ),
       onMapCreated: (map) => controller.complete(map),
-      onTap: onTap,
+      onTap: (latLng) async => await onTapMap(latLng),
       zoomGesturesEnabled: true,
       zoomControlsEnabled: false,
       myLocationEnabled: true,
