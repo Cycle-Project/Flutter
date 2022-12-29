@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geo_app/Client/IClient.dart';
+import 'package:geo_app/Client/Models/user_model.dart';
+import 'package:geo_app/Client/client.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 
 class SignupForm extends HookWidget {
-  const SignupForm({
+  SignupForm({
     Key? key,
     required this.onSignup,
     required this.onHaveAccount,
   }) : super(key: key);
   final Function() onSignup;
   final Function() onHaveAccount;
+
+  IClient _client = Client();
+  UserModel _userModel = UserModel();
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +141,20 @@ class SignupForm extends HookWidget {
                   Expanded(
                     flex: 1,
                     child: InkWell(
-                      onTap: onSignup,
+                      onTap: () {
+                        _userModel = UserModel(
+                          name: name.value,
+                          email: email.value,
+                          password: password.value,
+                        );
+                        _client.registerUser(
+                          userModel: _userModel,
+                        );
+                        List<UserModel> users = _client.getHttpUserModel() as List<UserModel>;
+                        print(users);
+                        print(_userModel.name);
+                        onSignup();
+                      },
                       child: Container(
                         height: 50,
                         decoration: BoxDecoration(

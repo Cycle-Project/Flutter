@@ -8,6 +8,7 @@ class LoginOrSignUpPage extends HookWidget {
   const LoginOrSignUpPage({Key? key}) : super(key: key);
 
   login(context) {
+    /*
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
@@ -15,6 +16,11 @@ class LoginOrSignUpPage extends HookWidget {
       ),
       (r) => r.isFirst,
     );
+    */
+  }
+
+  signup() {
+
   }
 
   @override
