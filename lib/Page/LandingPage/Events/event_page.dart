@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/LandingPage/Discover/discover_card.dart';
 
-class DiscoverPage extends HookWidget {
-  const DiscoverPage({
+class EventPage extends HookWidget {
+  const EventPage({
     Key? key,
     required this.color,
   }) : super(key: key);
@@ -39,7 +39,7 @@ class DiscoverPage extends HookWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
-        title: const Text("Discover"),
+        title: const Text("Events"),
         actions: [
           IconButton(
             onPressed: () {},

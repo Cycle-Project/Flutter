@@ -35,7 +35,7 @@ class LocationService extends HookWidget {
     }, [permissionGranted, serviceEnabled]);
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: Constants.backgroundColor,
       body: permissionGranted.value && serviceEnabled.value
           ? const PositionService()
           : const SizedBox(),

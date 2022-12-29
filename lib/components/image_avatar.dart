@@ -5,16 +5,16 @@ class ImageAvatar extends StatelessWidget {
     Key? key,
     this.size = 50,
     this.color = Colors.grey,
-    this.haveBorder = false,
+    this.onTap,
+    this.border,
     required this.fileName,
-    required this.onTap,
   }) : super(key: key);
 
   final double size;
   final Color color;
-  final bool haveBorder;
   final String fileName;
-  final Function() onTap;
+  final Function()? onTap;
+  final ImageAvatarBorder? border;
 
   @override
   Widget build(BuildContext context) {
@@ -24,18 +24,31 @@ class ImageAvatar extends StatelessWidget {
         height: size,
         width: size,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(size),
+          color: border?.color ?? Colors.white,
+          borderRadius: BorderRadius.circular(border?.borderRadius ?? size),
         ),
         child: Container(
-          margin: haveBorder ? const EdgeInsets.all(4) : EdgeInsets.zero,
+          margin: EdgeInsets.all(border?.thickness ?? 0),
           decoration: BoxDecoration(
             color: color,
-            shape: BoxShape.circle,
+            borderRadius:
+                BorderRadius.circular((border?.borderRadius ?? size) - 4),
             image: DecorationImage(image: AssetImage(fileName)),
           ),
         ),
       ),
     );
   }
+}
+
+class ImageAvatarBorder {
+  final double? thickness;
+  final double? borderRadius;
+  final Color? color;
+
+  const ImageAvatarBorder({
+    this.thickness,
+    this.borderRadius,
+    this.color,
+  });
 }

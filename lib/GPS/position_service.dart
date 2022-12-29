@@ -22,7 +22,7 @@ class PositionService extends HookWidget {
 
     return ChangeNotifierProvider(
       create: (_) => provider,
-      child: LandingPage(),
+      child: const LandingPage(),
     );
   }
 }
