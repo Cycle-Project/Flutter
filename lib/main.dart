@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geo_app/Page/Enterance/enterance_page.dart';
+import 'package:geo_app/Page/utilities/constants.dart';
 
 main() {
   runApp(const App());
@@ -10,10 +11,19 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: EnterancePage(),
+    return MaterialApp(
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primaryColor: Constants.primaryColor,
+        scaffoldBackgroundColor: Constants.bluishGreyColor,
+        primarySwatch: Constants.generateMaterialColor(
+          Constants.darkBluishGreyColor,
+        ),
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+      ),
+      home: const Scaffold(body: EnterancePage()),
       debugShowCheckedModeBanner: false,
     );
   }

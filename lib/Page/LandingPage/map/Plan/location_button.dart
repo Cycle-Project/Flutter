@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/location_dialog.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -18,18 +19,18 @@ class LocationButton extends HookWidget {
       context: context,
       barrierLabel: 'Dialog',
       transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (_, __, ___) => ChangeNotifierProvider.value(
-        value: Provider.of<PlanRouteProvider>(context),
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(index == 1 ? "Source" : "Destination"),
+      pageBuilder: (_, __, ___) => MultiProvider(
+        providers: [
+          ChangeNotifierProvider.value(
+            value: Provider.of<MapsProvider>(context),
           ),
-          body: LocationDialog(
-            index: index,
-            callback: (str) {
-              Navigator.of(context).pop(str);
-            },
+          ChangeNotifierProvider.value(
+            value: Provider.of<PlanRouteProvider>(context),
           ),
+        ],
+        child: LocationDialog(
+          index: index,
+          callback: (str) => Navigator.of(context).pop(str),
         ),
       ),
     ).then((value) => returnValue = value.toString());
@@ -38,50 +39,71 @@ class LocationButton extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = useTextEditingController();
-    final isVisible = useState(false);
+    final text = useState("Your Current sadsadasd");
 
-    return Stack(
+    return Row(
       children: [
-        InkWell(
-          onTap: () async {
-            controller.text = await dialog(context, index);
-            isVisible.value = controller.text != "";
-          },
-          child: SizedBox(
-            height: 50,
-            child: TextFormField(
-              enabled: false,
-              controller: controller,
-              style: const TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                floatingLabelAlignment: FloatingLabelAlignment.center,
-                disabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Colors.white),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Colors.white),
-                ),
-                labelText: name,
-                labelStyle: const TextStyle(color: Colors.white),
+        Expanded(
+          child: InkWell(
+            onTap: () async {
+              text.value = await dialog(context, index);
+            },
+            child: SizedBox(
+              height: 50,
+              child: Row(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        "${index == 1 ? "Source" : "Destination"} Location",
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                      Text(
+                        text.value == "" ? "-" : text.value,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  const SizedBox(
+                    height: 50,
+                    child: Align(
+                      alignment: Alignment(0, .7),
+                      child: Icon(
+                        Icons.edit_location_alt_outlined,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
-        Positioned(
-          top: 0,
-          bottom: 0,
-          right: 10,
-          child: Visibility(
-            visible: isVisible.value,
-            child: InkWell(
-              onTap: () {
-                controller.text = "";
-                isVisible.value = false;
-              },
-              child: const Icon(Icons.close, color: Colors.white),
+        Visibility(
+          visible: text.value != "",
+          child: InkWell(
+            onTap: () => text.value = "",
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 4),
+              child: SizedBox(
+                height: 50,
+                child: Align(
+                  alignment: Alignment(0, .7),
+                  child: Icon(
+                    Icons.close,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
             ),
           ),
         ),

@@ -1,7 +1,6 @@
-import 'package:anim_search_bar/anim_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/Page/LandingPage/map/Plan/circle_icon_button.dart';
+import 'package:geo_app/Page/LandingPage/map/map_widget.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -19,51 +18,143 @@ class LocationDialog extends HookWidget {
   Widget build(BuildContext context) {
     final planProvider = Provider.of<PlanRouteProvider>(context);
     final textSearchController = useTextEditingController();
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-          child: AnimSearchBar(
-            closeSearchOnSuffixTap: true,
-            autoFocus: true,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.white,
-            helpText: "Place or Address",
-            textController: textSearchController,
-            onSuffixTap: () {
-              textSearchController.clear();
-            },
-            onSubmitted: (String a) {},
+    final isSearching = useState(true);
+
+    return Scaffold(
+      appBar: AppBar(
+        elevation: isSearching.value ? 0 : 6,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.grey.shade600,
+        title: AnimatedCrossFade(
+          duration: const Duration(milliseconds: 200),
+          crossFadeState: isSearching.value
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          firstCurve: Curves.easeInSine,
+          secondCurve: Curves.easeInSine,
+          firstChild: SizedBox(
+            width: double.maxFinite,
+            child: Text(
+              "${index == 1 ? "Source" : "Destination"} Location",
+              textAlign: TextAlign.left,
+            ),
+          ),
+          secondChild: Center(
+            child: TextFormField(
+              controller: textSearchController,
+              style: const TextStyle(
+                fontSize: 20,
+              ),
+              autofocus: true,
+              decoration: const InputDecoration(
+                hintText: "Search",
+                border: OutlineInputBorder(borderSide: BorderSide.none),
+              ),
+            ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: IconButton(
+              onPressed: () {
+                if (textSearchController.text == "") {
+                  isSearching.value = !isSearching.value;
+                } else if (!isSearching.value) {
+                  textSearchController.text = "";
+                  isSearching.value = !isSearching.value;
+                } else {
+                  /// TODO: Search
+                }
+              },
+              icon: const Icon(Icons.search),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: Colors.white,
+      body: !isSearching.value
+          ? MapWidget(
+              shouldClearMark: false,
+              shouldAddMark: (p0) => false,
+            )
+          : Column(
+              children: [
+                _SearchListItem(
+                  callback: callback,
+                  onTap: () {
+                    switch (index) {
+                      case 1:
+                        planProvider.setSource(isPinned: true);
+                        break;
+                      case 2:
+                        planProvider.setDestination(isPinned: true);
+                        break;
+                      default:
+                    }
+                  },
+                  text: "Current Location",
+                  iconData: Icons.my_location,
+                ),
+                _SearchListItem(
+                  callback: (p0) => null,
+                  text: "Pick on Map",
+                  iconData: Icons.map,
+                  onTap: () => isSearching.value = false,
+                ),
+              ],
+            ),
+    );
+  }
+}
+
+class _SearchListItem extends StatelessWidget {
+  const _SearchListItem({
+    Key? key,
+    this.onTap,
+    required this.text,
+    required this.iconData,
+    required this.callback,
+  }) : super(key: key);
+  final IconData iconData;
+  final String text;
+  final Function()? onTap;
+  final Function(String) callback;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        if (onTap != null) onTap!();
+        callback(text);
+      },
+      child: SizedBox(
+        height: 50,
+        width: double.maxFinite,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              CircleIconButton(
-                icon: const Icon(Icons.my_location, color: Colors.black),
-                onPressed: () {
-                  switch (index) {
-                    case 1:
-                      planProvider.setSource(isPinned: true);
-                      break;
-                    case 2:
-                      planProvider.setDestination(isPinned: true);
-                      break;
-                    default:
-                  }
-                  callback("Current Location");
-                },
+              const SizedBox(width: 8),
+              Icon(
+                iconData,
+                color: Colors.black,
+                size: 28,
               ),
-              CircleIconButton(
-                icon: const Icon(Icons.map, color: Colors.blue),
-                onPressed: () {},
+              const SizedBox(width: 24),
+              Expanded(
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                  ),
+                ),
               ),
             ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
