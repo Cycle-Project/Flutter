@@ -1,6 +1,5 @@
 import 'package:geo_app/GPS/position_model.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_act.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class PlanRouteProvider extends MapAction {
@@ -8,30 +7,35 @@ class PlanRouteProvider extends MapAction {
     required super.mapsProvider,
   });
 
-  setSource({bool isPinned = false, LatLng? newSorce}) async {
-    if (!isSourcePinned && newSorce != null && !isPinned) {
+  setSource({bool isPinned = false, PositionModel? newSorce}) async {
+    if (!isPinned) {
       isSourcePinned = false;
-      source = PositionModel.fromLatLng(newSorce);
-    } else if (isPinned) {
-      isSourcePinned = true;
+      source = newSorce;
     } else {
-      return;
+      isSourcePinned = true;
+      source = PositionModel.fromLocationData(mapsProvider.currentLocation!);
     }
+    print("$isPinned ${newSorce?.toJson()}");
     mapsProvider.mapAction = this;
-    await getPolyPoints();
+
+    notifyListeners();
+    //await getPolyPoints();
   }
 
-  setDestination({bool isPinned = false, LatLng? newDestination}) async {
-    if (!isDestinationPinned && newDestination != null && !isPinned) {
+  setDestination({bool isPinned = false, PositionModel? newDestination}) async {
+    if (!isPinned) {
       isDestinationPinned = false;
-      destination = PositionModel.fromLatLng(newDestination);
-    } else if (isPinned) {
-      isDestinationPinned = true;
+      destination = newDestination;
     } else {
-      return;
+      isDestinationPinned = true;
+      destination =
+          PositionModel.fromLocationData(mapsProvider.currentLocation!);
     }
+    print("$isPinned ${newDestination?.toJson()}");
     mapsProvider.mapAction = this;
-    await getPolyPoints();
+
+    notifyListeners();
+    //await getPolyPoints();
   }
 
   @override
