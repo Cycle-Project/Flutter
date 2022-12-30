@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/GPS/location_service.dart';
 import 'package:geo_app/Page/Enterance/Page/login_or_signup_page.dart';
 import 'package:geo_app/Page/Enterance/enterance_header.dart';
 import 'package:geo_app/Page/Enterance/enterance_interaction.dart';
@@ -33,7 +32,7 @@ class EnterancePage extends HookWidget with EnteranceInteraction {
                         IconAvatar(
                           fileName: 'assets/icon/google.png',
                           imageSize: 32,
-                          onTap: () => googleLogin(),
+                          onTap: () => googleLogin(context),
                         ),
                         /*const SizedBox(width: 10),
                         IconAvatar(

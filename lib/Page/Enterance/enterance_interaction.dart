@@ -1,49 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:geo_app/Client/Manager/cache_manager.dart';
+import 'package:geo_app/Client/Controller/user_controller.dart';
 import 'package:geo_app/Client/Models/user_model.dart';
-import 'package:geo_app/Client/client.dart';
 import 'package:geo_app/GPS/location_service.dart';
 
 mixin EnteranceInteraction {
-  final Client _client = Client();
-  UserModel? _userModel;
+  final UserController userController = UserController();
 
-  login(context, isValidated, email, password) async {
-    if (isValidated) {
-      _userModel =
-      await _client.loginUser(email: email, password: password);
-      if (_userModel == null) {
-        //TODO: Burada Alert Gösterilecek Bab ba!
-        return;
-      }
-
-      if (_userModel!.id != null) {
-        CacheManager.saveSharedPref(tag: "userID", value: _userModel!.id!);
-      }
-      if (_userModel!.token != null) {
-        CacheManager.saveSharedPref(tag: "userToken", value: _userModel!.token!);
-      }
-      _loginApp(context);
-    }
+  Future<UserModel> login(
+    context, {
+    required String email,
+    required String password,
+  }) async {
+    UserModel user = await userController.login({
+      "email": email,
+      "password": password,
+    });
+    _navigateToApp(context);
+    return user;
   }
 
-  googleLogin() {
-    print("google");
+  Future<UserModel> googleLogin(context) async {
+    UserModel user = UserModel();
+    _navigateToApp(context);
+    return user;
   }
 
-  guestLogin(context) {
-    _loginApp(context);
+  Future<UserModel> guestLogin(context) async {
+    UserModel user = UserModel();
+    _navigateToApp(context);
+    return user;
   }
 
-  register() {
-    print("register");
+  Future<UserModel> register(context, {required UserModel userModel}) async {
+    UserModel user = await userController.register(userModel.toJson());
+    _navigateToApp(context);
+    return user;
   }
 
-  forgetPassword() {
-    print("forget");
-  }
+  forgetPassword(context) {}
 
-  _loginApp(context) {
+  _navigateToApp(context) {
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(

@@ -6,10 +6,12 @@
 //
 
 class ClientConstants {
-  static const String _BASE_URL = "https://cycleon.onrender.com/api";
-  static Map<String, String> paths = {
-    "listUser": "$_BASE_URL/users/list",
-    "registerUser": "$_BASE_URL/users/register",
-    "loginUser": "$_BASE_URL/users/login",
+  static const String baseUrl = "https://cycleon.onrender.com/api";
+  static const Map paths = {
+    "users": {
+      "list": "$baseUrl/users/list",
+      "register": "$baseUrl/users/register",
+      "login": "$baseUrl/users/login",
+    },
   };
 }
