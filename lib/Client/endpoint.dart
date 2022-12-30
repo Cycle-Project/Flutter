@@ -6,25 +6,10 @@
 //
 
 class ClientConstants {
-  static String BASE_URL = "https://cycleon.onrender.com/api";
-
-}
-
-enum EndpointEnum {
-  userList,
-  registerUser,
-}
-
-extension EnpointsEnumExtension on EndpointEnum {
-
-  String get getPath {
-    switch (this) {
-      case EndpointEnum.userList:
-        return "/users/list";
-      case EndpointEnum.registerUser:
-        return "/users/register";
-      default:
-        return "404 URL";
-    }
-  }
+  static const String _BASE_URL = "https://cycleon.onrender.com/api";
+  static Map<String, String> paths = {
+    "listUser": "$_BASE_URL/users/list",
+    "registerUser": "$_BASE_URL/users/register",
+    "loginUser": "$_BASE_URL/users/login",
+  };
 }

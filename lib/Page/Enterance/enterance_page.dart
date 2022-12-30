@@ -3,19 +3,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/GPS/location_service.dart';
 import 'package:geo_app/Page/Enterance/Page/login_or_signup_page.dart';
 import 'package:geo_app/Page/Enterance/enterance_header.dart';
+import 'package:geo_app/Page/Enterance/enterance_interaction.dart';
 import 'package:geo_app/components/icon_avatar.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 
-class EnterancePage extends HookWidget {
-  const EnterancePage({Key? key}) : super(key: key);
-
-  login(context) => Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const LocationService(),
-        ),
-        (r) => r.isFirst,
-      );
+class EnterancePage extends HookWidget with EnteranceInteraction {
+  EnterancePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +24,7 @@ class EnterancePage extends HookWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 const EnteranceHeader(),
-                const LoginOrSignUpPage(),
+                LoginOrSignUpPage(),
                 Wrap(
                   children: [
                     Row(
@@ -40,19 +33,19 @@ class EnterancePage extends HookWidget {
                         IconAvatar(
                           fileName: 'assets/icon/google.png',
                           imageSize: 32,
-                          onTap: () => login(context),
+                          onTap: () => googleLogin(),
                         ),
-                        const SizedBox(width: 10),
+                        /*const SizedBox(width: 10),
                         IconAvatar(
                           fileName: 'assets/icon/facebook.png',
                           imageSize: 32,
                           onTap: () => login(context),
-                        ),
+                        ),*/
                       ],
                     ),
                     Center(
                       child: InkWell(
-                        onTap: () => login(context),
+                        onTap: () => guestLogin(context),
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 20),
                           padding: const EdgeInsets.symmetric(
