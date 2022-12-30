@@ -3,25 +3,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/GPS/location_service.dart';
 import 'package:geo_app/Page/Enterance/Page/login_form.dart';
 import 'package:geo_app/Page/Enterance/Page/signup_form.dart';
+import 'package:geo_app/Page/Enterance/enterance_interaction.dart';
 
-class LoginOrSignUpPage extends HookWidget {
-  const LoginOrSignUpPage({Key? key}) : super(key: key);
-
-  login(context) {
-    /*
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const LocationService(),
-      ),
-      (r) => r.isFirst,
-    );
-    */
-  }
-
-  signup() {
-
-  }
+class LoginOrSignUpPage extends HookWidget with EnteranceInteraction {
+  LoginOrSignUpPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,11 +36,9 @@ class LoginOrSignUpPage extends HookWidget {
         ),
         isLogin.value
             ? LoginForm(
-                onLogin: () => login(context),
                 onDontHaveAccount: () => isLogin.value = false,
               )
             : SignupForm(
-                onSignup: () => isLogin.value = true,
                 onHaveAccount: () => isLogin.value = true,
               ),
         if (isLogin.value)
@@ -65,7 +48,7 @@ class LoginOrSignUpPage extends HookWidget {
               child: Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () => forgetPassword(),
                   child: const Text(
                     "Forgot Password",
                     style: TextStyle(

@@ -12,4 +12,5 @@ abstract class IClient {
 
   Future<List<UserModel>> getHttpUserModel();
   Future<UserModel?> registerUser({required UserModel userModel});
+  Future<UserModel?> loginUser({required String email, required String password});
 }
