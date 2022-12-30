@@ -111,7 +111,14 @@ class LoginForm extends HookWidget with EnteranceInteraction {
                     Expanded(
                       flex: 1,
                       child: InkWell(
-                        onTap: () => login(context, formKey.currentState!.validate(), email.value, password.value),
+                        onTap: () async {
+                          if (!formKey.currentState!.validate()) return;
+                          await login(
+                            context,
+                            email: email.value,
+                            password: password.value,
+                          );
+                        },
                         child: Container(
                           height: 50,
                           decoration: BoxDecoration(

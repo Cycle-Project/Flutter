@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/GPS/location_service.dart';
 import 'package:geo_app/Page/Enterance/Page/login_form.dart';
 import 'package:geo_app/Page/Enterance/Page/signup_form.dart';
 import 'package:geo_app/Page/Enterance/enterance_interaction.dart';
@@ -48,7 +47,7 @@ class LoginOrSignUpPage extends HookWidget with EnteranceInteraction {
               child: Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: InkWell(
-                  onTap: () => forgetPassword(),
+                  onTap: () => forgetPassword(context),
                   child: const Text(
                     "Forgot Password",
                     style: TextStyle(

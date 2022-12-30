@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/Client/IClient.dart';
 import 'package:geo_app/Client/Models/user_model.dart';
-import 'package:geo_app/Client/client.dart';
 import 'package:geo_app/Page/Enterance/enterance_interaction.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 
@@ -137,7 +135,16 @@ class SignupForm extends HookWidget with EnteranceInteraction {
                   Expanded(
                     flex: 1,
                     child: InkWell(
-                      onTap: () => register(),
+                      onTap: () async {
+                        if (password.value != repassword.value) return;
+
+                        await register(context,
+                            userModel: UserModel(
+                              name: name.value,
+                              email: email.value,
+                              password: password.value,
+                            ));
+                      },
                       child: Container(
                         height: 50,
                         decoration: BoxDecoration(
