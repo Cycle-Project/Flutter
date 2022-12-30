@@ -158,7 +158,7 @@ class SignupForm extends HookWidget {
                       child: Container(
                         height: 50,
                         decoration: BoxDecoration(
-                          color: primaryColor,
+                          color: Constants.primaryColor,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Center(

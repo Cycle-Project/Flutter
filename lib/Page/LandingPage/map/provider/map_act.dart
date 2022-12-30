@@ -29,7 +29,7 @@ abstract class MapAction extends ChangeNotifier {
       if (destination != null) {
         PolylinePoints polylinePoints = PolylinePoints();
         PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-          googleApiKey,
+          Constants.googleApiKey,
           PointLatLng(source!.latitude!, source!.longitude!),
           PointLatLng(destination!.latitude!, destination!.longitude!),
           travelMode: TravelMode.walking,

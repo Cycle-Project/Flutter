@@ -17,7 +17,7 @@ class EnteranceHeader extends StatelessWidget {
                   topRight: Radius.circular(20),
                   bottomLeft: Radius.circular(20),
                 ),
-                color: primaryColor,
+                color: Constants.primaryColor,
                 child: SizedBox.square(
                   dimension: 60,
                   child: Align(

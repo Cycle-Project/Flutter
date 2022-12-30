@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 import 'package:geo_app/components/image_avatar.dart';
 
-class DiscoverCard extends StatelessWidget {
-  const DiscoverCard({
+class EventCard extends StatelessWidget {
+  const EventCard({
     Key? key,
     required this.item,
   }) : super(key: key);
