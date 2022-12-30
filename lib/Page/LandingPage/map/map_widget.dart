@@ -72,7 +72,7 @@ class MapWidget extends HookWidget {
             infoWindow: const InfoWindow(title: "Marked Location"),
           ),
         );
-        await zoomToLocation(latLng);
+        zoomToLocation(latLng);
       }
     }
 
@@ -98,7 +98,7 @@ class MapWidget extends HookWidget {
         zoom: 16,
       ),
       onMapCreated: (map) => controller.complete(map),
-      onTap: (latLng) async => await onTapMap(latLng),
+      onTap: (latLng) => onTapMap(latLng),
       zoomGesturesEnabled: true,
       zoomControlsEnabled: false,
       myLocationEnabled: true,

@@ -1,24 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geo_app/GPS/position_model.dart';
 import 'package:geo_app/Page/LandingPage/map/map_widget.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 class LocationDialog extends HookWidget {
   const LocationDialog({
     Key? key,
     required this.index,
-    required this.callback,
   }) : super(key: key);
 
   final int index;
-  final Function(String) callback;
 
   @override
   Widget build(BuildContext context) {
+    final mapsProvider = Provider.of<MapsProvider>(context);
     final planProvider = Provider.of<PlanRouteProvider>(context);
     final textSearchController = useTextEditingController();
     final isSearching = useState(true);
+
+    setLocationSelected({bool isPinned = false, PositionModel? location}) {
+      switch (index) {
+        case 1:
+          planProvider.setSource(
+            isPinned: isPinned,
+            newSorce: location,
+          );
+          break;
+        case 2:
+          planProvider.setDestination(
+            isPinned: isPinned,
+            newDestination: location,
+          );
+          break;
+        default:
+          break;
+      }
+      Navigator.pop(context);
+    }
+
+    bool onTapMap(LatLng latLng) {
+      setLocationSelected(
+        isPinned: false,
+        location: PositionModel.fromLatLng(latLng),
+      );
+      return false;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -75,29 +105,22 @@ class LocationDialog extends HookWidget {
       backgroundColor: Colors.white,
       body: !isSearching.value
           ? MapWidget(
-              shouldClearMark: false,
-              shouldAddMark: (p0) => false,
+              shouldClearMark: !isSearching.value,
+              shouldAddMark: onTapMap,
             )
           : Column(
               children: [
                 _SearchListItem(
-                  callback: callback,
-                  onTap: () {
-                    switch (index) {
-                      case 1:
-                        planProvider.setSource(isPinned: true);
-                        break;
-                      case 2:
-                        planProvider.setDestination(isPinned: true);
-                        break;
-                      default:
-                    }
-                  },
+                  onTap: () => setLocationSelected(
+                    isPinned: true,
+                    location: PositionModel.fromLocationData(
+                      mapsProvider.currentLocation!,
+                    ),
+                  ),
                   text: "Current Location",
                   iconData: Icons.my_location,
                 ),
                 _SearchListItem(
-                  callback: (p0) => null,
                   text: "Pick on Map",
                   iconData: Icons.map,
                   onTap: () => isSearching.value = false,
@@ -114,19 +137,16 @@ class _SearchListItem extends StatelessWidget {
     this.onTap,
     required this.text,
     required this.iconData,
-    required this.callback,
   }) : super(key: key);
   final IconData iconData;
   final String text;
   final Function()? onTap;
-  final Function(String) callback;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
         if (onTap != null) onTap!();
-        callback(text);
       },
       child: SizedBox(
         height: 50,

@@ -19,7 +19,7 @@ class MapsProvider extends ChangeNotifier {
   });
 
   StreamSubscription<LocationData> listenLocation() {
-    return location.onLocationChanged.listen((event) async {
+    return location.onLocationChanged.listen((event) {
       currentLocation = event;
       mapAction?.onLocationChanged(currentLocation);
       notifyListeners();

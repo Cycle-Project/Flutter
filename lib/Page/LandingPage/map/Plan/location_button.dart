@@ -13,43 +13,61 @@ class LocationButton extends HookWidget {
   }) : super(key: key);
   final String name;
   final int index;
-  dialog(context, index) async {
-    String returnValue = "";
-    await showGeneralDialog(
-      context: context,
-      barrierLabel: 'Dialog',
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (_, __, ___) => MultiProvider(
-        providers: [
-          ChangeNotifierProvider.value(
-            value: Provider.of<MapsProvider>(context),
-          ),
-          ChangeNotifierProvider.value(
-            value: Provider.of<PlanRouteProvider>(context),
-          ),
-        ],
-        child: LocationDialog(
-          index: index,
-          callback: (str) => Navigator.of(context).pop(str),
-        ),
-      ),
-    ).then((value) => returnValue = value.toString());
-    return returnValue;
-  }
 
   @override
   Widget build(BuildContext context) {
-    final text = useState("Your Current sadsadasd");
+    final mapsProvider = Provider.of<MapsProvider>(context);
+    final planProvider = Provider.of<PlanRouteProvider>(context);
+    final text = useState("");
+
+    dialog(context, index) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MultiProvider(
+            providers: [
+              ChangeNotifierProvider.value(value: mapsProvider),
+              ChangeNotifierProvider.value(value: planProvider),
+            ],
+            child: LocationDialog(
+              index: index,
+            ),
+          ),
+        ),
+      );
+    }
+
+    useEffect(
+      () {
+        text.value = index == 1
+            ? planProvider.isSourcePinned
+                ? "Current Location"
+                : planProvider.source?.toJson().toString() ?? ""
+            : planProvider.isDestinationPinned
+                ? "Current Location"
+                : planProvider.destination?.toJson().toString() ?? "";
+
+        return null;
+      },
+      index == 1
+          ? [
+              planProvider.source,
+              planProvider.isSourcePinned,
+            ]
+          : [
+              planProvider.destination,
+              planProvider.isDestinationPinned,
+            ],
+    );
 
     return Row(
       children: [
         Expanded(
           child: InkWell(
-            onTap: () async {
-              text.value = await dialog(context, index);
-            },
+            onTap: () => dialog(context, index),
             child: SizedBox(
               height: 50,
+              width: double.maxFinite,
               child: Row(
                 children: [
                   Column(
@@ -62,12 +80,19 @@ class LocationButton extends HookWidget {
                           color: Colors.grey.shade600,
                         ),
                       ),
-                      Text(
-                        text.value == "" ? "-" : text.value,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * .6,
+                          maxHeight: 20,
+                        ),
+                        child: Text(
+                          text.value == "" ? "-" : text.value,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ],
@@ -91,7 +116,9 @@ class LocationButton extends HookWidget {
         Visibility(
           visible: text.value != "",
           child: InkWell(
-            onTap: () => text.value = "",
+            onTap: () => index == 1
+                ? planProvider.setSource(newSorce: null)
+                : planProvider.setDestination(newDestination: null),
             child: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 4),
               child: SizedBox(

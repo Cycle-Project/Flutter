@@ -5,6 +5,7 @@ import 'package:geo_app/Page/LandingPage/UserActions/user_action_card.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/plan_route_page.dart';
 import 'package:geo_app/Page/LandingPage/map/Record/record_route_page.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 import 'package:geo_app/components/header.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +29,8 @@ class UserActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mapsProvider = Provider.of<MapsProvider>(context);
+    final planProvider = Provider.of<PlanRouteProvider>(context);
     final list = [
       UserAction(
         color: Colors.red.shade400,
@@ -41,7 +44,10 @@ class UserActions extends StatelessWidget {
         ).shade400,
         iconData: Icons.route,
         headerText: "Plan",
-        child: (color) => PlanPage(color: color),
+        child: (color) => ChangeNotifierProvider.value(
+          value: planProvider,
+          child: PlanPage(color: color),
+        ),
       ),
       UserAction(
         color: Constants.generateMaterialColor(
@@ -60,7 +66,6 @@ class UserActions extends StatelessWidget {
         child: (color) => DiscoverPage(color: color),
       ),
     ];
-    final mapsProvider = Provider.of<MapsProvider>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
