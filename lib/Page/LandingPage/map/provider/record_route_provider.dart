@@ -1,17 +1,21 @@
+import 'package:flutter/material.dart';
 import 'package:geo_app/GPS/position_model.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_act.dart';
 import 'package:location/location.dart';
 
 class RecordRouteProvider extends MapAction {
-  bool record;
+  late bool record;
+  DateTime? startTime;
 
   RecordRouteProvider({
     this.record = false,
+    this.startTime,
     required super.mapsProvider,
   });
 
-  changeRecordingStatus({bool? isRecording}) {
+  changeRecordingStatus({bool? isRecording, DateTime? timeStart}) async {
     record = isRecording ?? !record;
+    startTime = timeStart;
     if (!record || mapsProvider.currentLocation == null) {
       source = null;
       destination = null;
@@ -23,6 +27,16 @@ class RecordRouteProvider extends MapAction {
       );
     }
     notifyListeners();
+  }
+
+  getTimePasseed() {
+    if (startTime == null) {
+      throw Exception("Recording didn't started or Start time did't setted!");
+    }
+    return DateTimeRange(
+      start: startTime!,
+      end: DateTime.now(),
+    ).duration;
   }
 
   @override

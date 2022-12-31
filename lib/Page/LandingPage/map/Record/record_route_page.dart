@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/LandingPage/map/map_widget.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/record_route_provider.dart';
+import 'package:provider/provider.dart';
 
 class RecordPage extends HookWidget {
   const RecordPage({
@@ -15,10 +17,26 @@ class RecordPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final recordProvider = Provider.of<RecordRouteProvider>(context);
+    final recording = useState(recordProvider.record);
+
     final initialAnimation = useState(true);
-    final recording = useState(false);
-    final timer = useState<Timer?>(null);
+    final timer = useState<Timer?>(
+      recordProvider.startTime == null ? null : Timer(const Duration(), () {}),
+    );
     final align = useState(true);
+
+    record() {
+      recording.value = !recording.value;
+    }
+
+    useValueChanged(
+      recording.value,
+      (oldValue, oldResult) => recordProvider.changeRecordingStatus(
+        isRecording: recording.value,
+        timeStart: DateTime.now(),
+      ),
+    );
 
     useEffect(() {
       if (timer.value != null) {
@@ -31,13 +49,11 @@ class RecordPage extends HookWidget {
           recording.value = true;
           timer.value = null;
         });
-      } else {}
-      return null;
+      }
+      return () {
+        timer.value?.cancel();
+      };
     }, [recording.value]);
-
-    record() {
-      recording.value = !recording.value;
-    }
 
     return Scaffold(
       backgroundColor: color,
@@ -134,35 +150,36 @@ class TimerText extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final timeStart = useState<DateTime?>(null);
-    final time = useState<Duration>(const Duration());
+    final recordProvider = Provider.of<RecordRouteProvider>(context);
+    const zero = Duration();
+    final time = useState<Duration>(zero);
 
-    printDuration(Duration duration) {
+    final printDuration = useCallback(() {
       String twoDigits(int n) => n.toString().padLeft(2, "0");
-      String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-      String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-      return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+      String twoDigitHours = twoDigits(time.value.inHours);
+      String twoDigitMinutes = twoDigits(time.value.inMinutes.remainder(60));
+      String twoDigitSeconds = twoDigits(time.value.inSeconds.remainder(60));
+      return "$twoDigitHours:$twoDigitMinutes:$twoDigitSeconds";
+    }, [time.value]);
+
+    setTime() async {
+      while (true) {
+        time.value = recordProvider.getTimePasseed();
+        await Future.delayed(const Duration(seconds: 1));
+      }
     }
 
     useEffect(() {
       if (isRecording) {
-        if (time.value == const Duration()) {
-          timeStart.value = DateTime.now();
-        }
-        Future.delayed(const Duration(milliseconds: 1), () {
-          time.value = DateTimeRange(
-            start: timeStart.value ?? DateTime.now(),
-            end: DateTime.now(),
-          ).duration;
-        });
+        setTime();
       } else {
-        time.value = const Duration();
+        time.value = zero;
       }
       return null;
-    }, [isRecording, timeStart.value, time.value]);
+    }, [isRecording, time.value]);
 
     return Text(
-      printDuration(time.value),
+      printDuration(),
       style: const TextStyle(color: Colors.white, fontSize: 32),
     );
   }
