@@ -14,5 +14,9 @@ class ClientConstants {
       "login": "$baseUrl/users/login",
       "getById": "$baseUrl/users/getbyid",
     },
+    "route": {
+      "list": "$baseUrl/route/list",
+      "add-route": "$baseUrl/route/add-route",
+    },
   };
 }
