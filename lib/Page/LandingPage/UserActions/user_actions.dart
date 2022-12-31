@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geo_app/Page/LandingPage/Discover/discover_page.dart';
-import 'package:geo_app/Page/LandingPage/Events/event_page.dart';
+import 'package:geo_app/Page/LandingPage/Community/community_page.dart';
 import 'package:geo_app/Page/LandingPage/UserActions/user_action_card.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/plan_route_page.dart';
 import 'package:geo_app/Page/LandingPage/map/Record/record_route_page.dart';
@@ -58,9 +58,9 @@ class UserActions extends StatelessWidget {
         color: Constants.generateMaterialColor(
           Colors.blue,
         ).shade400,
-        iconData: Icons.event,
-        headerText: "Events",
-        child: (color) => EventPage(color: color),
+        iconData: Icons.group,
+        headerText: "Community",
+        child: (color) => CommunityPage(color: color),
       ),
       UserAction(
         color: Constants.generateMaterialColor(
