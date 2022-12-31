@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Client/Models/user_model.dart';
+import 'package:geo_app/Page/Enterance/Page/Components/custom_textformfield.dart';
+import 'package:geo_app/Page/Enterance/Page/Components/string_extension.dart';
 import 'package:geo_app/Page/Enterance/enterance_interaction.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 
@@ -8,8 +10,11 @@ class SignupForm extends HookWidget with EnteranceInteraction {
   SignupForm({
     Key? key,
     required this.onHaveAccount,
+    required this.voidCallback,
   }) : super(key: key);
   final Function() onHaveAccount;
+  final formKey = GlobalKey<FormState>();
+  final VoidCallback voidCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +22,6 @@ class SignupForm extends HookWidget with EnteranceInteraction {
     final email = useState("");
     final password = useState("");
     final repassword = useState("");
-    final obscureText1 = useState(true);
-    final obscureText2 = useState(true);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -29,149 +32,129 @@ class SignupForm extends HookWidget with EnteranceInteraction {
       child: Theme(
         data: ThemeData(primaryColor: Colors.black),
         child: FormField(
-          builder: (state) => Column(
-            children: [
-              TextField(
-                onChanged: (val) => name.value = val,
-                decoration: InputDecoration(
+          builder: (state) => Form(
+            key: formKey,
+            child: Column(
+              children: [
+                CustomTextFormField(
+                  onChangedFunction: (val) => name.value = val,
                   labelText: "Name",
                   hintText: "Enter your name here...",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  isPassword: false,
+                  validatorFunc: (val) {
+                    if (val!.isEmpty) {
+                      return 'Please enter your name';
+                    } else {
+                      return null;
+                    }
+                  },
                 ),
-                style: const TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                ),
-                maxLines: 1,
-              ),
-              TextField(
-                onChanged: (val) => email.value = val,
-                decoration: InputDecoration(
-                  labelText: "Email Address",
+                CustomTextFormField(
+                  onChangedFunction: (val) => email.value = val,
+                  labelText: "Email",
                   hintText: "Enter your email here...",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+                  isPassword: false,
+                  validatorFunc: (val) {
+                    if (val!.isEmpty) {
+                      return 'Please enter your email adress';
+                    } else {
+                      return null;
+                    }
+                  },
                 ),
-                style: const TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                ),
-                maxLines: 1,
-              ),
-              TextField(
-                onChanged: (val) => password.value = val,
-                decoration: InputDecoration(
+                CustomTextFormField(
+                  onChangedFunction: (val) => password.value = val,
                   labelText: "Password",
                   hintText: "Enter your password here...",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  suffixIcon: InkWell(
-                    child: const Icon(
-                      Icons.remove_red_eye_outlined,
-                      color: Colors.black,
-                    ),
-                    onTap: () => obscureText1.value = !obscureText1.value,
-                  ),
+                  isPassword: true,
+                  validatorFunc: (val) {
+                    if (val!.isEmpty) {
+                      return 'Please enter your password';
+                    } else {
+                      return null;
+                    }
+                  },
                 ),
-                obscureText: obscureText1.value,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                ),
-                maxLines: 1,
-              ),
-              TextField(
-                onChanged: (val) => repassword.value = val,
-                decoration: InputDecoration(
+                CustomTextFormField(
+                  onChangedFunction: (val) => repassword.value = val,
                   labelText: "Confirm Password",
                   hintText: "Re-Enter your password here...",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  suffixIcon: InkWell(
-                    child: const Icon(
-                      Icons.remove_red_eye_outlined,
-                      color: Colors.black,
-                    ),
-                    onTap: () => obscureText2.value = !obscureText2.value,
-                  ),
+                  isPassword: true,
+                  validatorFunc: (val) {
+                    if (val!.isEmpty) {
+                      return 'Please enter your repassword';
+                    } else {
+                      return null;
+                    }
+                  },
                 ),
-                obscureText: obscureText2.value,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 14,
-                ),
-                maxLines: 1,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: InkWell(
-                      onTap: onHaveAccount,
-                      child: const SizedBox(
-                        height: 50,
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 5,
-                            horizontal: 10,
-                          ),
-                          child: Text(
-                            "Have an account?\nLogin",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: InkWell(
+                        onTap: onHaveAccount,
+                        child: const SizedBox(
+                          height: 50,
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 5,
+                              horizontal: 10,
+                            ),
+                            child: Text(
+                              "Have an account?\nLogin",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: InkWell(
-                      onTap: () async {
-                        if (password.value != repassword.value) return;
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        onTap: () async {
+                          if (!formKey.currentState!.validate()) return;
+                          if (password.value != repassword.value) return;
+                          await register(
+                            name: name.value,
+                            email: email.value,
+                            password: password.value,
+                          ).then((_) => voidCallback);
 
-                        await register(context,
-                            userModel: UserModel(
-                              name: name.value,
-                              email: email.value,
-                              password: password.value,
-                            ));
-                      },
-                      child: Container(
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: Constants.primaryColor,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: const Center(
-                          child: Text(
-                            "SignUp",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                          ///TODO: Register Successful Show Alert Information
+                        },
+                        child: Container(
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: Constants.primaryColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              "SignUp",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ]
-                .map((e) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: e,
-                    ))
-                .toList(),
+                  ],
+                ),
+              ]
+                  .map((e) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: e,
+              ))
+                  .toList(),
+            ),
           ),
         ),
       ),

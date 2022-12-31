@@ -1,78 +1,86 @@
 // ignore_for_file: avoid_print
 
+import 'package:dio/dio.dart';
 import 'package:geo_app/Client/Interfaces/user_interface.dart';
 import 'package:geo_app/Client/Manager/cache_manager.dart';
+import 'package:geo_app/Client/Models/rest_user_model.dart';
 import 'package:geo_app/Client/Models/user_model.dart';
 import 'package:geo_app/Client/client.dart';
-import 'package:geo_app/Client/endpoint.dart';
+import 'package:geo_app/Client/client_constants.dart';
 
 class UserController with IUser {
-  final Client client = Client();
-  final Map requestMap = ClientConstants.paths["users"];
+  final Client _client = Client();
+  final Map _requestMap = ClientConstants.paths["users"];
 
   ///MARK: GET USERS LIST
   @override
   Future<List<UserModel>> getUsers() async {
-    List<UserModel>? response;
+    List<UserModel>? users;
     try {
-      response = await client.getMethod<List<UserModel>>(
-        requestMap["list"],
-      );
+      //final response = await dio.get("https://cycleon.onrender.com/api/users/list");
+      final response = await _client.getMethod(_requestMap["list"]);
       if (response == null) {
         throw Exception("Responded as NULL");
+      }
+      users = RestUserModel.fromJson(response.data).data;
+      if (users == null) {
+        throw Exception("get users data null");
       }
     } catch (e) {
       print("at -> getUsers : $e!");
     }
-    return response!;
+    return users ?? [];
   }
 
   ///MARK: POST REGISTER USER
   @override
   Future<UserModel> register(Map map) async {
-    UserModel? response;
+    UserModel? user;
     try {
-      response = await client.postMethod<UserModel>(
-        path: requestMap["register"],
+      final response = await _client.postMethod(
+        path: _requestMap["register"],
         value: map,
       );
       if (response == null) {
         throw Exception("Responded as NULL");
       }
+      user = UserModel.fromJson(response.data);
     } catch (e) {
       print("at -> register : $e!");
     }
-    return response!;
+    return user ?? UserModel();
   }
 
   ///MARK: POST LOGIN USER
   @override
   Future<UserModel> login(Map map) async {
-    UserModel? response;
+    UserModel? user;
     try {
-      response = await client.postMethod<UserModel>(
-        path: requestMap["login"],
+      final response = await _client.postMethod(
+        path: _requestMap["login"],
         value: map,
       );
       if (response == null) {
         throw Exception("Responded as NULL");
       }
+      //TODO: Bu atama işlemi çalışmıyor
+      user = UserModel.fromJson(response.data);
 
       /// Saving user_id for making requests based on which user is logged in
-      if (response.id != null) {
-        CacheManager.saveSharedPref(
+      if (user.id != null) {
+        await CacheManager.saveSharedPref(
           tag: "user_id",
-          value: response.id!,
+          value: user.id!,
         );
+        print("Kaydetti hıı amughnaa");
       } else {
         throw Exception("at -> login : user.id is NULL!");
       }
-
       /// Registering user_token to make request and pass security system on server
-      if (response.token != null) {
-        CacheManager.saveSharedPref(
+      if (user.token != null) {
+        await CacheManager.saveSharedPref(
           tag: "user_token",
-          value: response.token!,
+          value: user.token!,
         );
       } else {
         throw Exception("at -> login : user.token is NULL!");
@@ -80,6 +88,21 @@ class UserController with IUser {
     } catch (e) {
       print("at -> login : $e!");
     }
-    return response!;
+    return user ?? UserModel();
+  }
+
+  @override
+  Future<UserModel> getById(String id) async {
+    UserModel? user;
+    try {
+      final response = await _client.getMethod(_requestMap["getById"] + "/$id");
+      if (response == null) {
+        throw Exception("Responded as NULL");
+      }
+      user = UserModel.fromJson(response.data);
+    } catch (e) {
+      print("at -> getUsers : $e!");
+    }
+    return user ?? UserModel();
   }
 }
