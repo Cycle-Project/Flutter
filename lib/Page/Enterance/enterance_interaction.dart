@@ -6,15 +6,29 @@ import 'package:geo_app/GPS/location_service.dart';
 mixin EnteranceInteraction {
   final UserController userController = UserController();
 
-  Future<UserModel> login(
-    context, {
+  Future<void> register({
+    required String name,
     required String email,
     required String password,
   }) async {
-    UserModel user = await userController.login({
+    Map<String, String> map = {
+      "name": name,
       "email": email,
       "password": password,
-    });
+    };
+    await userController.register(map);
+  }
+
+  Future<UserModel> login(
+      context, {
+        required String email,
+        required String password,
+      }) async {
+    Map<String, String> map = {
+      "email": email,
+      "password": password,
+    };
+    UserModel user = await userController.login(map);
     _navigateToApp(context);
     return user;
   }
@@ -31,12 +45,6 @@ mixin EnteranceInteraction {
     return user;
   }
 
-  Future<UserModel> register(context, {required UserModel userModel}) async {
-    UserModel user = await userController.register(userModel.toJson());
-    _navigateToApp(context);
-    return user;
-  }
-
   forgetPassword(context) {}
 
   _navigateToApp(context) {
@@ -45,7 +53,7 @@ mixin EnteranceInteraction {
       MaterialPageRoute(
         builder: (_) => const LocationService(),
       ),
-      (r) => r.isFirst,
+          (r) => r.isFirst,
     );
   }
 }
