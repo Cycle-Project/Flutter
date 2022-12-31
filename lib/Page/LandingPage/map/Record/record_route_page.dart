@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/LandingPage/map/map_widget.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/record_route_provider.dart';
+import 'package:geo_app/Page/utilities/constants.dart';
 import 'package:provider/provider.dart';
 
 class RecordPage extends HookWidget {
@@ -85,57 +86,94 @@ class RecordPage extends HookWidget {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          SizedBox.expand(
-            child: align.value
-                ? Container()
-                : AnimatedOpacity(
-                    duration: duration,
-                    opacity: align.value ? 0 : 1,
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.height * .25,
-                      ),
-                      child: MapWidget(
-                        shouldClearMark: true,
-                        shouldAddMark: (latLng) => false,
+      body: align.value
+          ? Column(
+              children: [
+                Expanded(
+                  flex: 8,
+                  child: Align(
+                    alignment: const Alignment(0, .3),
+                    child: TimerText(
+                      isRecording: recording.value,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 4,
+                  child: Center(
+                    child: InkWell(
+                      onTap: () => record(),
+                      child: _RecordButton(
+                        isRecording: recording.value,
+                        color: color,
                       ),
                     ),
                   ),
-          ),
-          AnimatedAlign(
-            duration: duration,
-            alignment:
-                align.value ? const Alignment(0, 0) : const Alignment(.4, .8),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 30),
-              child: TimerText(isRecording: recording.value),
-            ),
-          ),
-          AnimatedAlign(
-            duration: duration,
-            alignment:
-                align.value ? const Alignment(0, .7) : const Alignment(-.6, .8),
-            child: InkWell(
-              onTap: () => record(),
-              child: DecoratedBox(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Icon(
-                    recording.value ? Icons.pause_outlined : Icons.circle,
-                    size: 50,
-                    color: color,
+              ],
+            )
+          : Stack(
+              children: [
+                SizedBox.expand(
+                  child: MapWidget(
+                    shouldClearMark: true,
+                    shouldAddMark: (latLng) => false,
                   ),
                 ),
-              ),
+                Align(
+                  alignment: const Alignment(0, .8),
+                  child: InkWell(
+                    onTap: () => record(),
+                    child: Container(
+                      width: 280,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(80),
+                        color: Constants.darkBluishGreyColor,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _RecordButton(
+                            isRecording: recording.value,
+                            color: color,
+                          ),
+                          const SizedBox(width: 20),
+                          TimerText(isRecording: recording.value),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+    );
+  }
+}
+
+class _RecordButton extends StatelessWidget {
+  const _RecordButton({
+    Key? key,
+    required this.isRecording,
+    required this.color,
+  }) : super(key: key);
+  final bool isRecording;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Icon(
+          isRecording ? Icons.pause_outlined : Icons.circle,
+          size: 50,
+          color: color,
+        ),
       ),
     );
   }
@@ -163,14 +201,13 @@ class TimerText extends HookWidget {
     }, [time.value]);
 
     setTime() async {
-      while (true) {
-        time.value = recordProvider.getTimePasseed();
-        await Future.delayed(const Duration(seconds: 1));
-      }
+      await Future.delayed(const Duration(seconds: 1));
+      time.value = recordProvider.getTimePasseed();
     }
 
     useEffect(() {
       if (isRecording) {
+        time.value = recordProvider.getTimePasseed();
         setTime();
       } else {
         time.value = zero;
