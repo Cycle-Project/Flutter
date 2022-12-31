@@ -13,5 +13,9 @@ class ClientConstants {
       "register": "$baseUrl/users/register",
       "login": "$baseUrl/users/login",
     },
+    "route": {
+      "list": "$baseUrl/route/list",
+      "add-route": "$baseUrl/route/add-route",
+    },
   };
 }
