@@ -6,4 +6,5 @@ mixin IUser {
   Future<List<UserModel>> getUsers();
   Future<UserModel> register(Map map);
   Future<UserModel> login(Map map);
+  Future<UserModel> getById(String id);
 }

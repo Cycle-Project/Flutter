@@ -13,24 +13,26 @@ class Client {
   final dio = Dio();
 
   ///MARK: GENERIC GET
-  Future<T?> getMethod<T>(String path) async {
-    final response = await dio.get<T?>(path);
+  Future getMethod(String path) async {
+    final response = await dio.get(path);
 
     switch (response.statusCode) {
       case HttpStatus.ok:
-        return response.data;
+        return response;
       default:
         throw Exception(response.statusMessage.toString());
     }
   }
 
   ///MARK: GENERIC POST
-  Future<T?> postMethod<T>({required String path, required Map value}) async {
-    final response = await dio.post<T?>(path, data: value);
+  Future postMethod({required String path, required Map value}) async {
+    final response = await dio.post(path, data: value);
 
     switch (response.statusCode) {
+      case HttpStatus.ok:
+        return response;
       case HttpStatus.created:
-        return response.data;
+        return response;
       default:
         throw Exception(response.statusMessage.toString());
     }

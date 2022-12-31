@@ -1,5 +1,5 @@
 //
-//  endpoint.dart
+//  client_constants.dart
 //  Flutter
 //
 //  Created by Ömer Faruk Öztürk on 29.12.2022.
@@ -12,6 +12,7 @@ class ClientConstants {
       "list": "$baseUrl/users/list",
       "register": "$baseUrl/users/register",
       "login": "$baseUrl/users/login",
+      "getById": "$baseUrl/users/getbyid",
     },
   };
 }

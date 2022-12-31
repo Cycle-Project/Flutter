@@ -38,6 +38,7 @@ class LoginOrSignUpPage extends HookWidget with EnteranceInteraction {
                 onDontHaveAccount: () => isLogin.value = false,
               )
             : SignupForm(
+                voidCallback: () => isLogin.value = true,
                 onHaveAccount: () => isLogin.value = true,
               ),
         if (isLogin.value)

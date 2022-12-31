@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geo_app/Page/Enterance/Page/Components/string_extension.dart';
 import 'package:geo_app/Page/Enterance/enterance_page.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 

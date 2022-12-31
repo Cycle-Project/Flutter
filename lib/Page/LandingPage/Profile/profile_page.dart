@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geo_app/Client/Manager/cache_manager.dart';
 import 'package:geo_app/Page/LandingPage/Profile/components/profile_widget.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 
@@ -8,8 +9,17 @@ class ProfilePage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+
     final username = useState("Username");
     final followers = useState(515);
+
+    useEffect(() {
+      print("kljasd");
+      Future.microtask(() async {
+         print(await CacheManager.getSharedPref(tag: "user_id"));
+      });
+    }, []);
+
     return Scaffold(
       backgroundColor: Constants.generateMaterialColor(
         Constants.darkBluishGreyColor,
