@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 class Header extends StatelessWidget {
   const Header({
     super.key,
+    this.padding = const EdgeInsets.symmetric(horizontal: 8),
     required this.title,
     this.color,
   });
   final String title;
+  final EdgeInsets padding;
   final Color? color;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8),
+      padding: padding,
       child: Row(
         children: [
           Text(
@@ -25,7 +27,6 @@ class Header extends StatelessWidget {
           ),
           Icon(
             Icons.keyboard_arrow_right_outlined,
-            size: 24,
             color: color ?? Colors.black,
           ),
         ],

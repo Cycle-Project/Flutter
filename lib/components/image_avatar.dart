@@ -20,20 +20,24 @@ class ImageAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      child: Container(
-        height: size,
-        width: size,
-        decoration: BoxDecoration(
-          color: border?.color ?? Colors.white,
-          borderRadius: BorderRadius.circular(border?.borderRadius ?? size),
-        ),
-        child: Container(
-          margin: EdgeInsets.all(border?.thickness ?? 0),
+      child: SizedBox.square(
+        dimension: size,
+        child: DecoratedBox(
           decoration: BoxDecoration(
-            color: color,
-            borderRadius:
-                BorderRadius.circular((border?.borderRadius ?? size) - 4),
-            image: DecorationImage(image: AssetImage(fileName)),
+            color: border?.color ?? Colors.white,
+            borderRadius: BorderRadius.circular(border?.borderRadius ?? size),
+          ),
+          child: Container(
+            margin: EdgeInsets.all(border?.thickness ?? 0),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius:
+                  BorderRadius.circular((border?.borderRadius ?? size) - 4),
+              image: DecorationImage(
+                image: AssetImage(fileName),
+                fit: BoxFit.fitWidth,
+              ),
+            ),
           ),
         ),
       ),
