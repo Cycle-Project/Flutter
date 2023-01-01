@@ -22,7 +22,7 @@ class LandingPageAppBar extends StatelessWidget {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const ProfilePage(),
+                    builder: (_) => ProfilePage(),
                   ),
                 ),
                 child: ImageAvatar(

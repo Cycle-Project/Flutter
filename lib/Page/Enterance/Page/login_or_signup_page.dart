@@ -28,28 +28,23 @@ class LoginOrSignUpPage extends HookWidget with EnteranceInteraction {
                 : "To enter the newest cycling world",
             style: const TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.w200,
+              fontWeight: FontWeight.w400,
               color: Colors.white,
             ),
           ),
         ),
         isLogin.value
-            ? LoginForm(
-          onDontHaveAccount: () => isLogin.value = false,
-        )
-            : SignupForm(
-          voidCallback: () => isLogin.value = true,
-          onHaveAccount: () => isLogin.value = true,
-        ),
+            ? LoginForm(onDontHaveAccount: () => isLogin.value = false)
+            : SignupForm(onHaveAccount: () => isLogin.value = true),
         if (isLogin.value)
-          SizedBox(
-            height: 50,
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 20),
-                child: InkWell(
-                  onTap: () => forgetPassword(context),
-                  child: const Text(
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: InkWell(
+                onTap: () => forgetPassword(context),
+                child: const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Text(
                     "Forgot Password",
                     style: TextStyle(
                       color: Colors.white,
