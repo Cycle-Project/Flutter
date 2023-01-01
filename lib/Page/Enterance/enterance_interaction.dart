@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:geo_app/Client/Controller/user_controller.dart';
-import 'package:geo_app/Client/Models/user_model.dart';
+import 'package:geo_app/Client/Interfaces/user_interface.dart';
 import 'package:geo_app/GPS/location_service.dart';
+import 'package:geo_app/Page/utilities/dialogs.dart';
 
 mixin EnteranceInteraction {
-  final UserController userController = UserController();
+  final UserController _userController = UserController();
 
-  Future<void> register({
+  Future<bool> register(
+    context, {
     required String name,
     required String email,
     required String password,
@@ -16,33 +18,44 @@ mixin EnteranceInteraction {
       "email": email,
       "password": password,
     };
-    await userController.register(map);
+    UIResult registerResult = await _userController.register(map);
+    if (!registerResult.success) {
+      showFailDialog(context, registerResult.message);
+      return false;
+    }
+    await showSuccessDialog(context, registerResult.message).then(
+      (_) async => await login(context, email: email, password: password),
+    );
+    return true;
   }
 
-  Future<UserModel> login(
-      context, {
-        required String email,
-        required String password,
-      }) async {
+  Future<bool> login(
+    context, {
+    required String email,
+    required String password,
+  }) async {
     Map<String, String> map = {
       "email": email,
       "password": password,
     };
-    UserModel user = await userController.login(map);
-    _navigateToApp(context);
-    return user;
+    UIResult loginResult = await _userController.login(map);
+    if (!loginResult.success) {
+      showFailDialog(context, loginResult.message);
+      return false;
+    }
+    await showSuccessDialog(context, loginResult.message)
+        .then((_) => _navigateToApp(context));
+    return true;
   }
 
-  Future<UserModel> googleLogin(context) async {
-    UserModel user = UserModel();
+  Future googleLogin(context) async {
+    //UserModel user = UserModel();
     _navigateToApp(context);
-    return user;
   }
 
-  Future<UserModel> guestLogin(context) async {
-    UserModel user = UserModel();
+  Future guestLogin(context) async {
+    //UserModel user = UserModel();
     _navigateToApp(context);
-    return user;
   }
 
   forgetPassword(context) {}
@@ -53,7 +66,7 @@ mixin EnteranceInteraction {
       MaterialPageRoute(
         builder: (_) => const LocationService(),
       ),
-          (r) => r.isFirst,
+      (r) => r.isFirst,
     );
   }
 }

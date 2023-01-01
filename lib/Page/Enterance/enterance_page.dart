@@ -32,7 +32,7 @@ class EnterancePage extends HookWidget with EnteranceInteraction {
                         IconAvatar(
                           fileName: 'assets/icon/google.png',
                           imageSize: 32,
-                          onTap: () => googleLogin(context),
+                          onTap: () async => await googleLogin(context),
                         ),
                         /*const SizedBox(width: 10),
                         IconAvatar(

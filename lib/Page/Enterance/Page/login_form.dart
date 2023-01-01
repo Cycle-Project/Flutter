@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/Enterance/Page/Components/custom_textformfield.dart';
-import 'package:geo_app/Page/Enterance/Page/Components/string_extension.dart';
+import 'package:geo_app/Page/Enterance/Page/Components/primary_button.dart';
 import 'package:geo_app/Page/Enterance/enterance_interaction.dart';
-import 'package:geo_app/Page/utilities/constants.dart';
 
 class LoginForm extends HookWidget with EnteranceInteraction {
   LoginForm({
@@ -17,6 +16,31 @@ class LoginForm extends HookWidget with EnteranceInteraction {
   Widget build(BuildContext context) {
     final email = useState("");
     final password = useState("");
+    final animate = useState(false);
+    final success = useState<bool?>(null);
+
+    onLogin(context) async {
+      animate.value = true;
+      bool isValidate = await Future.delayed(
+        const Duration(seconds: 1),
+        () => formKey.currentState!.validate(),
+      );
+      if (!isValidate) {
+        animate.value = false;
+        success.value = false;
+        await Future.delayed(
+          const Duration(milliseconds: 1600),
+          () => success.value = null,
+        );
+        return;
+      }
+      animate.value = false;
+      success.value = await login(
+        context,
+        email: email.value,
+        password: password.value,
+      );
+    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -63,20 +87,17 @@ class LoginForm extends HookWidget with EnteranceInteraction {
                       flex: 2,
                       child: InkWell(
                         onTap: onDontHaveAccount,
-                        child: const SizedBox(
-                          height: 50,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 5,
-                              horizontal: 10,
-                            ),
-                            child: Text(
-                              "Don't have an account?\nCreate Account",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                              ),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 5,
+                            horizontal: 10,
+                          ),
+                          child: Text(
+                            "Don't have an account?\nCreate Account",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ),
@@ -85,30 +106,11 @@ class LoginForm extends HookWidget with EnteranceInteraction {
                     Expanded(
                       flex: 1,
                       child: InkWell(
-                        onTap: () async {
-                          if (!formKey.currentState!.validate()) return;
-                          await login(
-                            context,
-                            email: email.value,
-                            password: password.value,
-                          );
-                        },
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: Constants.primaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                        onTap: () async => await onLogin(context),
+                        child: PrimaryButton(
+                          text: "Login",
+                          shouldAnimate: animate.value,
+                          isSuccess: success.value,
                         ),
                       ),
                     ),
@@ -116,9 +118,9 @@ class LoginForm extends HookWidget with EnteranceInteraction {
                 ),
               ]
                   .map((e) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: e,
-              ))
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: e,
+                      ))
                   .toList(),
             ),
           ),

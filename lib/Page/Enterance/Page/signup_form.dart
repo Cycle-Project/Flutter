@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/Client/Models/user_model.dart';
 import 'package:geo_app/Page/Enterance/Page/Components/custom_textformfield.dart';
-import 'package:geo_app/Page/Enterance/Page/Components/string_extension.dart';
+import 'package:geo_app/Page/Enterance/Page/Components/primary_button.dart';
 import 'package:geo_app/Page/Enterance/enterance_interaction.dart';
-import 'package:geo_app/Page/utilities/constants.dart';
 
 class SignupForm extends HookWidget with EnteranceInteraction {
   SignupForm({
     Key? key,
     required this.onHaveAccount,
-    required this.voidCallback,
   }) : super(key: key);
   final Function() onHaveAccount;
   final formKey = GlobalKey<FormState>();
-  final VoidCallback voidCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +18,34 @@ class SignupForm extends HookWidget with EnteranceInteraction {
     final email = useState("");
     final password = useState("");
     final repassword = useState("");
+    final animate = useState(false);
+    final success = useState<bool?>(null);
+
+    onSignUp(context) async {
+      animate.value = true;
+      bool isValidate = await Future.delayed(
+        const Duration(seconds: 1),
+        () => formKey.currentState!.validate(),
+      );
+      if (!isValidate) {
+        animate.value = false;
+        success.value = false;
+        await Future.delayed(
+          const Duration(milliseconds: 1600),
+          () => success.value = null,
+        );
+        return;
+      }
+      animate.value = false;
+      success.value = await register(
+        context,
+        name: name.value,
+        email: email.value,
+        password: password.value,
+      );
+
+      ///TODO: Register Successful Show Alert Information
+    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -70,6 +94,8 @@ class SignupForm extends HookWidget with EnteranceInteraction {
                   validatorFunc: (val) {
                     if (val!.isEmpty) {
                       return 'Please enter your password';
+                    } else if (val != repassword.value) {
+                      return 'Passwords doesn\'t match';
                     } else {
                       return null;
                     }
@@ -83,6 +109,8 @@ class SignupForm extends HookWidget with EnteranceInteraction {
                   validatorFunc: (val) {
                     if (val!.isEmpty) {
                       return 'Please enter your repassword';
+                    } else if (val != password.value) {
+                      return 'Passwords doesn\'t match';
                     } else {
                       return null;
                     }
@@ -94,20 +122,17 @@ class SignupForm extends HookWidget with EnteranceInteraction {
                       flex: 2,
                       child: InkWell(
                         onTap: onHaveAccount,
-                        child: const SizedBox(
-                          height: 50,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 5,
-                              horizontal: 10,
-                            ),
-                            child: Text(
-                              "Have an account?\nLogin",
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w400,
-                              ),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 5,
+                            horizontal: 10,
+                          ),
+                          child: Text(
+                            "Have an account?\nLogin",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
                         ),
@@ -116,33 +141,11 @@ class SignupForm extends HookWidget with EnteranceInteraction {
                     Expanded(
                       flex: 1,
                       child: InkWell(
-                        onTap: () async {
-                          if (!formKey.currentState!.validate()) return;
-                          if (password.value != repassword.value) return;
-                          await register(
-                            name: name.value,
-                            email: email.value,
-                            password: password.value,
-                          ).then((_) => voidCallback);
-
-                          ///TODO: Register Successful Show Alert Information
-                        },
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            color: Constants.primaryColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "SignUp",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                        onTap: () => onSignUp(context),
+                        child: PrimaryButton(
+                          text: "SignUp",
+                          shouldAnimate: animate.value,
+                          isSuccess: success.value,
                         ),
                       ),
                     ),
@@ -150,9 +153,9 @@ class SignupForm extends HookWidget with EnteranceInteraction {
                 ),
               ]
                   .map((e) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: e,
-              ))
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: e,
+                      ))
                   .toList(),
             ),
           ),

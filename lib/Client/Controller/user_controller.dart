@@ -1,6 +1,5 @@
 // ignore_for_file: avoid_print
 
-import 'package:dio/dio.dart';
 import 'package:geo_app/Client/Interfaces/user_interface.dart';
 import 'package:geo_app/Client/Manager/cache_manager.dart';
 import 'package:geo_app/Client/Models/rest_user_model.dart';
@@ -9,62 +8,85 @@ import 'package:geo_app/Client/client.dart';
 import 'package:geo_app/Client/client_constants.dart';
 
 class UserController with IUser {
-  final Client _client = Client();
-  final Map _requestMap = ClientConstants.paths["users"];
+  late Client _client;
+  late Map _requestMap;
+
+  UserController() {
+    _client = Client();
+    _requestMap = ClientConstants.paths["users"];
+  }
 
   ///MARK: GET USERS LIST
   @override
-  Future<List<UserModel>> getUsers() async {
-    List<UserModel>? users;
+  Future<List<UserModel>> getUsers({required token}) async {
     try {
       //final response = await dio.get("https://cycleon.onrender.com/api/users/list");
-      final response = await _client.getMethod(_requestMap["list"]);
+      final response = await _client.getMethod(
+        _requestMap["list"],
+        token: token,
+      );
       if (response == null) {
         throw Exception("Responded as NULL");
       }
-      users = RestUserModel.fromJson(response.data).data;
+      List<UserModel>? users = RestUserModel.fromJson(response.data).data;
       if (users == null) {
-        throw Exception("get users data null");
+        throw Exception("An Error Occured!");
       }
+      return users;
     } catch (e) {
-      print("at -> getUsers : $e!");
+      print("at -> getUsers: $e");
     }
-    return users ?? [];
+    return [];
+  }
+
+  ///MARK: GET USER BY ID
+  @override
+  Future<UserModel> getById({required id, required token}) async {
+    try {
+      final response = await _client.getMethod(
+        "${_requestMap["getById"]}/$id",
+        token: token,
+      );
+      if (response == null) {
+        throw Exception("An Error Occured!");
+      }
+      return UserModel.fromJson(response.data);
+    } catch (e) {
+      print("Error at -> getById: $e");
+    }
+    return UserModel();
   }
 
   ///MARK: POST REGISTER USER
   @override
-  Future<UserModel> register(Map map) async {
-    UserModel? user;
+  Future<UIResult> register(map) async {
     try {
       final response = await _client.postMethod(
-        path: _requestMap["register"],
+        _requestMap["register"],
         value: map,
       );
       if (response == null) {
-        throw Exception("Responded as NULL");
+        throw Exception("An Error Occured!");
       }
-      user = UserModel.fromJson(response.data);
+      return UIResult(success: true, message: "Register Succesful");
     } catch (e) {
-      print("at -> register : $e!");
+      print("Error at register -> $e");
+      return UIResult(success: false, message: "User Already Exists!");
     }
-    return user ?? UserModel();
   }
 
   ///MARK: POST LOGIN USER
   @override
-  Future<UserModel> login(Map map) async {
-    UserModel? user;
+  Future<UIResult> login(map) async {
     try {
       final response = await _client.postMethod(
-        path: _requestMap["login"],
+        _requestMap["login"],
         value: map,
       );
       if (response == null) {
-        throw Exception("Responded as NULL");
+        throw Exception("An Error Occured!");
       }
-      //TODO: Bu atama işlemi çalışmıyor
-      user = UserModel.fromJson(response.data);
+      UserModel user = UserModel.fromJson(response.data);
 
       /// Saving user_id for making requests based on which user is logged in
       if (user.id != null) {
@@ -72,10 +94,10 @@ class UserController with IUser {
           tag: "user_id",
           value: user.id!,
         );
-        print("Kaydetti hıı amughnaa");
       } else {
-        throw Exception("at -> login : user.id is NULL!");
+        throw Exception("An Error Occured!");
       }
+
       /// Registering user_token to make request and pass security system on server
       if (user.token != null) {
         await CacheManager.saveSharedPref(
@@ -83,26 +105,15 @@ class UserController with IUser {
           value: user.token!,
         );
       } else {
-        throw Exception("at -> login : user.token is NULL!");
+        throw Exception("An Error Occured!");
       }
+      return UIResult(success: true, message: "Login Succesful");
     } catch (e) {
-      print("at -> login : $e!");
+      print("Error at login -> $e");
+      return UIResult(
+        success: false,
+        message: "Please check your\nEmail or Password!",
+      );
     }
-    return user ?? UserModel();
-  }
-
-  @override
-  Future<UserModel> getById(String id) async {
-    UserModel? user;
-    try {
-      final response = await _client.getMethod(_requestMap["getById"] + "/$id");
-      if (response == null) {
-        throw Exception("Responded as NULL");
-      }
-      user = UserModel.fromJson(response.data);
-    } catch (e) {
-      print("at -> getUsers : $e!");
-    }
-    return user ?? UserModel();
   }
 }

@@ -6,32 +6,49 @@
 // ignore_for_file: avoid_print
 import 'dart:io';
 import 'package:dio/dio.dart';
+
 class Client {
   final dio = Dio();
-
+  /* 'Authorization' */
   ///MARK: GENERIC GET
-  Future getMethod(String path) async {
-    final response = await dio.get(path);
+  Future getMethod(String path, {String? token}) async {
+    final response = await dio.get(
+      path,
+      options:
+          token == null ? null : Options(headers: {'x-access-token': token}),
+    );
 
     switch (response.statusCode) {
-      case HttpStatus.ok:
+      case HttpStatus.ok: //200
         return response;
       default:
-        throw Exception(response.statusMessage.toString());
+        print("${response.statusMessage}");
+        throw Exception("Error: ${response.statusMessage}");
     }
   }
 
   ///MARK: GENERIC POST
-  Future postMethod({required String path, required Map value}) async {
-    final response = await dio.post(path, data: value);
+  Future postMethod(
+    String path, {
+    required Map value,
+    String? token,
+  }) async {
+    final response = await dio.post(
+      path,
+      data: value,
+      options:
+          token == null ? null : Options(headers: {'x-access-token': token}),
+    );
 
     switch (response.statusCode) {
-      case HttpStatus.ok:
+      case HttpStatus.ok: //200
         return response;
-      case HttpStatus.created:
+      case HttpStatus.created: //201
         return response;
+      //case HttpStatus.badRequest:     //400
       default:
-        throw Exception(response.statusMessage.toString());
+        print("${response.statusMessage}");
+        throw Exception("Error: ${response.statusMessage}");
     }
   }
 }

@@ -8,28 +8,33 @@ class EnteranceHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 40, right: 10, left: 10),
-      child: Row(
-        children: const [
-          Expanded(
-            child: Center(
-              child: Material(
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(20),
-                  bottomLeft: Radius.circular(20),
-                ),
-                color: Constants.primaryColor,
-                child: SizedBox.square(
-                  dimension: 60,
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding: EdgeInsets.all(4),
-                      child: Text(
-                        "Cy",
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
+      child: SizedBox(
+        height: 60,
+        child: Row(
+          children: const [
+            Expanded(
+              child: Center(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(24),
+                      bottomLeft: Radius.circular(24),
+                    ),
+                    color: Constants.primaryColor,
+                  ),
+                  child: SizedBox(
+                    width: 60,
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: EdgeInsets.all(4),
+                        child: Text(
+                          "Cy",
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -37,11 +42,8 @@ class EnteranceHeader extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-          Expanded(
-            flex: 2,
-            child: SizedBox(
-              height: 60,
+            Expanded(
+              flex: 2,
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -54,8 +56,8 @@ class EnteranceHeader extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
