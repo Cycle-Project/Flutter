@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:geo_app/Page/LandingPage/Profile/profile_page.dart';
 import 'package:geo_app/components/image_avatar.dart';
 
 class LandingPageAppBar extends StatelessWidget {
@@ -18,21 +17,13 @@ class LandingPageAppBar extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 16),
             child: Center(
-              child: InkWell(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ProfilePage(),
-                  ),
+              child: ImageAvatar(
+                border: const ImageAvatarBorder(
+                  thickness: 4,
+                  borderRadius: 16,
                 ),
-                child: ImageAvatar(
-                  border: const ImageAvatarBorder(
-                    thickness: 4,
-                    borderRadius: 16,
-                  ),
-                  size: 64,
-                  fileName: profileSrc,
-                ),
+                size: 64,
+                fileName: profileSrc,
               ),
             ),
           ),

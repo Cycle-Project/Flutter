@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/LandingPage/Discover/discover_card.dart';
 
-class DiscoverPage extends HookWidget {
-  const DiscoverPage({
+class Discover extends HookWidget {
+  const Discover({
     Key? key,
-    required this.color,
   }) : super(key: key);
-  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final list = useState<List?>(null);
     useEffect(() {
       list.value = [
@@ -33,38 +30,15 @@ class DiscoverPage extends HookWidget {
       ];
       return null;
     }, []);
-    return Scaffold(
-      backgroundColor: color,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
-        title: const Text("Discover"),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.filter_alt_rounded),
-          )
-        ],
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 4),
-          Expanded(
-            child: SizedBox(
-              height: size.height * .5,
-              child: ListView.builder(
-                itemCount: list.value?.length ?? 0,
-                itemBuilder: (context, i) => list.value == null
-                    ? const SizedBox()
-                    : DiscoverCard(
-                        item: list.value![i],
-                      ),
-              ),
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: list.value?.length ?? 0,
+      itemBuilder: (context, i) => list.value == null
+          ? const SizedBox()
+          : DiscoverCard(
+              item: list.value![i],
             ),
-          ),
-        ],
-      ),
     );
   }
 }
