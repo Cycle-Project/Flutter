@@ -127,7 +127,7 @@ class _Events extends StatelessWidget {
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
-                child: Text("${i + 1} Event"),
+                child: Text("Event ${i + 1}"),
               ),
             ),
           ),

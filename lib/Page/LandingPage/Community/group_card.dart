@@ -34,6 +34,7 @@ class GroupCard extends StatelessWidget {
         child: Row(
           children: [
             ImageAvatar(
+              color: Colors.white,
               fileName: item["imagePath"]!,
               border: const ImageAvatarBorder(borderRadius: 12, thickness: 0),
               size: 60,
