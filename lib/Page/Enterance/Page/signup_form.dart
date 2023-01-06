@@ -24,14 +24,14 @@ class SignupForm extends HookWidget with EnteranceInteraction {
     onSignUp(context) async {
       animate.value = true;
       bool isValidate = await Future.delayed(
-        const Duration(seconds: 1),
+        const Duration(milliseconds: 100),
         () => formKey.currentState!.validate(),
       );
       if (!isValidate) {
         animate.value = false;
         success.value = false;
         await Future.delayed(
-          const Duration(milliseconds: 1600),
+          const Duration(milliseconds: 100),
           () => success.value = null,
         );
         return;
