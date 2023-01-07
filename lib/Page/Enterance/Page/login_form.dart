@@ -16,31 +16,6 @@ class LoginForm extends HookWidget with EnteranceInteraction {
   Widget build(BuildContext context) {
     final email = useState("");
     final password = useState("");
-    final animate = useState(false);
-    final success = useState<bool?>(null);
-
-    onLogin(context) async {
-      animate.value = true;
-      bool isValidate = await Future.delayed(
-        const Duration(milliseconds: 100),
-        () => formKey.currentState!.validate(),
-      );
-      if (!isValidate) {
-        animate.value = false;
-        success.value = false;
-        await Future.delayed(
-          const Duration(milliseconds: 100),
-          () => success.value = null,
-        );
-        return;
-      }
-      animate.value = false;
-      success.value = await login(
-        context,
-        email: email.value,
-        password: password.value,
-      );
-    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -105,12 +80,16 @@ class LoginForm extends HookWidget with EnteranceInteraction {
                     ),
                     Expanded(
                       flex: 1,
-                      child: InkWell(
-                        onTap: () async => await onLogin(context),
-                        child: PrimaryButton(
-                          text: "Login",
-                          shouldAnimate: animate.value,
-                          isSuccess: success.value,
+                      child: PrimaryButton(
+                        text: "Login",
+                        onTap: () async => await login(
+                          context,
+                          email: email.value,
+                          password: password.value,
+                        ),
+                        validate: () async => await Future.delayed(
+                          const Duration(milliseconds: 100),
+                          () => formKey.currentState!.validate(),
                         ),
                       ),
                     ),

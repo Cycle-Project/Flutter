@@ -34,12 +34,6 @@ class EnterancePage extends HookWidget with EnteranceInteraction {
                           imageSize: 32,
                           onTap: () async => await googleLogin(context),
                         ),
-                        /*const SizedBox(width: 10),
-                        IconAvatar(
-                          fileName: 'assets/icon/facebook.png',
-                          imageSize: 32,
-                          onTap: () => login(context),
-                        ),*/
                       ],
                     ),
                     Center(
