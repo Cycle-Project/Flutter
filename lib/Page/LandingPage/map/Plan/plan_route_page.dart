@@ -15,10 +15,7 @@ class PlanPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<PlanRouteProvider>(context);
-    plan() {
-      print(provider.source?.toJson().toString());
-      print(provider.destination?.toJson().toString());
-    }
+    plan() {}
 
     return Scaffold(
       backgroundColor: color,

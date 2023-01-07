@@ -31,8 +31,7 @@ class Discover extends HookWidget {
       return null;
     }, []);
     return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.only(top: 8),
       itemCount: list.value?.length ?? 0,
       itemBuilder: (context, i) => list.value == null
           ? const SizedBox()

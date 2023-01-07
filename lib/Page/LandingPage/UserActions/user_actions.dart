@@ -46,6 +46,7 @@ class UserActions extends StatelessWidget {
         children: [
           const Header(title: "Actions", color: Colors.white),
           ListView.builder(
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: list.length,

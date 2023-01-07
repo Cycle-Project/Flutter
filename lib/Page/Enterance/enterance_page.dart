@@ -22,7 +22,10 @@ class EnterancePage extends HookWidget with EnteranceInteraction {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                const EnteranceHeader(),
+                const Padding(
+                  padding: EdgeInsets.only(top: 40, right: 10, left: 10),
+                  child: EnteranceHeader(showTitle: true),
+                ),
                 LoginOrSignUpPage(),
                 Wrap(
                   children: [
