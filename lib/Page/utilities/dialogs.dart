@@ -75,3 +75,43 @@ showFailDialog(context, message) async => await showDialog(
         );
       },
     );
+
+ShowQuestionDialog(context,
+        {required String question,
+        required Function() approveAction,
+        required Function() cancelAction}) async =>
+    await showDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            title: Text(
+              question,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: approveAction,
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.green),
+                  textStyle: MaterialStateProperty.all(
+                    const TextStyle(fontSize: 16),
+                  ),
+                ),
+                child: const Text('Approve'),
+              ),
+              ElevatedButton(
+                onPressed: approveAction,
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(Colors.blueAccent),
+                  textStyle: MaterialStateProperty.all(
+                    const TextStyle(fontSize: 16),
+                  ),
+                ),
+                child: const Text('Cancel'),
+              ),
+            ],
+          );
+        });
