@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Client/Models/user_model.dart';
+import 'package:geo_app/Page/LandingPage/Profile/components/profile_image.dart';
 import 'package:geo_app/Page/LandingPage/Profile/components/profile_widget.dart';
 import 'package:geo_app/Page/LandingPage/landing_page_interactions.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
+import 'package:geo_app/components/qr_code.dart';
+import 'package:geo_app/components/qr_code_scanner.dart';
 
 class ProfilePage extends HookWidget with LandingPageInteractions {
   ProfilePage({Key? key}) : super(key: key);
@@ -24,18 +27,7 @@ class ProfilePage extends HookWidget with LandingPageInteractions {
         }
         return Column(
           children: [
-            SizedBox.square(
-              dimension: 120,
-              child: Container(
-                margin: const EdgeInsets.all(4),
-                padding: const EdgeInsets.all(4),
-                decoration: const BoxDecoration(
-                  color: Colors.grey,
-                  shape: BoxShape.circle,
-                  //image: DecorationImage(image: AssetImage("")),
-                ),
-              ),
-            ),
+            ProfileImage(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               child: Column(
@@ -51,13 +43,22 @@ class ProfilePage extends HookWidget with LandingPageInteractions {
                   ),
                   const SizedBox(height: 4),
                   const Text(
-                    /* ${user.friends} */ "0 Followers",
+                    /* ${user.friends} */
+                    "0 Connected",
                     style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                   const SizedBox(height: 16),
                 ],
               ),
             ),
+            QRCode(
+              qrSize: 150,
+              qrPadding: 2,
+              qrData: user.id!,
+              qrBackgroundColor: Colors.transparent,
+              qrForegroundColor: Constants.tealColor,
+            ),
+            const QrCodeScanner(),
             ProfileWidget(
               name: "Routes",
               prefixIcon: Icons.route,
