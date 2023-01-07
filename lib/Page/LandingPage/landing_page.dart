@@ -10,22 +10,29 @@ class LandingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: HomePageWithBottomAppBar(
-        pages: [
-          const HomePage(),
-          const CommunityPage(),
-          ProfilePage(),
-        ],
-        icons: const [
-          Icons.home_outlined,
-          Icons.group_outlined,
-          Icons.person_outline,
-        ],
-        color: Colors.white54,
-        selectedColor: Constants.primaryColor,
-        backgroundColor: Constants.bluishGreyColor,
-        bottomBarColor: Constants.darkBluishGreyColor,
+    return WillPopScope(
+      /// TODO are you sure dialog
+      onWillPop: () async => await Future.delayed(
+        const Duration(milliseconds: 100),
+        () => true,
+      ),
+      child: SafeArea(
+        child: HomePageWithBottomAppBar(
+          pages: [
+            const HomePage(),
+            const CommunityPage(),
+            ProfilePage(),
+          ],
+          icons: const [
+            Icons.home_outlined,
+            Icons.search,
+            Icons.person_outline,
+          ],
+          color: Colors.white54,
+          selectedColor: Constants.primaryColor,
+          backgroundColor: Constants.bluishGreyColor,
+          bottomBarColor: Constants.darkBluishGreyColor,
+        ),
       ),
     );
   }

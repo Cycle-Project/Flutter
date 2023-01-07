@@ -6,47 +6,86 @@ class PrimaryButton extends HookWidget {
   const PrimaryButton({
     Key? key,
     required this.text,
-    required this.shouldAnimate,
-    required this.isSuccess,
+    this.onTap,
+    this.validate,
   }) : super(key: key);
-  final bool shouldAnimate;
+
+  final Future Function()? onTap;
+  final Future<bool> Function()? validate;
   final String text;
-  final bool? isSuccess;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: Constants.primaryColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: AnimatedCrossFade(
-        alignment: Alignment.center,
-        crossFadeState: shouldAnimate
-            ? CrossFadeState.showSecond
-            : CrossFadeState.showFirst,
-        firstChild: Center(
-            child: _SuccessState(
-          text: text,
-          isSuccess: isSuccess,
-        )),
-        secondChild: const Padding(
-          padding: EdgeInsets.symmetric(vertical: 5),
-          child: Center(
-            child: SizedBox.square(
-              dimension: 40,
-              child: CircularProgressIndicator(
-                backgroundColor: Colors.white,
-                color: Constants.bluishGreyColor,
+    final state = useState(<String, dynamic>{
+      "animate": false,
+      "success": null,
+    });
+    return InkWell(
+      onTap: () async {
+        state.value = {
+          "animate": true,
+          "success": null,
+        };
+        if (validate != null) {
+          bool isValidate = await validate!();
+          if (!isValidate) {
+            state.value = {
+              "animate": false,
+              "success": false,
+            };
+            await Future.delayed(
+              const Duration(milliseconds: 100),
+              () => state.value = {
+                "animate": false,
+                "success": null,
+              },
+            );
+            return;
+          }
+        }
+        state.value = {
+          "animate": false,
+          "success": await (onTap != null
+              ? onTap!()
+              : Future.delayed(
+                  const Duration(milliseconds: 100),
+                  () => true,
+                )),
+        };
+      },
+      child: Container(
+        height: 50,
+        decoration: BoxDecoration(
+          color: Constants.primaryColor,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: AnimatedCrossFade(
+          alignment: Alignment.center,
+          crossFadeState: state.value['animate']
+              ? CrossFadeState.showSecond
+              : CrossFadeState.showFirst,
+          firstChild: Center(
+              child: _SuccessState(
+            text: text,
+            isSuccess: state.value['success'],
+          )),
+          secondChild: const Padding(
+            padding: EdgeInsets.symmetric(vertical: 5),
+            child: Center(
+              child: SizedBox.square(
+                dimension: 40,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.white,
+                  color: Constants.bluishGreyColor,
+                ),
               ),
             ),
           ),
+          sizeCurve: Curves.easeOutQuint,
+          firstCurve: Curves.easeOutQuint,
+          secondCurve: Curves.easeOutQuint,
+          duration: const Duration(milliseconds: 500),
         ),
-        sizeCurve: Curves.easeOutQuint,
-        firstCurve: Curves.easeOutQuint,
-        secondCurve: Curves.easeOutQuint,
-        duration: const Duration(milliseconds: 500),
       ),
     );
   }

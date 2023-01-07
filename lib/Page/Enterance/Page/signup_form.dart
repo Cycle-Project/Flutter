@@ -18,34 +18,6 @@ class SignupForm extends HookWidget with EnteranceInteraction {
     final email = useState("");
     final password = useState("");
     final repassword = useState("");
-    final animate = useState(false);
-    final success = useState<bool?>(null);
-
-    onSignUp(context) async {
-      animate.value = true;
-      bool isValidate = await Future.delayed(
-        const Duration(milliseconds: 100),
-        () => formKey.currentState!.validate(),
-      );
-      if (!isValidate) {
-        animate.value = false;
-        success.value = false;
-        await Future.delayed(
-          const Duration(milliseconds: 100),
-          () => success.value = null,
-        );
-        return;
-      }
-      animate.value = false;
-      success.value = await register(
-        context,
-        name: name.value,
-        email: email.value,
-        password: password.value,
-      );
-
-      ///TODO: Register Successful Show Alert Information
-    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -141,11 +113,18 @@ class SignupForm extends HookWidget with EnteranceInteraction {
                     Expanded(
                       flex: 1,
                       child: InkWell(
-                        onTap: () => onSignUp(context),
+                        onTap: () async => await register(
+                          context,
+                          name: name.value,
+                          email: email.value,
+                          password: password.value,
+                        ),
                         child: PrimaryButton(
                           text: "SignUp",
-                          shouldAnimate: animate.value,
-                          isSuccess: success.value,
+                          validate: () async => await Future.delayed(
+                            const Duration(milliseconds: 100),
+                            () => formKey.currentState!.validate(),
+                          ),
                         ),
                       ),
                     ),

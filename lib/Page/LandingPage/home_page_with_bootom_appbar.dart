@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geo_app/Page/LandingPage/landing_page_appbar.dart';
 
 class HomePageWithBottomAppBar extends HookWidget {
   const HomePageWithBottomAppBar({
@@ -37,14 +38,35 @@ class HomePageWithBottomAppBar extends HookWidget {
 
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: PageView.builder(
-        itemCount: pages.length,
-        itemBuilder: (context, i) => SingleChildScrollView(
-          controller: scrollController,
-          child: pages[i],
+      body: GestureDetector(
+        onTap: () => isVisible.value = true,
+        child: Column(
+          children: [
+            AnimatedCrossFade(
+              crossFadeState: pageIndex.value == 2 || !isVisible.value
+                  ? CrossFadeState.showSecond
+                  : CrossFadeState.showFirst,
+              duration: const Duration(milliseconds: 100),
+              firstChild:
+                  const LandingPageAppBar(profileSrc: "assets/icon/Avatar.png"),
+              secondChild: const SizedBox(),
+              sizeCurve: Curves.easeInExpo,
+            ),
+            Expanded(
+              child: Center(
+                child: PageView.builder(
+                  itemCount: pages.length,
+                  itemBuilder: (context, i) => SingleChildScrollView(
+                    controller: scrollController,
+                    child: pages[i],
+                  ),
+                  controller: pageController,
+                  physics: const NeverScrollableScrollPhysics(),
+                ),
+              ),
+            ),
+          ],
         ),
-        controller: pageController,
-        physics: const NeverScrollableScrollPhysics(),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Padding(
@@ -71,6 +93,7 @@ class HomePageWithBottomAppBar extends HookWidget {
                   ),
                   onPressed: () {
                     pageIndex.value = i;
+                    isVisible.value = true;
                     pageController.animateToPage(
                       i,
                       duration: const Duration(milliseconds: 300),
