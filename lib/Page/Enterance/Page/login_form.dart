@@ -87,10 +87,7 @@ class LoginForm extends HookWidget with EnteranceInteraction {
                           email: email.value,
                           password: password.value,
                         ),
-                        validate: () async => await Future.delayed(
-                          const Duration(milliseconds: 100),
-                          () => formKey.currentState!.validate(),
-                        ),
+                        validate: () => formKey.currentState!.validate(),
                       ),
                     ),
                   ],

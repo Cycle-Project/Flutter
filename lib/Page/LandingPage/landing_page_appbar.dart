@@ -1,56 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:geo_app/components/image_avatar.dart';
+import 'package:geo_app/Page/Enterance/enterance_header.dart';
+import 'package:geo_app/Page/utilities/constants.dart';
 
 class LandingPageAppBar extends StatelessWidget {
   const LandingPageAppBar({
     super.key,
-    required this.profileSrc,
   });
-  final String profileSrc;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 90,
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: Center(
-              child: ImageAvatar(
-                border: const ImageAvatarBorder(
-                  thickness: 4,
-                  borderRadius: 16,
+    return ColoredBox(
+      color: Constants.darkBluishGreyColor,
+      child: SafeArea(
+        left: false,
+        right: false,
+        bottom: false,
+        child: SizedBox(
+          height: 80,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              children: [
+                const Expanded(child: EnteranceHeader(showTitle: false)),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * .6,
+                  child: const Align(
+                    alignment: Alignment(-1, .4),
+                    child: Text(
+                      "Cycleon",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
-                size: 64,
-                fileName: profileSrc,
-              ),
+                InkWell(
+                  onTap: () => showGeneralDialog(
+                    context: context,
+                    pageBuilder: (context, _, __) => Scaffold(
+                      appBar: AppBar(
+                        title: const Text("Notifications"),
+                      ),
+                    ),
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    child: Icon(
+                      Icons.notifications_none_outlined,
+                      size: 36,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          const Spacer(),
-          InkWell(
-            onTap: () {},
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              child: Icon(
-                Icons.notifications_none_outlined,
-                size: 32,
-                color: Colors.white,
-              ),
-            ),
-          ),
-          InkWell(
-            onTap: () => Navigator.pop(context),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              child: Icon(
-                Icons.logout_rounded,
-                size: 32,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

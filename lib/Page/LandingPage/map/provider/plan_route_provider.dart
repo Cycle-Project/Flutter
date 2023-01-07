@@ -15,7 +15,6 @@ class PlanRouteProvider extends MapAction {
       isSourcePinned = true;
       source = PositionModel.fromLocationData(mapsProvider.currentLocation!);
     }
-    print("$isPinned ${newSorce?.toJson()}");
     mapsProvider.mapAction = this;
 
     notifyListeners();
@@ -31,7 +30,6 @@ class PlanRouteProvider extends MapAction {
       destination =
           PositionModel.fromLocationData(mapsProvider.currentLocation!);
     }
-    print("$isPinned ${newDestination?.toJson()}");
     mapsProvider.mapAction = this;
 
     notifyListeners();

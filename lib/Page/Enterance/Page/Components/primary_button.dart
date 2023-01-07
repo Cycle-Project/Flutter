@@ -10,8 +10,8 @@ class PrimaryButton extends HookWidget {
     this.validate,
   }) : super(key: key);
 
-  final Future Function()? onTap;
-  final Future<bool> Function()? validate;
+  final Function()? onTap;
+  final Function()? validate;
   final String text;
 
   @override
@@ -22,12 +22,12 @@ class PrimaryButton extends HookWidget {
     });
     return InkWell(
       onTap: () async {
-        state.value = {
-          "animate": true,
-          "success": null,
-        };
         if (validate != null) {
-          bool isValidate = await validate!();
+          state.value = {
+            "animate": true,
+            "success": null,
+          };
+          bool isValidate = validate!();
           if (!isValidate) {
             state.value = {
               "animate": false,
@@ -45,12 +45,7 @@ class PrimaryButton extends HookWidget {
         }
         state.value = {
           "animate": false,
-          "success": await (onTap != null
-              ? onTap!()
-              : Future.delayed(
-                  const Duration(milliseconds: 100),
-                  () => true,
-                )),
+          "success": onTap != null ? await onTap!() : true,
         };
       },
       child: Container(
@@ -65,10 +60,11 @@ class PrimaryButton extends HookWidget {
               ? CrossFadeState.showSecond
               : CrossFadeState.showFirst,
           firstChild: Center(
-              child: _SuccessState(
-            text: text,
-            isSuccess: state.value['success'],
-          )),
+            child: _SuccessState(
+              text: text,
+              isSuccess: state.value['success'],
+            ),
+          ),
           secondChild: const Padding(
             padding: EdgeInsets.symmetric(vertical: 5),
             child: Center(

@@ -14,7 +14,7 @@ class DiscoverCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 400,
-      margin: const EdgeInsets.only(bottom: 8, left: 4, right: 4),
+      margin: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: Constants.primaryColor,

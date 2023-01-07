@@ -112,20 +112,15 @@ class SignupForm extends HookWidget with EnteranceInteraction {
                     ),
                     Expanded(
                       flex: 1,
-                      child: InkWell(
+                      child: PrimaryButton(
+                        text: "SignUp",
                         onTap: () async => await register(
                           context,
                           name: name.value,
                           email: email.value,
                           password: password.value,
                         ),
-                        child: PrimaryButton(
-                          text: "SignUp",
-                          validate: () async => await Future.delayed(
-                            const Duration(milliseconds: 100),
-                            () => formKey.currentState!.validate(),
-                          ),
-                        ),
+                        validate: () => formKey.currentState!.validate(),
                       ),
                     ),
                   ],

@@ -14,9 +14,7 @@ class GroupCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      clipBehavior: Clip.hardEdge,
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -25,10 +23,7 @@ class GroupCard extends StatelessWidget {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => GroupDetailPage(
-              color: color,
-              item: item,
-            ),
+            builder: (context) => GroupDetailPage(item: item),
           ),
         ),
         child: Row(
