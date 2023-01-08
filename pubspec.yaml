@@ -49,6 +49,8 @@ dependencies:
   qr_flutter: ^4.0.0
   flutter_barcode_scanner: ^2.0.0
   image_picker: ^0.8.6
+  liquid_swipe: ^3.0.0
+  smooth_page_indicator: ^1.0.0+2
 
 
 dev_dependencies:

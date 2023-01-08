@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geo_app/Page/Enterance/enterance_page.dart';
+import 'package:geo_app/Page/OnboardingPage/on_boarding_page.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 
 main() {
@@ -23,7 +24,7 @@ class App extends StatelessWidget {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
       ),
-      home: Scaffold(body: EnterancePage()),
+      home: Scaffold(body: OnboardingPage()),
       debugShowCheckedModeBanner: false,
     );
   }
