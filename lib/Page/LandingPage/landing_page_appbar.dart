@@ -21,10 +21,12 @@ class LandingPageAppBar extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
               children: [
-                const Expanded(child: EnteranceHeader(showTitle: false)),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * .6,
-                  child: const Align(
+                const SizedBox(
+                  width: 92,
+                  child: EnteranceHeader(showTitle: false),
+                ),
+                const Expanded(
+                  child: Align(
                     alignment: Alignment(-1, .4),
                     child: Text(
                       "Cycleon",
