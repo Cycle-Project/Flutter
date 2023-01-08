@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geo_app/Client/Controller/user_controller.dart';
-import 'package:geo_app/Client/Interfaces/user_interface.dart';
+import 'package:geo_app/Client/Interfaces/ui_result.dart';
 import 'package:geo_app/GPS/location_service.dart';
 import 'package:geo_app/Page/utilities/dialogs.dart';
 

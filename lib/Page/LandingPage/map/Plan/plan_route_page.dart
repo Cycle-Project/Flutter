@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/location_button.dart';
+import 'package:geo_app/Page/LandingPage/map/map_widget.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
+import 'package:geo_app/Page/utilities/constants.dart';
 import 'package:provider/provider.dart';
 
 class PlanPage extends HookWidget {
@@ -14,94 +17,174 @@ class PlanPage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final mapsProvider = Provider.of<MapsProvider>(context);
     final provider = Provider.of<PlanRouteProvider>(context);
-    plan() {}
+    plan() {
+      // TODO fill here
+    }
 
-    return Scaffold(
-      backgroundColor: color,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
-        title: const Text("Planing a route"),
-      ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Column(
+    bottomSheet(context) async {
+      await Future.delayed(const Duration(milliseconds: 100));
+      await showModalBottomSheet(
+        context: context,
+        backgroundColor: Constants.darkBluishGreyColor,
+        builder: (_) => MultiProvider(
+          providers: [
+            ChangeNotifierProvider.value(value: mapsProvider),
+            ChangeNotifierProvider.value(value: provider),
+          ],
+          child: Wrap(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    color: Colors.white,
+              Row(
+                children: [
+                  const Spacer(),
+                  Expanded(
+                    child: Divider(
+                      height: 16,
+                      thickness: 2,
+                      color: Constants.primaryColor.withOpacity(.6),
+                    ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
+                  Expanded(
+                    child: Row(
+                      children: [
+                        const Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8, top: 8),
+                          child: Icon(
+                            Icons.close,
+                            size: 28,
+                            color: Constants.primaryColor.withOpacity(.6),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                margin: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.white,
+                ),
+                child: Wrap(
+                  children: const [
+                    LocationButton(
+                      index: 1,
+                      name: "Source",
+                    ),
+                    Divider(
+                      height: 20,
+                      thickness: .6,
+                      indent: 10,
+                      endIndent: 10,
+                      color: Colors.grey,
+                    ),
+                    LocationButton(
+                      index: 2,
+                      name: "Destination",
+                    ),
+                  ],
+                ),
+              ),
+              //if (provider.source != null && provider.destination != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16, left: 16, right: 16),
+                child: InkWell(
+                  onTap: plan,
+                  child: Container(
+                    height: 60,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Constants.primaryColor.withOpacity(.8),
+                    ),
+                    child: Row(
                       children: const [
-                        LocationButton(
-                          index: 1,
-                          name: "Source",
+                        Spacer(),
+                        Icon(Icons.route, color: Colors.white, size: 26),
+                        SizedBox(width: 12),
+                        Text(
+                          "Plan",
+                          style: TextStyle(color: Colors.white, fontSize: 24),
                         ),
-                        Divider(
-                          height: 20,
-                          thickness: .6,
-                          indent: 10,
-                          endIndent: 10,
-                          color: Colors.grey,
-                        ),
-                        LocationButton(
-                          index: 2,
-                          name: "Destination",
-                        ),
+                        Spacer(),
                       ],
                     ),
                   ),
                 ),
               ),
-              const Expanded(
-                child: SizedBox(),
-              ),
-              if (provider.source != null && provider.destination != null)
-                Container(
-                  margin:
-                      const EdgeInsets.only(bottom: 20, left: 16, right: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: InkWell(
-                    onTap: () => plan(),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.route_outlined,
-                            color: color,
-                            size: 30,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              "Plan",
-                              style: TextStyle(
-                                fontSize: 24,
-                                color: color,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
             ],
           ),
         ),
+      );
+    }
+
+    useEffect(() {
+      bottomSheet(context);
+      return null;
+    }, []);
+
+    return Scaffold(
+      backgroundColor: color,
+      body: Stack(
+        children: [
+          SizedBox.expand(
+            child: MapWidget(
+              shouldClearMark: false,
+              shouldAddMark: (_) => false,
+            ),
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: SafeArea(
+              child: InkWell(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Constants.darkBluishGreyColor,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(
+                    Icons.keyboard_arrow_left,
+                    color: Constants.primaryColor,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Row(
+              children: [
+                const Spacer(),
+                InkWell(
+                  onTap: () async => await bottomSheet(context),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 26, vertical: 4),
+                    decoration: const BoxDecoration(
+                      color: Constants.darkBluishGreyColor,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.keyboard_arrow_up,
+                      size: 50,
+                      color: Constants.primaryColor,
+                    ),
+                  ),
+                ),
+                const Spacer(),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

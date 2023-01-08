@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/Client/Models/user_model.dart';
+import 'package:geo_app/Client/Models/User/user_model.dart';
 import 'package:geo_app/Page/LandingPage/UserActions/user_actions.dart';
 import 'package:geo_app/Page/LandingPage/UserActions/user_progress.dart';
 import 'package:geo_app/Page/LandingPage/landing_page_appbar.dart';

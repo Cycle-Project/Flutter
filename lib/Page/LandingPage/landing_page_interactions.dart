@@ -1,6 +1,6 @@
 import 'package:geo_app/Client/Controller/user_controller.dart';
 import 'package:geo_app/Client/Manager/cache_manager.dart';
-import 'package:geo_app/Client/Models/user_model.dart';
+import 'package:geo_app/Client/Models/User/user_model.dart';
 
 mixin LandingPageInteractions {
   final UserController _userController = UserController();

@@ -9,7 +9,7 @@ import 'package:dio/dio.dart';
 
 class Client {
   final dio = Dio();
-  /* 'Authorization' */
+
   ///MARK: GENERIC GET
   Future getMethod(String path, {String? token}) async {
     final response = await dio.get(
@@ -17,14 +17,12 @@ class Client {
       options:
           token == null ? null : Options(headers: {'x-access-token': token}),
     );
-
-    switch (response.statusCode) {
-      case HttpStatus.ok: //200
-        return response;
-      default:
-        print("${response.statusMessage}");
-        throw Exception("Error: ${response.statusMessage}");
+    //200
+    if (response.statusCode == HttpStatus.ok) {
+      return response;
     }
+    print("${response.statusMessage}");
+    throw Exception("Error: ${response.statusMessage}");
   }
 
   ///MARK: GENERIC POST
@@ -39,16 +37,49 @@ class Client {
       options:
           token == null ? null : Options(headers: {'x-access-token': token}),
     );
-
-    switch (response.statusCode) {
-      case HttpStatus.ok: //200
-        return response;
-      case HttpStatus.created: //201
-        return response;
-      //case HttpStatus.badRequest:     //400
-      default:
-        print("${response.statusMessage}");
-        throw Exception("Error: ${response.statusMessage}");
+    //200 //201
+    if (response.statusCode == HttpStatus.ok ||
+        response.statusCode == HttpStatus.created) {
+      return response;
     }
+    print("${response.statusMessage}");
+    throw Exception("Error: ${response.statusMessage}");
+  }
+
+  ///MARK: GENERIC PUT
+  Future putMethod(
+    String path, {
+    required Map value,
+    String? token,
+  }) async {
+    final response = await dio.put(
+      path,
+      data: value,
+      options:
+          token == null ? null : Options(headers: {'x-access-token': token}),
+    );
+
+    //200 //201
+    if (response.statusCode == HttpStatus.ok ||
+        response.statusCode == HttpStatus.created) {
+      return response;
+    }
+    print("${response.statusMessage}");
+    throw Exception("Error: ${response.statusMessage}");
+  }
+
+  ///MARK: GENERIC DELETE
+  Future deleteMethod(String path, {String? token}) async {
+    final response = await dio.delete(
+      path,
+      options:
+          token == null ? null : Options(headers: {'x-access-token': token}),
+    );
+    //200
+    if (response.statusCode == HttpStatus.ok) {
+      return response;
+    }
+    print("${response.statusMessage}");
+    throw Exception("Error: ${response.statusMessage}");
   }
 }

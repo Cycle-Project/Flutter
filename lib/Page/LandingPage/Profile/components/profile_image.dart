@@ -44,29 +44,40 @@ class ProfileImage extends HookWidget {
               icon: Icons.cancel_outlined,
               title: "Cancel",
             ),
+            _CustomListTile(
+              onTap: () async {
+                bool answer = await showQuestionDialog(
+                    context, 'Do you want to remove Image?');
+                if (answer) image.value = File("");
+                // ignore: use_build_context_synchronously
+                Navigator.pop(context);
+              },
+              icon: Icons.delete_forever,
+              color: Colors.red.shade600,
+              title: "Delete Image",
+            ),
           ],
         ),
       ),
-      child: SizedBox.square(
-        dimension: 150,
-        child: Container(
-          margin: const EdgeInsets.all(4),
-          padding: const EdgeInsets.all(4),
-          decoration: const BoxDecoration(
-            color: Constants.darkBluishGreyColor,
-            shape: BoxShape.circle,
-          ),
-          child: Center(
-            child: ClipOval(
-              child: image.value.path.isEmpty
-                  ? const Icon(Icons.person, size: 72, color: Colors.white)
-                  : Image.file(
-                      image.value,
-                      fit: BoxFit.cover,
-                    ),
+      child: Container(
+        width: 150,
+        height: 150,
+        margin: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(4),
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: Constants.primaryColor,
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            image: FileImage(
+              image.value,
             ),
+            fit: BoxFit.cover,
           ),
         ),
+        child: image.value.path.isEmpty
+            ? const Icon(Icons.person, size: 72, color: Colors.white)
+            : const SizedBox(),
       ),
     );
   }
@@ -78,9 +89,11 @@ class _CustomListTile extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.onTap,
+    this.color = Colors.white,
   }) : super(key: key);
 
   final IconData icon;
+  final Color color;
   final String title;
   final Function() onTap;
 
@@ -93,14 +106,14 @@ class _CustomListTile extends StatelessWidget {
         child: Row(
           children: [
             const Spacer(),
-            Icon(icon, size: 28, color: Colors.white),
+            Icon(icon, size: 28, color: color),
             const SizedBox(width: 20),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: Colors.white,
+                color: color,
               ),
             ),
             const Spacer(),
