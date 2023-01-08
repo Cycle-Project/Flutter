@@ -1,3 +1,4 @@
+import 'package:geo_app/Client/Models/Weather/weather_basic_model.dart';
 import 'package:geo_app/Client/Models/user_model.dart';
 
 mixin IUser {
@@ -14,4 +15,8 @@ class UIResult {
   final String message;
 
   UIResult({required this.success, required this.message});
+}
+
+mixin IWeather {
+  Future<WeatherBasicModel> getWeatherByLatLang({required double lat, required double lang});
 }

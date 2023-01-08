@@ -37,8 +37,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
   ];
 
   final controller = LiquidController();
-
-
   var currentPage = 0;
 
   @override
@@ -108,7 +106,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
       ),
     );
   }
-
 
   onPageChangedCallback(int activeIndex) {
     setState(() => currentPage = activeIndex);
