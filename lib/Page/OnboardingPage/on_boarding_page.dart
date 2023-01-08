@@ -1,62 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geo_app/Page/Enterance/enterance_interaction.dart';
+import 'package:geo_app/Page/Enterance/enterance_page.dart';
 import 'package:geo_app/Page/OnboardingPage/Model/on_boarding_model.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:lottie/lottie.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-class OnboardingPage extends StatefulWidget {
+class OnboardingPage extends HookWidget with EnteranceInteraction {
   OnboardingPage({Key? key}) : super(key: key);
 
   @override
-  State<OnboardingPage> createState() => _OnboardingPageState();
-}
-
-class _OnboardingPageState extends State<OnboardingPage> {
-  final onboardingPages = [
-    OnboardingModel(
-      lottie: "https://assets6.lottiefiles.com/packages/lf20_8fz0xapf.json",
-      title: "Bisiklet Sürme",
-      subtitle: "Ebenin kilometresi kadar bisiklet sürebilirsin",
-      counter: 1,
-      bgColor: Colors.red,
-    ),
-    OnboardingModel(
-      lottie: "https://assets10.lottiefiles.com/packages/lf20_ryzjgsfe.json",
-      title: "Tanışma",
-      subtitle: "Erkekler için Kız bulma platformu",
-      counter: 2,
-      bgColor: Colors.blue,
-    ),
-    OnboardingModel(
-      lottie: "https://assets6.lottiefiles.com/packages/lf20_hbhjkeay.json",
-      title: "Öyle işte",
-      subtitle: "Bir şeyler bir şeler hacım işte. Uygulamaya like atın",
-      counter: 3,
-      bgColor: Colors.green,
-    ),
-  ];
-
-  final controller = LiquidController();
-  var currentPage = 0;
-
-  @override
   Widget build(BuildContext context) {
+    final pages = [
+      OnboardingModel(
+        lottie: "https://assets6.lottiefiles.com/packages/lf20_8fz0xapf.json",
+        title: "Bisiklet Sürme",
+        subtitle: "Ebenin kilometresi kadar bisiklet sürebilirsin",
+        counter: 1,
+        bgColor: Colors.red,
+      ),
+      OnboardingModel(
+        lottie: "https://assets10.lottiefiles.com/packages/lf20_ryzjgsfe.json",
+        title: "Tanışma",
+        subtitle: "Erkekler için Kız bulma platformu",
+        counter: 2,
+        bgColor: Colors.blue,
+      ),
+      OnboardingModel(
+        lottie: "https://assets6.lottiefiles.com/packages/lf20_hbhjkeay.json",
+        title: "Öyle işte",
+        subtitle: "Bir şeyler bir şeler hacım işte. Uygulamaya like atın",
+        counter: 3,
+        bgColor: Colors.green,
+      ),
+    ];
+    final controller = LiquidController();
+    final currentPage = useState(0);
+
     return Scaffold(
       body: Stack(
         alignment: Alignment.center,
         children: [
           LiquidSwipe(
-            pages: [
-              OnboardingAPage(onboardingModel: onboardingPages[0]),
-              OnboardingAPage(onboardingModel: onboardingPages[1]),
-              OnboardingAPage(onboardingModel: onboardingPages[2]),
-            ],
+            pages: List.generate(
+              pages.length,
+              (i) => OnboardingAPage(onboardingModel: pages[i]),
+            ),
             liquidController: controller,
             slideIconWidget: const Icon(Icons.arrow_back_ios),
             enableSideReveal: true,
-            onPageChangeCallback: onPageChangedCallback,
+            onPageChangeCallback: (active) {
+              if (pages.length - 1 == currentPage.value) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => EnterancePage(),
+                  ),
+                  (r) => r.isFirst,
+                );
+                return;
+              }
+              currentPage.value = active;
+            },
           ),
-          Positioned(
+          /* Positioned(
             bottom: 60,
             child: OutlinedButton(
               onPressed: () {
@@ -79,18 +87,19 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
               ),
             ),
-          ),
-          Positioned(
-            top: 50,
-            right: 20,
-            child: TextButton(
-              onPressed: () => controller.jumpToPage(page: 2),
-              child: const Text(
-                "Skip",
-                style: TextStyle(color: Colors.white),
+          ), */
+          if (currentPage.value != pages.length - 1)
+            Positioned(
+              top: 50,
+              right: 20,
+              child: TextButton(
+                onPressed: () => controller.jumpToPage(page: pages.length - 1),
+                child: const Text(
+                  "Skip",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
-          ),
           Positioned(
             bottom: 20,
             child: AnimatedSmoothIndicator(
@@ -105,10 +114,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
         ],
       ),
     );
-  }
-
-  onPageChangedCallback(int activeIndex) {
-    setState(() => currentPage = activeIndex);
   }
 }
 

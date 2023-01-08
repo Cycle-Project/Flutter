@@ -195,8 +195,9 @@ class ProfilePage extends HookWidget with LandingPageInteractions {
               onTap: () async {
                 if (await showQuestionDialog(
                     context, "Dou you want to exit?")) {
-                  CacheManager.remove(tag: "user_id");
-                  CacheManager.remove(tag: "user_token");
+                  await CacheManager.remove(tag: "user_id");
+                  await CacheManager.remove(tag: "user_token");
+                  // ignore: use_build_context_synchronously
                   Navigator.pop(context);
                 }
               },

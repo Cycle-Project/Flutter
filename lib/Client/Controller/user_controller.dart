@@ -17,6 +17,50 @@ class UserController with IUser {
     _requestMap = ClientConstants.paths["users"];
   }
 
+  ///MARK: SharedPref User
+  @override
+  Future<bool> cachedLogin() async {
+    try {
+      String? userId = await CacheManager.getSharedPref(tag: "user_id");
+      String? userToken = await CacheManager.getSharedPref(tag: "user_token");
+
+      Map map = {};
+
+      /// Saving user_id for making requests based on which user is logged in
+      if (userId != null && userToken != null) {
+        print("id: $userId, token: $userToken");
+        UserModel prefUser = await getById(id: userId, token: userToken);
+        map = prefUser.toJson();
+      } else {
+        throw Exception("An Error Occured!");
+      }
+
+      final response = await _client.postMethod(
+        _requestMap["login"],
+        value: map,
+      );
+      if (response == null) {
+        throw Exception("An Error Occured!");
+      }
+      UserModel user = UserModel.fromJson(response.data);
+
+      /// Registering user_token to make request and pass security system on server
+      if (user.token != null) {
+        await CacheManager.saveSharedPref(
+          tag: "user_token",
+          value: user.token!,
+        );
+      } else {
+        throw Exception("An Error Occured!");
+      }
+      return true;
+    } catch (e) {
+      await CacheManager.remove(tag: "user_id");
+      await CacheManager.remove(tag: "user_token");
+      return false;
+    }
+  }
+
   ///MARK: POST REGISTER USER
   @override
   Future<UIResult> register(map) async {
@@ -26,6 +70,27 @@ class UserController with IUser {
         value: map,
       );
       if (response == null) {
+        throw Exception("An Error Occured!");
+      }
+      UserModel user = UserModel.fromJson(response.data);
+
+      /// Saving user_id for making requests based on which user is logged in
+      if (user.id != null) {
+        await CacheManager.saveSharedPref(
+          tag: "user_id",
+          value: user.id!,
+        );
+      } else {
+        throw Exception("An Error Occured!");
+      }
+
+      /// Registering user_token to make request and pass security system on server
+      if (user.token != null) {
+        await CacheManager.saveSharedPref(
+          tag: "user_token",
+          value: user.token!,
+        );
+      } else {
         throw Exception("An Error Occured!");
       }
       return UIResult(success: true, message: "Register Succesful");

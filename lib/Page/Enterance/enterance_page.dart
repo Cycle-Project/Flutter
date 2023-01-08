@@ -11,6 +11,10 @@ class EnterancePage extends HookWidget with EnteranceInteraction {
 
   @override
   Widget build(BuildContext context) {
+    useEffect(() {
+      loggedBefore(context);
+      return null;
+    }, []);
     return Scaffold(
       backgroundColor: Constants.bluishGreyColor,
       body: SingleChildScrollView(

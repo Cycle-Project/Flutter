@@ -15,8 +15,8 @@ class LandingPage extends StatelessWidget {
     return WillPopScope(
       onWillPop: () async {
         if (await showQuestionDialog(context, "Dou you want to exit?")) {
-          CacheManager.remove(tag: "user_id");
-          CacheManager.remove(tag: "user_token");
+          await CacheManager.remove(tag: "user_id");
+          await CacheManager.remove(tag: "user_token");
           return true;
         }
         return false;
