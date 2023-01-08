@@ -27,6 +27,16 @@ class PositionModel {
     longitude = latLng.longitude;
   }
 
+  LatLng toLatLng() => LatLng(
+        latitude!,
+        longitude!,
+      );
+
+  PositionModel.middlePoint(PositionModel a, PositionModel b) {
+    latitude = a.latitude! + (b.latitude! - a.latitude!) * 0.5;
+    longitude = a.longitude! + (b.longitude! - a.longitude!) * 0.5;
+  }
+
   LatLng get latLng {
     return LatLng(
       latitude!,

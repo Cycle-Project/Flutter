@@ -1,4 +1,4 @@
-import 'package:geo_app/Client/Models/user_model.dart';
+import 'package:geo_app/Client/Models/User/user_model.dart';
 
 class RestUserModel {
   bool? success;
@@ -18,8 +18,8 @@ class RestUserModel {
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'success': success,
-    'count': count,
-    'data': List<UserModel>.from(data!.map((x) => x.toJson())),
-  };
+        'success': success,
+        'count': count,
+        'data': List<UserModel>.from(data!.map((x) => x.toJson())),
+      };
 }
