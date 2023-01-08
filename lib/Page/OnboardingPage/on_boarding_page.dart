@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geo_app/Client/Manager/cache_manager.dart';
 import 'package:geo_app/Page/Enterance/enterance_interaction.dart';
 import 'package:geo_app/Page/Enterance/enterance_page.dart';
 import 'package:geo_app/Page/OnboardingPage/Model/on_boarding_model.dart';
+import 'package:geo_app/Page/utilities/constants.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:lottie/lottie.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -18,21 +20,21 @@ class OnboardingPage extends HookWidget with EnteranceInteraction {
         title: "Bisiklet Sürme",
         subtitle: "Ebenin kilometresi kadar bisiklet sürebilirsin",
         counter: 1,
-        bgColor: Colors.red,
+        bgColor: Constants.lightSalmonColor,
       ),
       OnboardingModel(
         lottie: "https://assets10.lottiefiles.com/packages/lf20_ryzjgsfe.json",
         title: "Tanışma",
         subtitle: "Erkekler için Kız bulma platformu",
         counter: 2,
-        bgColor: Colors.blue,
+        bgColor: Constants.generateMaterialColor(Constants.tealColor).shade400,
       ),
       OnboardingModel(
         lottie: "https://assets6.lottiefiles.com/packages/lf20_hbhjkeay.json",
         title: "Öyle işte",
         subtitle: "Bir şeyler bir şeler hacım işte. Uygulamaya like atın",
         counter: 3,
-        bgColor: Colors.green,
+        bgColor: Constants.generateMaterialColor(Constants.lilaColor).shade300,
       ),
     ];
     final controller = LiquidController();
@@ -43,51 +45,66 @@ class OnboardingPage extends HookWidget with EnteranceInteraction {
         alignment: Alignment.center,
         children: [
           LiquidSwipe(
+            enableLoop: false,
             pages: List.generate(
               pages.length,
               (i) => OnboardingAPage(onboardingModel: pages[i]),
             ),
             liquidController: controller,
-            slideIconWidget: const Icon(Icons.arrow_back_ios),
+            slideIconWidget: pages.length - 1 == currentPage.value
+                ? null
+                : const Icon(Icons.arrow_back_ios),
             enableSideReveal: true,
-            onPageChangeCallback: (active) {
-              if (pages.length - 1 == currentPage.value) {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => EnterancePage(),
-                  ),
-                  (r) => r.isFirst,
-                );
-                return;
-              }
+            onPageChangeCallback: (active) async {
               currentPage.value = active;
             },
           ),
-          /* Positioned(
-            bottom: 60,
-            child: OutlinedButton(
-              onPressed: () {
-                int nextPage = controller.currentPage + 1;
-                controller.animateToPage(page: nextPage);
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                side: const BorderSide(color: Colors.black26),
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(20),
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: const BoxDecoration(
-                    color: Color(0xff272727), shape: BoxShape.circle),
-                child: const Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.white,
+          if (pages.length - 1 == currentPage.value)
+            Positioned(
+              bottom: 60,
+              child: InkWell(
+                onTap: () async {
+                  await CacheManager.saveSharedPref(
+                          tag: "newUser", value: "false")
+                      .then(
+                    (value) => Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => EnterancePage(),
+                      ),
+                      (r) => r.isFirst,
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff272727),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Wrap(
+                    direction: Axis.horizontal,
+                    children: const [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          "Let's Start",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ), */
           if (currentPage.value != pages.length - 1)
             Positioned(
               top: 50,
@@ -104,10 +121,11 @@ class OnboardingPage extends HookWidget with EnteranceInteraction {
             bottom: 20,
             child: AnimatedSmoothIndicator(
               count: 3,
-              activeIndex: controller.currentPage,
+              activeIndex: currentPage.value,
               effect: const WormEffect(
-                activeDotColor: Color(0xff272727),
-                dotHeight: 5,
+                dotColor: Constants.backgroundColor,
+                activeDotColor: Constants.darkBluishGreyColor,
+                dotHeight: 12,
               ),
             ),
           ),
