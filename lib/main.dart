@@ -24,7 +24,7 @@ class App extends StatelessWidget {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
       ),
-      home: Scaffold(body: OnboardingPage()),
+      home: Scaffold(body: EnterancePage()),
       debugShowCheckedModeBanner: false,
     );
   }
