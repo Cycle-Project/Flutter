@@ -70,34 +70,35 @@ class LocationButton extends HookWidget {
               width: double.maxFinite,
               child: Row(
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text(
-                        "${index == 1 ? "Source" : "Destination"} Location",
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                        ),
-                      ),
-                      ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * .6,
-                          maxHeight: 20,
-                        ),
-                        child: Text(
-                          text.value == "" ? "-" : text.value,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text(
+                          "${index == 1 ? "Source" : "Destination"} Location",
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
                           ),
                         ),
-                      ),
-                    ],
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * .65,
+                            maxHeight: 20,
+                          ),
+                          child: Text(
+                            text.value == "" ? "-" : text.value,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  const Spacer(),
                   const SizedBox(
                     height: 50,
                     child: Align(
