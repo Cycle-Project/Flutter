@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:geo_app/Page/Enterance/enterance_page.dart';
-import 'package:geo_app/Page/OnboardingPage/on_boarding_page.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
+import 'package:geo_app/Splash/splash_view.dart';
 
 main() {
   runApp(const App());
@@ -24,7 +23,7 @@ class App extends StatelessWidget {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
       ),
-      home: Scaffold(body: EnterancePage()),
+      home: const SplashView(),
       debugShowCheckedModeBanner: false,
     );
   }
