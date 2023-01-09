@@ -10,14 +10,14 @@ class SignupForm extends HookWidget with EnteranceInteraction {
     required this.onHaveAccount,
   }) : super(key: key);
   final Function() onHaveAccount;
-  final formKey = GlobalKey<FormState>();
+  static final formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final name = useState("");
-    final email = useState("");
-    final password = useState("");
-    final repassword = useState("");
+    final name = useTextEditingController();
+    final email = useTextEditingController();
+    final password = useTextEditingController();
+    final repassword = useTextEditingController();
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -25,114 +25,114 @@ class SignupForm extends HookWidget with EnteranceInteraction {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Theme(
-        data: ThemeData(primaryColor: Colors.black),
-        child: FormField(
-          builder: (state) => Form(
-            key: formKey,
-            child: Column(
-              children: [
-                CustomTextFormField(
-                  onChangedFunction: (val) => name.value = val,
-                  labelText: "Name",
-                  hintText: "Enter your name here...",
-                  isPassword: false,
-                  validatorFunc: (val) {
-                    if (val!.isEmpty) {
-                      return 'Please enter your name';
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-                CustomTextFormField(
-                  onChangedFunction: (val) => email.value = val,
-                  labelText: "Email",
-                  hintText: "Enter your email here...",
-                  isPassword: false,
-                  validatorFunc: (val) {
-                    if (val!.isEmpty) {
-                      return 'Please enter your email adress';
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-                CustomTextFormField(
-                  onChangedFunction: (val) => password.value = val,
-                  labelText: "Password",
-                  hintText: "Enter your password here...",
-                  isPassword: true,
-                  validatorFunc: (val) {
-                    if (val!.isEmpty) {
-                      return 'Please enter your password';
-                    } else if (val != repassword.value) {
-                      return 'Passwords doesn\'t match';
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-                CustomTextFormField(
-                  onChangedFunction: (val) => repassword.value = val,
-                  labelText: "Confirm Password",
-                  hintText: "Re-Enter your password here...",
-                  isPassword: true,
-                  validatorFunc: (val) {
-                    if (val!.isEmpty) {
-                      return 'Please enter your repassword';
-                    } else if (val != password.value) {
-                      return 'Passwords doesn\'t match';
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: InkWell(
-                        onTap: onHaveAccount,
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                            vertical: 5,
-                            horizontal: 10,
-                          ),
-                          child: Text(
-                            "Have an account?\nLogin",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: PrimaryButton(
-                        text: "SignUp",
-                        onTap: () async => await register(
-                          context,
-                          name: name.value,
-                          email: email.value,
-                          password: password.value,
-                        ),
-                        validate: () => formKey.currentState!.validate(),
-                      ),
-                    ),
-                  ],
-                ),
-              ]
-                  .map((e) => Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: e,
-                      ))
-                  .toList(),
+      child: Form(
+        key: formKey,
+        autovalidateMode: AutovalidateMode.disabled,
+        child: Column(
+          children: [
+            CustomTextFormField(
+              controller: name,
+              keyboardType: TextInputType.name,
+              labelText: "Name",
+              hintText: "Enter your name here...",
+              isPassword: false,
+              validatorFunc: (val) {
+                if (val!.isEmpty) {
+                  return 'Please enter your name';
+                } else {
+                  return null;
+                }
+              },
             ),
-          ),
+            CustomTextFormField(
+              controller: email,
+              keyboardType: TextInputType.emailAddress,
+              labelText: "Email",
+              hintText: "Enter your email here...",
+              isPassword: false,
+              validatorFunc: (val) {
+                if (val!.isEmpty) {
+                  return 'Please enter your email adress';
+                } else {
+                  return null;
+                }
+              },
+            ),
+            CustomTextFormField(
+              controller: password,
+              keyboardType: TextInputType.visiblePassword,
+              labelText: "Password",
+              hintText: "Enter your password here...",
+              isPassword: true,
+              validatorFunc: (val) {
+                if (val!.isEmpty) {
+                  return 'Please enter your password';
+                } else if (val != repassword.text) {
+                  return 'Passwords doesn\'t match';
+                } else {
+                  return null;
+                }
+              },
+            ),
+            CustomTextFormField(
+              controller: repassword,
+              keyboardType: TextInputType.visiblePassword,
+              labelText: "Confirm Password",
+              hintText: "Re-Enter your password here...",
+              isPassword: true,
+              validatorFunc: (val) {
+                if (val!.isEmpty) {
+                  return 'Please enter your repassword';
+                } else if (val != password.text) {
+                  return 'Passwords doesn\'t match';
+                } else {
+                  return null;
+                }
+              },
+            ),
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: InkWell(
+                    onTap: onHaveAccount,
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 5,
+                        horizontal: 10,
+                      ),
+                      child: Text(
+                        "Have an account?\nLogin",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: PrimaryButton(
+                    text: "SignUp",
+                    onTap: () async => await register(
+                      context,
+                      name: name.text,
+                      email: email.text,
+                      password: password.text,
+                    ),
+                    validate: () => formKey.currentState!.validate(),
+                  ),
+                ),
+              ],
+            ),
+          ]
+              .map((e) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: e,
+                  ))
+              .toList(),
         ),
       ),
     );

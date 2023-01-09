@@ -13,7 +13,7 @@ class ProfileImage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    var image = useState(File(""));
+    var image = useState<File?>(null);
 
     picker(context, ImageSource source) async {
       XFile? photo = await _picker.pickImage(source: source);
@@ -68,14 +68,16 @@ class ProfileImage extends HookWidget {
         decoration: BoxDecoration(
           color: Constants.primaryColor,
           shape: BoxShape.circle,
-          image: DecorationImage(
-            image: FileImage(
-              image.value,
-            ),
-            fit: BoxFit.cover,
-          ),
+          image: image.value == null
+              ? null
+              : DecorationImage(
+                  image: FileImage(
+                    image.value!,
+                  ),
+                  fit: BoxFit.cover,
+                ),
         ),
-        child: image.value.path.isEmpty
+        child: image.value?.path.isEmpty ?? true
             ? const Icon(Icons.person, size: 72, color: Colors.white)
             : const SizedBox(),
       ),

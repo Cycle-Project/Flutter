@@ -8,9 +8,10 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CacheManager {
-  static Future saveSharedPref({required String tag, required String value}) async {
+  static Future saveSharedPref(
+      {required String tag, required String value}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(tag, value);
+    await prefs.setString(tag, value);
   }
 
   static Future<String?> getSharedPref({required String tag}) async {
@@ -20,6 +21,6 @@ class CacheManager {
 
   static Future remove({required String tag}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.remove(tag);
+    await prefs.remove(tag);
   }
 }

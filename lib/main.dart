@@ -22,6 +22,11 @@ class App extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
+        primaryColor: Constants.primaryColor,
+        scaffoldBackgroundColor: Constants.darkBluishGreyColor,
+        primarySwatch: Constants.generateMaterialColor(
+          Constants.bluishGreyColor,
+        ),
       ),
       home: const SplashView(),
       debugShowCheckedModeBanner: false,

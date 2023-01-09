@@ -1,8 +1,9 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:geo_app/Client/Controller/user_controller.dart';
 import 'package:geo_app/Client/Interfaces/ui_result.dart';
 import 'package:geo_app/GPS/location_service.dart';
-import 'package:geo_app/Page/OnboardingPage/on_boarding_page.dart';
 import 'package:geo_app/Page/utilities/dialogs.dart';
 
 mixin EnteranceInteraction {
@@ -24,15 +25,8 @@ mixin EnteranceInteraction {
       showFailDialog(context, registerResult.message);
       return false;
     }
-    await showSuccessDialog(context, registerResult.message);
-
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (_) => OnboardingPage(),
-      ),
-      (r) => r.isFirst,
-    );
+    await showSuccessDialog(context, registerResult.message)
+        .then((_) => _navigateToApp(context));
 
     return true;
   }
