@@ -4,7 +4,7 @@ import 'package:geo_app/Client/Models/Weather/wind_model.dart';
 
 class WeatherBasicModel {
   String? name;
-  WeatherModel? weatherModel;
+  List<WeatherModel>? weatherModel;
   WindModel? windModel;
   MainModel? mainModel;
 
@@ -17,16 +17,28 @@ class WeatherBasicModel {
 
   WeatherBasicModel.fromJson(Map<String, dynamic> json) {
     name = json['name'];
-    weatherModel = json['weather'];
-    windModel = json['windModel'];
-    mainModel = json['mainModel'];
+    if (json['weather'] != null) {
+      weatherModel = <WeatherModel>[];
+      json['weather'].forEach((v) {
+        weatherModel!.add(WeatherModel.fromJson(v));
+      });
+    }
+    windModel = json['wind'] != null ? WindModel.fromJson(json['wind']) : null;
+    mainModel = json['main'] != null ? MainModel.fromJson(json['main']) : null;
   }
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-    'name': name,
-    'weather': weatherModel,
-    'windModel': windModel,
-    'mainModel': mainModel,
-  };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    if (weatherModel != null) {
+      data['weather'] = weatherModel!.map((v) => v.toJson()).toList();
+    }
+    if (windModel != null) {
+      data['wind'] = windModel!.toJson();
+    }
+    if (mainModel != null) {
+      data['main'] = mainModel!.toJson();
+    }
+    return data;
+  }
 }
-

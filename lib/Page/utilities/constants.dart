@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class Constants {
   static const googleApiKey = "AIzaSyA9fb2IaIuN_aEB4Ykqs1SgqyJ2-1SjqUQ";
+  static const openWeatherKey = "1f3413676a6ff7bcae401502cb9cd820";
 
   static const bluishGreyColor = Color(0xFFA7B8B6);
   static const darkBluishGreyColor = Color(0xFF343B3A);

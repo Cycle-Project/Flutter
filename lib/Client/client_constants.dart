@@ -1,8 +1,11 @@
+import 'package:geo_app/Page/utilities/constants.dart';
+
 class ClientConstants {
-  static const String _weatherKey = "1f3413676a6ff7bcae401502cb9cd820";
   static const String baseUrl = "https://cycleon.onrender.com/api";
   static const String _baseUrl = "https://cycleon.onrender.com";
   static const String _url = "$_baseUrl/api";
+  static const String _baseGoogleMapsURL =
+      "https://maps.googleapis.com/maps/api";
   static const Map paths = {
     "users": {
       // POST @body
@@ -40,7 +43,14 @@ class ClientConstants {
       "deletebyid": "$_url/route/deletebyid",
     },
     "weather": {
-      "currentWeather": "https://api.openweathermap.org/data/2.5/weather?lat=10.99&lon=44.34&appid=$_weatherKey",
+      // GET @param key
+      "currentWeather":
+          "https://api.openweathermap.org/data/2.5/weather?lat=10.99&lon=44.34&appid=${Constants.openWeatherKey}",
+    },
+    "googleMaps": {
+      "distanceTwoLocate": "$_baseGoogleMapsURL/distancematrix/json?",
+      "elevation": "$_baseGoogleMapsURL/elevation/json?",
     }
   };
 }
+

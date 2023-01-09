@@ -7,7 +7,6 @@ class WeatherModel {
     this.main,
     this.description,
     this.icon,
-
   });
 
   WeatherModel.fromJson(Map<String, dynamic> json) {
@@ -16,9 +15,11 @@ class WeatherModel {
     icon = json['icon'];
   }
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
-    'main': main,
-    'description': description,
-    'icon': icon,
-  };
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['main'] = main;
+    data['description'] = description;
+    data['icon'] = icon;
+    return data;
+  }
 }
