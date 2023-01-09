@@ -10,32 +10,33 @@ class SplashView extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading = useState(true);
-    final newUser = useState(false);
     checkNewUser() async {
       await Future.delayed(const Duration(seconds: 1));
-      newUser.value =
-          (await CacheManager.getSharedPref(tag: "newUser") ?? "true") ==
-              "true";
-      isLoading.value = false;
+      await CacheManager.getSharedPref(tag: "newUser").then(
+        (value) => Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => (value ?? "true") == "true"
+                ? OnboardingPage()
+                : EnterancePage(),
+          ),
+          (r) => !r.isFirst,
+        ),
+      );
     }
 
     useEffect(() {
       checkNewUser();
       return null;
     }, []);
-    return isLoading.value
-        ? Scaffold(
-            body: Center(
-              child: Transform(
-                alignment: Alignment.center,
-                transform: Matrix4.diagonal3Values(2, 2, 1),
-                child: const EnteranceHeader(showTitle: false),
-              ),
-            ),
-          )
-        : newUser.value
-            ? OnboardingPage()
-            : EnterancePage();
+
+    return Scaffold(
+      body: Center(
+        child: Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.diagonal3Values(2, 2, 1),
+          child: const EnteranceHeader(showTitle: false),
+        ),
+      ),
+    );
   }
 }
