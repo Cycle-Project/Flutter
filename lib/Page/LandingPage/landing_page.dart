@@ -1,26 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:geo_app/Client/Manager/cache_manager.dart';
 import 'package:geo_app/Page/LandingPage/Pages/community_page.dart';
 import 'package:geo_app/Page/LandingPage/Pages/home_page.dart';
 import 'package:geo_app/Page/LandingPage/Pages/profile_page.dart';
 import 'package:geo_app/Page/LandingPage/home_page_with_bootom_appbar.dart';
+import 'package:geo_app/Page/LandingPage/landing_page_interactions.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
-import 'package:geo_app/Page/utilities/dialogs.dart';
 
-class LandingPage extends StatelessWidget {
-  const LandingPage({Key? key}) : super(key: key);
+class LandingPage extends StatelessWidget with LandingPageInteractions {
+  LandingPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        if (await showQuestionDialog(context, "Dou you want to exit?")) {
-          await CacheManager.remove(tag: "user_id");
-          await CacheManager.remove(tag: "user_token");
-          return true;
-        }
-        return false;
-      },
+      onWillPop: () => exitFromApp(context),
       child: HomePageWithBottomAppBar(
         pages: [
           HomePage(),

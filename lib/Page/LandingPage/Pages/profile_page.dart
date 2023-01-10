@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/Client/Manager/cache_manager.dart';
 import 'package:geo_app/Client/Models/User/user_model.dart';
 import 'package:geo_app/Page/LandingPage/Profile/components/profile_widget.dart';
 import 'package:geo_app/Page/LandingPage/Profile/profile_favorites.dart';
+import 'package:geo_app/Page/LandingPage/Profile/profile_friends.dart';
 import 'package:geo_app/Page/LandingPage/Profile/profile_qr.dart';
 import 'package:geo_app/Page/LandingPage/Profile/profile_routes.dart';
 import 'package:geo_app/Page/LandingPage/Profile/topbar.dart';
 import 'package:geo_app/Page/LandingPage/landing_page_interactions.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
-import 'package:geo_app/Page/utilities/dialogs.dart';
 
 class ProfilePage extends HookWidget with LandingPageInteractions {
   ProfilePage({Key? key}) : super(key: key);
@@ -82,11 +81,7 @@ class ProfilePage extends HookWidget with LandingPageInteractions {
             child: Column(
               children: [
                 ProfileQR(userid: user.value?.id ?? "-1"),
-                ProfileWidget(
-                  name: "Friends",
-                  prefixIcon: Icons.group,
-                  onTap: () {},
-                ),
+                ProfileFriends(),
               ],
             ),
           ),
@@ -102,11 +97,7 @@ class ProfilePage extends HookWidget with LandingPageInteractions {
               color: Colors.red,
               prefixIcon: Icons.logout_rounded,
               onTap: () async {
-                if (await showQuestionDialog(
-                    context, "Dou you want to exit?")) {
-                  await CacheManager.remove(tag: "user_id");
-                  await CacheManager.remove(tag: "user_token");
-                  // ignore: use_build_context_synchronously
+                if (await exitFromApp(context)) {
                   Navigator.pop(context);
                 }
               },

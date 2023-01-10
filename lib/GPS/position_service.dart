@@ -30,7 +30,7 @@ class PositionService extends HookWidget {
         ChangeNotifierProvider(create: (_) => planProvider),
         ChangeNotifierProvider(create: (_) => recordProvider),
       ],
-      child: const LandingPage(),
+      child: LandingPage(),
     );
   }
 }

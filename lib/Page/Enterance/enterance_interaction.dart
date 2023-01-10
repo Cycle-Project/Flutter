@@ -9,6 +9,10 @@ import 'package:geo_app/Page/utilities/dialogs.dart';
 mixin EnteranceInteraction {
   final UserController _userController = UserController();
 
+  dispose() {
+    _userController.dispose();
+  }
+
   Future<bool> register(
     context, {
     required String name,

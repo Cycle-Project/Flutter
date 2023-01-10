@@ -10,11 +10,16 @@ import 'package:geo_app/Client/client_constants.dart';
 
 class UserController with IUser {
   late Client _client;
-  late Map _requestMap;
+  late Map requestMap;
 
   UserController() {
     _client = Client();
-    _requestMap = ClientConstants.paths["users"];
+    requestMap = ClientConstants.paths["users"];
+  }
+
+  dispose() {
+    _client.dispose();
+    requestMap = {};
   }
 
   ///MARK: SharedPref User
@@ -36,7 +41,7 @@ class UserController with IUser {
       }
 
       final response = await _client.postMethod(
-        _requestMap["login"],
+        requestMap["login"],
         value: map,
       );
       if (response == null) {
@@ -66,7 +71,7 @@ class UserController with IUser {
   Future<UIResult> register(map) async {
     try {
       final response = await _client.postMethod(
-        _requestMap["register"],
+        requestMap["register"],
         value: map,
       );
       if (response == null) {
@@ -105,7 +110,7 @@ class UserController with IUser {
   Future<UIResult> login(map) async {
     try {
       final response = await _client.postMethod(
-        _requestMap["login"],
+        requestMap["login"],
         value: map,
       );
       if (response == null) {
@@ -148,7 +153,7 @@ class UserController with IUser {
     try {
       //final response = await dio.get("https://cycleon.onrender.com/api/users/list");
       final response = await _client.getMethod(
-        _requestMap["list"],
+        requestMap["list"],
         token: token,
       );
       if (response == null) {
@@ -170,7 +175,7 @@ class UserController with IUser {
   Future<UserModel> getById({required id, required token}) async {
     try {
       final response = await _client.getMethod(
-        "${_requestMap["getbyid"]}/$id",
+        "${requestMap["getbyid"]}/$id",
         token: token,
       );
       if (response == null) {
@@ -191,7 +196,7 @@ class UserController with IUser {
   }) async {
     try {
       final response = await _client.putMethod(
-        "${_requestMap["update"]}/$id",
+        "${requestMap["update"]}/$id",
         value: map,
         token: token,
       );
@@ -212,7 +217,7 @@ class UserController with IUser {
   }) async {
     try {
       final response = await _client.deleteMethod(
-        "${_requestMap["deletebyid"]}/$id",
+        "${requestMap["deletebyid"]}/$id",
         token: token,
       );
       if (response == null) {
@@ -221,6 +226,69 @@ class UserController with IUser {
       return true;
     } catch (e) {
       print("Error at -> getById: $e");
+    }
+    return false;
+  }
+
+  @override
+  Future<UserModel> addFriend({
+    required String id,
+    required String friendId,
+    required String token,
+  }) async {
+    try {
+      final response = await _client.putMethod(
+        "${requestMap["add-friend"]}/$id",
+        token: token,
+        value: {"friendId": friendId},
+      );
+      if (response == null) {
+        throw Exception("An Error Occured!");
+      }
+      return UserModel.fromJson(response.data);
+    } catch (e) {
+      print("Error at -> addFriend: $e");
+    }
+    return UserModel();
+  }
+
+  @override
+  Future<List<UserModel>> getFriends({
+    required String id,
+    required String token,
+  }) async {
+    try {
+      final response = await _client.getMethod(
+        "${requestMap["get-friends"]}/$id",
+        token: token,
+      );
+      if (response == null) {
+        throw Exception("An Error Occured!");
+      }
+      return response.data.map((e) => UserModel.fromJson(e)).toList();
+    } catch (e) {
+      print("Error at -> getFriends: $e");
+    }
+    return [];
+  }
+
+  @override
+  Future<bool> removeFriend({
+    required String id,
+    required String friendId,
+    required String token,
+  }) async {
+    try {
+      final response = await _client.deleteMethod(
+        "${requestMap["remove-friend"]}/$id/$friendId",
+        token: token,
+      );
+      if (response == null) {
+        throw Exception("An Error Occured!");
+      }
+      return true;
+    } catch (e) {
+      print("Error at -> getFriends: $e");
     }
     return false;
   }
