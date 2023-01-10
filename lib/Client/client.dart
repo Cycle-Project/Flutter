@@ -10,6 +10,10 @@ import 'package:dio/dio.dart';
 class Client {
   final dio = Dio();
 
+  dispose() {
+    dio.close();
+  }
+
   ///MARK: GENERIC GET
   Future getMethod(String path, {String? token}) async {
     final response = await dio.get(

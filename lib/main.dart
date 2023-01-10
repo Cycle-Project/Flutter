@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
-import 'package:geo_app/Splash/splash_view.dart';
+import 'package:geo_app/Page/Splash/splash_view.dart';
 
 main() {
   runApp(const App());

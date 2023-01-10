@@ -22,8 +22,23 @@ mixin IUser {
     required String id,
     required String token,
   });
+  Future<List<UserModel>> getFriends({
+    required String id,
+    required String token,
+  });
+  Future<UserModel> addFriend({
+    required String id,
+    required String friendId,
+    required String token,
+  });
+  Future<bool> removeFriend({
+    required String id,
+    required String friendId,
+    required String token,
+  });
 }
 
 mixin IWeather {
-  Future<WeatherBasicModel> getWeatherByLatLang({required double lat, required double lang});
+  Future<WeatherBasicModel> getWeatherByLatLang(
+      {required double lat, required double lang});
 }
