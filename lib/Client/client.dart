@@ -15,7 +15,7 @@ class Client {
   }
 
   ///MARK: GENERIC GET
-  Future getMethod(String path, {String? token}) async {
+  Future<Response?> getMethod(String path, {String? token}) async {
     final response = await dio.get(
       path,
       options:
@@ -30,7 +30,7 @@ class Client {
   }
 
   ///MARK: GENERIC POST
-  Future postMethod(
+  Future<Response?> postMethod(
     String path, {
     required Map value,
     String? token,
@@ -51,7 +51,7 @@ class Client {
   }
 
   ///MARK: GENERIC PUT
-  Future putMethod(
+  Future<Response?> putMethod(
     String path, {
     required Map value,
     String? token,
@@ -73,7 +73,7 @@ class Client {
   }
 
   ///MARK: GENERIC DELETE
-  Future deleteMethod(String path, {String? token}) async {
+  Future<Response?> deleteMethod(String path, {String? token}) async {
     final response = await dio.delete(
       path,
       options:

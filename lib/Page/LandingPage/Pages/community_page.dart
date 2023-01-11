@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geo_app/Client/Models/User/user_model.dart';
 import 'package:geo_app/Page/LandingPage/Community/group_card.dart';
 import 'package:geo_app/Page/LandingPage/Discover/discover_page.dart';
+import 'package:geo_app/Page/LandingPage/Profile/components/search_user_card.dart';
+import 'package:geo_app/Page/LandingPage/landing_page_interactions.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
+import 'package:geo_app/Page/utilities/dialogs.dart';
+import 'package:geo_app/WebSocket/friends_controller.dart';
+import 'package:provider/provider.dart';
 
-class CommunityPage extends HookWidget {
-  const CommunityPage({
+class CommunityPage extends HookWidget with LandingPageInteractions {
+  CommunityPage({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final friendsController = Provider.of<FriendsController>(context);
     final list = useState<List?>(null);
     final activeIndex = useState(0);
 
@@ -99,11 +106,23 @@ class CommunityPage extends HookWidget {
                       children: [
                         const Spacer(),
                         InkWell(
-                          onTap: () => showGeneralDialog(
-                            context: context,
-                            pageBuilder: (context, _, __) => Scaffold(
-                              appBar: AppBar(
-                                title: const Text("Search"),
+                          onTap: () async => await getUsers(context, true).then(
+                            (value) async => await showModalBottomSheet(
+                              context: context,
+                              backgroundColor: Constants.darkBluishGreyColor,
+                              isScrollControlled: true,
+                              builder: (_) => MultiProvider(
+                                providers: [
+                                  ChangeNotifierProvider.value(
+                                    value: friendsController,
+                                  ),
+                                ],
+                                child: CustomSearchDialog<UserModel>(
+                                  items: value ?? [],
+                                  itemBuilder: (_, user) =>
+                                      SearchUserCard(user: user),
+                                  contains: (user) => user.name ?? "",
+                                ),
                               ),
                             ),
                           ),

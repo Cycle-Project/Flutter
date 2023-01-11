@@ -6,6 +6,7 @@ import 'package:geo_app/Page/LandingPage/landing_page.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/record_route_provider.dart';
+import 'package:geo_app/WebSocket/friends_controller.dart';
 import 'package:provider/provider.dart';
 
 class PositionService extends HookWidget {
@@ -16,6 +17,7 @@ class PositionService extends HookWidget {
     final mapsProvider = MapsProvider();
     final planProvider = PlanRouteProvider(mapsProvider: mapsProvider);
     final recordProvider = RecordRouteProvider(mapsProvider: mapsProvider);
+    final friendsController = FriendsController();
 
     useEffect(() {
       final subscription = mapsProvider.listenLocation();
@@ -29,6 +31,7 @@ class PositionService extends HookWidget {
         ChangeNotifierProvider(create: (_) => mapsProvider),
         ChangeNotifierProvider(create: (_) => planProvider),
         ChangeNotifierProvider(create: (_) => recordProvider),
+        ChangeNotifierProvider(create: (_) => friendsController),
       ],
       child: LandingPage(),
     );
