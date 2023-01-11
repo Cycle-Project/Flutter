@@ -54,7 +54,7 @@ class ClientConstants {
     "weather": {
       // GET @param key
       "currentWeather":
-          "https://api.openweathermap.org/data/2.5/weather?lat=10.99&lon=44.34&appid=${Constants.openWeatherKey}",
+          "https://api.openweathermap.org/data/2.5/weather?",
     },
     "googleMaps": {
       "distanceTwoLocate": "$_baseGoogleMapsURL/distancematrix/json?",

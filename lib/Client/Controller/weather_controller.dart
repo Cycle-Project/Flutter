@@ -2,6 +2,7 @@ import 'package:geo_app/Client/Interfaces/user_interface.dart';
 import 'package:geo_app/Client/Models/Weather/weather_basic_model.dart';
 import 'package:geo_app/Client/client.dart';
 import 'package:geo_app/Client/client_constants.dart';
+import 'package:geo_app/Page/utilities/constants.dart';
 
 class WeatherController with IWeather {
   late Client _client;
@@ -16,7 +17,7 @@ class WeatherController with IWeather {
   Future<WeatherBasicModel> getWeatherByLatLang({required double lat, required double lang}) async {
     try {
       final response = await _client.getMethod(
-        _requestMap["currentWeather"],
+        _requestMap["currentWeather"] + "lat=$lat&lon=$lang&appid=${Constants.openWeatherKey}",
       );
       if (response == null) {
         throw Exception("Responded as NULL");

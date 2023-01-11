@@ -18,7 +18,7 @@ class PlanRouteProvider extends MapAction {
     mapsProvider.mapAction = this;
 
     notifyListeners();
-    //await getPolyPoints();
+    await getPolyPoints();
   }
 
   setDestination({bool isPinned = false, PositionModel? newDestination}) async {
@@ -33,7 +33,7 @@ class PlanRouteProvider extends MapAction {
     mapsProvider.mapAction = this;
 
     notifyListeners();
-    //await getPolyPoints();
+    await getPolyPoints();
   }
 
   @override
