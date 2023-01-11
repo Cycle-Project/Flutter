@@ -1,5 +1,5 @@
 mixin IFriends {
-  createSocket({String? url});
+  createSocket();
   disconnect();
   sendFriendRequest({
     required String id,

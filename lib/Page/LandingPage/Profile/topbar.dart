@@ -6,8 +6,10 @@ class TopBar extends StatelessWidget {
   const TopBar({
     Key? key,
     required this.username,
+    this.child,
   }) : super(key: key);
   final String username;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +43,7 @@ class TopBar extends StatelessWidget {
               ],
             ),
           ),
+          if (child != null) child!,
         ],
       ),
     );

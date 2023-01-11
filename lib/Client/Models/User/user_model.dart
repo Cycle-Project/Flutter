@@ -11,6 +11,7 @@ class UserModel {
   String? email;
   String? password;
   String? token;
+  List<String>? friends;
 
   UserModel({
     this.name,
@@ -18,6 +19,7 @@ class UserModel {
     this.id,
     this.password,
     this.token,
+    this.friends,
   });
 
   UserModel.fromJson(Map<String, dynamic> json) {
@@ -26,13 +28,15 @@ class UserModel {
     email = json['email'];
     password = json['password'];
     token = json['token'];
+    friends = (json['friends'] as List?)?.cast<String>() ?? [];
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-    '_id': id,
-    'name': name,
-    'email': email,
-    'password': password,
-    'token': token,
-  };
+        '_id': id,
+        'name': name,
+        'email': email,
+        'password': password,
+        'token': token,
+        'friends': friends,
+      };
 }

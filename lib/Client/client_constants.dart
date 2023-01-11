@@ -1,9 +1,8 @@
 import 'package:geo_app/Page/utilities/constants.dart';
 
 class ClientConstants {
-  static const String baseUrl = "https://cycleon.onrender.com/api";
-  static const String _baseUrl = "https://cycleon.onrender.com";
-  static const String url = "$_baseUrl/api";
+  static const String baseUrl = "https://cycleon.onrender.com";
+  static const String url = "$baseUrl/api";
   static const String _baseGoogleMapsURL =
       "https://maps.googleapis.com/maps/api";
   static const Map paths = {
@@ -28,9 +27,6 @@ class ClientConstants {
 
       // GET @param id
       "get-friends": "$url/users/get-friends",
-
-      // PUT @param id @body(friend_id)
-      "add-friend": "$url/users/add-friend",
 
       // DELETE @param id  @param fid
       "remove-friend": "$url/users/remove-friend",
@@ -62,4 +58,3 @@ class ClientConstants {
     }
   };
 }
-

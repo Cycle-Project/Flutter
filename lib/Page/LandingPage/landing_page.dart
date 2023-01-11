@@ -16,7 +16,7 @@ class LandingPage extends StatelessWidget with LandingPageInteractions {
       child: HomePageWithBottomAppBar(
         pages: [
           HomePage(),
-          const CommunityPage(),
+          CommunityPage(),
           ProfilePage(),
         ],
         icons: const [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geo_app/Page/utilities/constants.dart';
 
 class UserActionCard extends StatelessWidget {
   const UserActionCard({
@@ -26,6 +27,14 @@ class UserActionCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: color,
+          boxShadow: [
+            BoxShadow(
+              color: Constants.generateMaterialColor(color).shade400,
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: const Offset(0, 3),
+            )
+          ],
         ),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         margin: const EdgeInsets.only(top: 8, right: 8, left: 8),

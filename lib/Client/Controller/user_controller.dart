@@ -39,12 +39,15 @@ class UserController with IUser {
       } else {
         throw Exception("An Error Occured!");
       }
+      if (map.isEmpty) {
+        throw Exception("An Error Occured!");
+      }
 
       final response = await _client.postMethod(
         requestMap["login"],
         value: map,
       );
-      if (response == null) {
+      if (response == null || response.data == null) {
         throw Exception("An Error Occured!");
       }
       UserModel user = UserModel.fromJson(response.data);
@@ -231,28 +234,6 @@ class UserController with IUser {
   }
 
   @override
-  Future<UserModel> addFriend({
-    required String id,
-    required String friendId,
-    required String token,
-  }) async {
-    try {
-      final response = await _client.putMethod(
-        "${requestMap["add-friend"]}/$id",
-        token: token,
-        value: {"friendId": friendId},
-      );
-      if (response == null) {
-        throw Exception("An Error Occured!");
-      }
-      return UserModel.fromJson(response.data);
-    } catch (e) {
-      print("Error at -> addFriend: $e");
-    }
-    return UserModel();
-  }
-
-  @override
   Future<List<UserModel>> getFriends({
     required String id,
     required String token,
@@ -265,7 +246,9 @@ class UserController with IUser {
       if (response == null) {
         throw Exception("An Error Occured!");
       }
-      return response.data.map((e) => UserModel.fromJson(e)).toList();
+      return (response.data['data'] as List)
+          .map((e) => UserModel.fromJson(e))
+          .toList();
     } catch (e) {
       print("Error at -> getFriends: $e");
     }
@@ -288,7 +271,7 @@ class UserController with IUser {
       }
       return true;
     } catch (e) {
-      print("Error at -> getFriends: $e");
+      print("Error at -> removeFriend: $e");
     }
     return false;
   }

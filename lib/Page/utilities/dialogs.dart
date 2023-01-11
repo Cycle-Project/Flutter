@@ -191,3 +191,87 @@ Future<bool> showQuestionDialog(context, question) async => await showDialog(
         ],
       ),
     );
+
+class CustomSearchDialog<T> extends HookWidget {
+  const CustomSearchDialog({
+    super.key,
+    required this.items,
+    required this.itemBuilder,
+    required this.contains,
+  });
+
+  final List<T> items;
+  final Widget Function(BuildContext, T) itemBuilder;
+  final String Function(T) contains;
+
+  @override
+  Widget build(BuildContext context) {
+    final list = useState(items);
+    final searchController = useTextEditingController();
+
+    useValueChanged(
+      searchController.text,
+      (oldValue, oldResult) {
+        list.value = [];
+        for (T item in items) {
+          String ccase = contains(item).replaceAll(' ', '').toLowerCase();
+          String search =
+              searchController.text.replaceAll(' ', '').toLowerCase();
+          if (ccase.contains(search) || searchController.text.trim() == "") {
+            list.value.add(item);
+          }
+        }
+        return "";
+      },
+    );
+    useEffect(() {
+      searchController.text = "";
+      return null;
+    }, []);
+    return ListView(
+      children: [
+        const SizedBox(height: 40),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white.withOpacity(.2),
+                ),
+                margin: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(8),
+                child: TextFormField(
+                  controller: searchController,
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                  decoration: const InputDecoration(
+                    prefixIcon: Icon(Icons.search, color: Colors.white),
+                    border: InputBorder.none,
+                    hintText: "Search",
+                    hintStyle: TextStyle(color: Colors.white60),
+                  ),
+                ),
+              ),
+            ),
+            InkWell(
+              onTap: () => Navigator.of(context).pop(),
+              child: const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Cancel",
+                  style: TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              ),
+            ),
+          ],
+        ),
+        ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          shrinkWrap: true,
+          itemCount: list.value.length,
+          itemBuilder: (context, i) => itemBuilder(context, list.value[i]),
+        ),
+      ],
+    );
+  }
+}

@@ -1,21 +1,19 @@
+import 'package:flutter/material.dart';
 import 'package:geo_app/Client/Controller/user_controller.dart';
 import 'package:geo_app/Client/Manager/cache_manager.dart';
 import 'package:geo_app/Client/Models/User/user_model.dart';
+import 'package:geo_app/Page/Enterance/enterance_page.dart';
 import 'package:geo_app/Page/utilities/dialogs.dart';
-import 'package:geo_app/WebSocket/friends_controller.dart';
 
 mixin LandingPageInteractions {
   final UserController _userController = UserController();
-  final FriendsController friendsController = FriendsController();
 
   dispose() {
-    friendsController.disconnect();
-    friendsController.dispose();
     _userController.dispose();
   }
 
-  Future<UserModel?> getUserById(context) async {
-    String? id = await CacheManager.getSharedPref(tag: "user_id");
+  Future<UserModel?> getUserById(context, {String? userId}) async {
+    String? id = userId ?? await CacheManager.getSharedPref(tag: "user_id");
     String? token = await CacheManager.getSharedPref(tag: "user_token");
     if (id == null || token == null) {
       return null;
@@ -23,14 +21,36 @@ mixin LandingPageInteractions {
     return await _userController.getById(id: id, token: token);
   }
 
+  Future<List<UserModel>?> getUsers(context, bool withoutCurrent) async {
+    String? token = await CacheManager.getSharedPref(tag: "user_token");
+    if (token == null) {
+      return null;
+    }
+    List<UserModel>? users = await _userController.getUsers(token: token);
+    if (withoutCurrent) {
+      UserModel? current = await getUserById(context);
+      users.removeWhere((e) => e.id == current!.id);
+    }
+    return users;
+  }
+
   exitFromApp(context) async {
     if (await showQuestionDialog(context, "Dou you want to exit?")) {
       await CacheManager.remove(tag: "user_id");
       await CacheManager.remove(tag: "user_token");
       dispose();
-      return true;
+      _navigateToEnterence(context);
     }
-    return false;
+  }
+
+  _navigateToEnterence(context) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => EnterancePage(),
+      ),
+      (r) => r.isFirst,
+    );
   }
 
   Future<List<UserModel>?> getFriends() async {
@@ -42,30 +62,19 @@ mixin LandingPageInteractions {
     return await _userController.getFriends(id: id, token: token);
   }
 
-  Future<UserModel?> addFriend(String friendId) async {
+  Future removeFriend(context, String friendId) async {
     String? id = await CacheManager.getSharedPref(tag: "user_id");
     String? token = await CacheManager.getSharedPref(tag: "user_token");
     if (id == null || token == null) {
-      return null;
+      return;
     }
-    return await _userController.addFriend(
-      id: id,
-      friendId: friendId,
-      token: token,
-    );
-  }
-
-  Future<bool> removeFriend(String friendId) async {
-    String? id = await CacheManager.getSharedPref(tag: "user_id");
-    String? token = await CacheManager.getSharedPref(tag: "user_token");
-    if (id == null || token == null) {
-      return false;
+    bool isSure = await showQuestionDialog(context, "Are you sure?");
+    if (isSure) {
+      await _userController.removeFriend(
+        id: id,
+        friendId: friendId,
+        token: token,
+      );
     }
-    await _userController.removeFriend(
-      id: id,
-      friendId: friendId,
-      token: token,
-    );
-    return true;
   }
 }
