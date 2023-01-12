@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Client/Controller/route_controller.dart';
+import 'package:geo_app/Client/Models/Route/position.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/Components/plan_route_elevation.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/Components/plan_route_speed_time_component.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/Components/plan_route_weather_container.dart';
@@ -29,6 +30,8 @@ class PlanRouteCustomDialog extends HookWidget {
       ),
       content: Column(
         children: [
+          Text(
+              "PolylineCoordinates => ${mapsProvider.polylineCoordinates.length}"),
           SpeedTimeContainer(
             mapsProvider: mapsProvider,
             provider: provider,
@@ -41,6 +44,7 @@ class PlanRouteCustomDialog extends HookWidget {
             mapsProvider: mapsProvider,
             provider: provider,
           ),
+
           /*Text(
               "Destination Elevation: ${destinationElevation.elevationList!.first.elevation}"),
           Text(
@@ -58,14 +62,8 @@ class PlanRouteCustomDialog extends HookWidget {
           onPressed: () async {
             String? userToken = applicationUserModel.token;
             _routeController.createRoute({
-              "positions": [
-                {
-                  "latitude": "123123",
-                  "longitude": "123123",
-                  "altitude": "123123",
-                  "city": "lşsks"
-                }
-              ],
+              "positions": mapsProvider.polylineCoordinates
+                  .map((e) => Position.fromLatLng(e)),
               "userMadeId": "63b17cb6e0fec3e19def2359"
             }, token: userToken!);
           },
