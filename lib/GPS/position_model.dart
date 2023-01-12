@@ -1,3 +1,4 @@
+/*
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
@@ -5,23 +6,28 @@ class PositionModel {
   double? latitude;
   double? longitude;
   double? altitude;
+  String? city;
 
   PositionModel({
     this.latitude = 0,
     this.longitude = 0,
     this.altitude = 0,
+    this.city = "",
   });
 
   PositionModel.fromJson(Map<String, dynamic> json) {
     latitude = json['latitude'];
     longitude = json['longitude'];
     altitude = json['altitude'];
+    city = json['city'];
   }
+
   PositionModel.fromLocationData(LocationData locationData) {
     latitude = locationData.latitude;
     longitude = locationData.longitude;
     altitude = locationData.altitude;
   }
+
   PositionModel.fromLatLng(LatLng latLng) {
     latitude = latLng.latitude;
     longitude = latLng.longitude;
@@ -49,6 +55,7 @@ class PositionModel {
       "latitude": latitude,
       "longitude": longitude,
       "altitude": altitude,
+      "city": city,
     };
   }
 
@@ -57,3 +64,4 @@ class PositionModel {
     ..longitude = locationData.longitude
     ..altitude = locationData.altitude;
 }
+*/

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:geo_app/Client/Manager/cache_manager.dart';
 import 'package:geo_app/Client/client_constants.dart';
 import 'package:geo_app/WebSocket/friends_interface.dart';
+import 'package:geo_app/main.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
 class FriendRequests {
@@ -41,7 +41,7 @@ class FriendsController extends ChangeNotifier with IFriends {
 
   @override
   createSocket() async {
-    String? token = await CacheManager.getSharedPref(tag: "user_token");
+    String? token = applicationUserModel.token;
     // Initialize socket
     //'http://localhost:3000'
     //ClientConstants.baseUrl

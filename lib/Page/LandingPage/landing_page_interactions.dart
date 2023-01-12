@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geo_app/Client/Controller/user_controller.dart';
-import 'package:geo_app/Client/Manager/cache_manager.dart';
 import 'package:geo_app/Client/Models/User/user_model.dart';
 import 'package:geo_app/Page/Enterance/enterance_page.dart';
 import 'package:geo_app/Page/utilities/dialogs.dart';
+import 'package:geo_app/main.dart';
 
 mixin LandingPageInteractions {
   final UserController _userController = UserController();
@@ -12,32 +12,29 @@ mixin LandingPageInteractions {
     _userController.dispose();
   }
 
-  Future<UserModel?> getUserById(context, {String? userId}) async {
-    String? id = userId ?? await CacheManager.getSharedPref(tag: "user_id");
-    String? token = await CacheManager.getSharedPref(tag: "user_token");
-    if (id == null || token == null) {
+  Future<UserModel?> getUserById(context, {required  String userId}) async {
+    String? id = userId;
+    String? token = applicationUserModel.token;
+    if (token == null) {
       return null;
     }
     return await _userController.getById(id: id, token: token);
   }
 
   Future<List<UserModel>?> getUsers(context, bool withoutCurrent) async {
-    String? token = await CacheManager.getSharedPref(tag: "user_token");
+    String? token = applicationUserModel.token;
     if (token == null) {
       return null;
     }
     List<UserModel>? users = await _userController.getUsers(token: token);
     if (withoutCurrent) {
-      UserModel? current = await getUserById(context);
-      users.removeWhere((e) => e.id == current!.id);
+      users.removeWhere((e) => e.id == applicationUserModel.id);
     }
     return users;
   }
 
   exitFromApp(context) async {
     if (await showQuestionDialog(context, "Dou you want to exit?")) {
-      await CacheManager.remove(tag: "user_id");
-      await CacheManager.remove(tag: "user_token");
       dispose();
       _navigateToEnterence(context);
     }
@@ -54,8 +51,8 @@ mixin LandingPageInteractions {
   }
 
   Future<List<UserModel>?> getFriends() async {
-    String? id = await CacheManager.getSharedPref(tag: "user_id");
-    String? token = await CacheManager.getSharedPref(tag: "user_token");
+    String? id = applicationUserModel.id;
+    String? token = applicationUserModel.token;
     if (id == null || token == null) {
       return null;
     }
@@ -63,8 +60,8 @@ mixin LandingPageInteractions {
   }
 
   Future removeFriend(context, String friendId) async {
-    String? id = await CacheManager.getSharedPref(tag: "user_id");
-    String? token = await CacheManager.getSharedPref(tag: "user_token");
+    String? id = applicationUserModel.id;
+    String? token = applicationUserModel.token;
     if (id == null || token == null) {
       return;
     }

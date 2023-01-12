@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/GPS/position_model.dart';
+import 'package:geo_app/Client/Models/Route/position.dart';
 import 'package:geo_app/Page/LandingPage/map/map_widget.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
@@ -22,7 +22,7 @@ class LocationDialog extends HookWidget {
     final textSearchController = useTextEditingController();
     final isSearching = useState(true);
 
-    setLocationSelected({bool isPinned = false, PositionModel? location}) {
+    setLocationSelected({bool isPinned = false, Position? location}) {
       switch (index) {
         case 1:
           planProvider.setSource(
@@ -45,7 +45,7 @@ class LocationDialog extends HookWidget {
     bool onTapMap(LatLng latLng) {
       setLocationSelected(
         isPinned: false,
-        location: PositionModel.fromLatLng(latLng),
+        location: Position.fromLatLng(latLng),
       );
       return false;
     }
@@ -113,7 +113,7 @@ class LocationDialog extends HookWidget {
                 _SearchListItem(
                   onTap: () => setLocationSelected(
                     isPinned: true,
-                    location: PositionModel.fromLocationData(
+                    location: Position.fromLocationData(
                       mapsProvider.currentLocation!,
                     ),
                   ),

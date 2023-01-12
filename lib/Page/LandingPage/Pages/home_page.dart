@@ -7,6 +7,7 @@ import 'package:geo_app/Page/LandingPage/UserActions/user_actions.dart';
 import 'package:geo_app/Page/LandingPage/UserActions/user_progress.dart';
 import 'package:geo_app/Page/LandingPage/landing_page_appbar.dart';
 import 'package:geo_app/Page/LandingPage/landing_page_interactions.dart';
+import 'package:geo_app/main.dart';
 
 class HomePage extends HookWidget with LandingPageInteractions {
   HomePage({super.key});
@@ -17,7 +18,7 @@ class HomePage extends HookWidget with LandingPageInteractions {
     final user = useState<UserModel?>(null);
 
     useMemoized(() {
-      Future.microtask(() async => user.value = await getUserById(context));
+      user.value = applicationUserModel;
       return null;
     }, []);
 

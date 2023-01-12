@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/Client/Models/GoogleMaps/Elevation/basic_elevation_model.dart';
+import 'package:geo_app/Client/Controller/route_controller.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/Components/plan_route_elevation.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/Components/plan_route_speed_time_component.dart';
-import 'package:geo_app/Page/LandingPage/map/Plan/Components/ViewModel/plan_route_view_model_googlemaps.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/Components/plan_route_weather_container.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
-import 'package:geo_app/components/line_graph.dart';
+import 'package:geo_app/main.dart';
 
 class PlanRouteCustomDialog extends HookWidget {
   final MapsProvider mapsProvider;
   final PlanRouteProvider provider;
 
-  const PlanRouteCustomDialog({
+  PlanRouteCustomDialog({
     Key? key,
     required this.mapsProvider,
     required this.provider,
   }) : super(key: key);
+
+  RouteController _routeController = RouteController();
 
   @override
   build(BuildContext context) {
@@ -54,7 +55,20 @@ class PlanRouteCustomDialog extends HookWidget {
       ),
       actions: [
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () async {
+            String? userToken = applicationUserModel.token;
+            _routeController.createRoute({
+              "positions": [
+                {
+                  "latitude": "123123",
+                  "longitude": "123123",
+                  "altitude": "123123",
+                  "city": "lşsks"
+                }
+              ],
+              "userMadeId": "63b17cb6e0fec3e19def2359"
+            }, token: userToken!);
+          },
           child: const Text("Save"),
         ),
       ],

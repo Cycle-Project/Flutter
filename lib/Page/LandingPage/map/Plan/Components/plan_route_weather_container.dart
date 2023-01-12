@@ -3,7 +3,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/Components/ViewModel/plan_route_view_model_weather.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
-import 'package:lottie/lottie.dart';
 
 class WeatherContainer extends HookWidget {
   final MapsProvider mapsProvider;

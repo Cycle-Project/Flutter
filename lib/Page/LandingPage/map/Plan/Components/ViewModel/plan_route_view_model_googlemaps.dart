@@ -6,7 +6,6 @@ import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
 import 'package:geo_app/components/line_graph.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 
 class PlanRouteViewModelGoogleMaps {
   late GoogleMapsController googleMapsController;

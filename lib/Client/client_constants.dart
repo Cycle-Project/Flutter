@@ -1,4 +1,3 @@
-import 'package:geo_app/Page/utilities/constants.dart';
 
 class ClientConstants {
   static const String baseUrl = "https://cycleon.onrender.com";

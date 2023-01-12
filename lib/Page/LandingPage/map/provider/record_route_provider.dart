@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:geo_app/GPS/position_model.dart';
+import 'package:geo_app/Client/Models/Route/position.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_act.dart';
 import 'package:location/location.dart';
 
@@ -22,7 +22,7 @@ class RecordRouteProvider extends MapAction {
       mapsProvider.polylineCoordinates = [];
     } else {
       mapsProvider.mapAction = this;
-      source = destination = PositionModel.fromLocationData(
+      source = destination = Position.fromLocationData(
         mapsProvider.currentLocation!,
       );
     }
@@ -42,7 +42,7 @@ class RecordRouteProvider extends MapAction {
   @override
   onLocationChanged(LocationData? currentLocation) async {
     if (record) {
-      destination = PositionModel.fromLocationData(currentLocation!);
+      destination = Position.fromLocationData(currentLocation!);
       // TODO : send destination to service
       await getPolyPoints();
     }

@@ -6,6 +6,7 @@ import 'package:geo_app/Page/LandingPage/landing_page_interactions.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 import 'package:geo_app/WebSocket/friends_controller.dart';
 import 'package:geo_app/components/header.dart';
+import 'package:geo_app/main.dart';
 import 'package:provider/provider.dart';
 
 class LandingPageAppBar extends HookWidget {
@@ -83,8 +84,8 @@ class NotificationsDialog extends HookWidget with LandingPageInteractions {
           friendList.value.add(user);
         }
         // ignore: use_build_context_synchronously
-        currentUser.value = await getUserById(context);
       });
+      currentUser.value = applicationUserModel;
       return null;
     }, [friendsController.friendRequests]);
 

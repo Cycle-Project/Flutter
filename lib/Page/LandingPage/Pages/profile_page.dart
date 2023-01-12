@@ -10,6 +10,7 @@ import 'package:geo_app/Page/LandingPage/Profile/profile_routes.dart';
 import 'package:geo_app/Page/LandingPage/Profile/topbar.dart';
 import 'package:geo_app/Page/LandingPage/landing_page_interactions.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
+import 'package:geo_app/main.dart';
 
 class ProfilePage extends HookWidget with LandingPageInteractions {
   ProfilePage({
@@ -37,16 +38,12 @@ class ProfilePage extends HookWidget with LandingPageInteractions {
 
     useMemoized(() {
       if (profiledUser == null) {
-        Future.microtask(() async {
-          user.value = await getUserById(context);
-          isLoading.value = false;
-        });
+        user.value = applicationUserModel;
+        isLoading.value = false;
       } else {
         user.value = profiledUser;
-        Future.microtask(() async {
-          currentUser.value = await getUserById(context);
-          isLoading.value = false;
-        });
+        currentUser.value = applicationUserModel;
+        isLoading.value = false;
       }
       return null;
     }, []);

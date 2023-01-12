@@ -71,7 +71,7 @@ class SpeedTimeContainer extends HookWidget {
               )
             ],
           ),
-          VerticalDivider(
+          const VerticalDivider(
             thickness: 2,
             color: Colors.red,
           ),

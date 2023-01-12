@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:geo_app/Client/Models/User/user_model.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 import 'package:geo_app/Page/Splash/splash_view.dart';
+
+UserModel applicationUserModel = UserModel();
 
 main() {
   runApp(const App());
