@@ -2,11 +2,11 @@
 
 import 'package:geo_app/Client/Interfaces/ui_result.dart';
 import 'package:geo_app/Client/Interfaces/user_interface.dart';
-import 'package:geo_app/Client/Manager/cache_manager.dart';
 import 'package:geo_app/Client/Models/User/rest_user_model.dart';
 import 'package:geo_app/Client/Models/User/user_model.dart';
 import 'package:geo_app/Client/client.dart';
 import 'package:geo_app/Client/client_constants.dart';
+import 'package:geo_app/main.dart';
 
 class UserController with IUser {
   late Client _client;
@@ -26,8 +26,8 @@ class UserController with IUser {
   @override
   Future<bool> cachedLogin() async {
     try {
-      String? userId = await CacheManager.getSharedPref(tag: "user_id");
-      String? userToken = await CacheManager.getSharedPref(tag: "user_token");
+      String? userId = applicationUserModel.id;
+      String? userToken = applicationUserModel.token;
 
       Map map = {};
 
@@ -51,20 +51,10 @@ class UserController with IUser {
         throw Exception("An Error Occured!");
       }
       UserModel user = UserModel.fromJson(response.data);
+      applicationUserModel = user;
 
-      /// Registering user_token to make request and pass security system on server
-      if (user.token != null) {
-        await CacheManager.saveSharedPref(
-          tag: "user_token",
-          value: user.token!,
-        );
-      } else {
-        throw Exception("An Error Occured!");
-      }
       return true;
     } catch (e) {
-      await CacheManager.remove(tag: "user_id");
-      await CacheManager.remove(tag: "user_token");
       return false;
     }
   }
@@ -82,25 +72,8 @@ class UserController with IUser {
       }
       UserModel user = UserModel.fromJson(response.data);
 
-      /// Saving user_id for making requests based on which user is logged in
-      if (user.id != null) {
-        await CacheManager.saveSharedPref(
-          tag: "user_id",
-          value: user.id!,
-        );
-      } else {
-        throw Exception("An Error Occured!");
-      }
+      applicationUserModel = user;
 
-      /// Registering user_token to make request and pass security system on server
-      if (user.token != null) {
-        await CacheManager.saveSharedPref(
-          tag: "user_token",
-          value: user.token!,
-        );
-      } else {
-        throw Exception("An Error Occured!");
-      }
       return UIResult(success: true, message: "Register Succesful");
     } catch (e) {
       print("Error at register -> $e");
@@ -121,25 +94,7 @@ class UserController with IUser {
       }
       UserModel user = UserModel.fromJson(response.data);
 
-      /// Saving user_id for making requests based on which user is logged in
-      if (user.id != null) {
-        await CacheManager.saveSharedPref(
-          tag: "user_id",
-          value: user.id!,
-        );
-      } else {
-        throw Exception("An Error Occured!");
-      }
-
-      /// Registering user_token to make request and pass security system on server
-      if (user.token != null) {
-        await CacheManager.saveSharedPref(
-          tag: "user_token",
-          value: user.token!,
-        );
-      } else {
-        throw Exception("An Error Occured!");
-      }
+      applicationUserModel = user;
       return UIResult(success: true, message: "Login Succesful");
     } catch (e) {
       print("Error at login -> $e");

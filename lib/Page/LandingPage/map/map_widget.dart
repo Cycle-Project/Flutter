@@ -4,7 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/GPS/position_model.dart';
+import 'package:geo_app/Client/Models/Route/position.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -82,7 +82,7 @@ class MapWidget extends HookWidget {
           mapsProvider.currentLocation!.longitude!,
         );
 
-    getRouteLocation() => PositionModel.middlePoint(
+    getRouteLocation() => Position.middlePoint(
             mapsProvider.mapAction!.source!,
             mapsProvider.mapAction!.destination!)
         .toLatLng();
