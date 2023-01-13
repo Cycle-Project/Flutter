@@ -1,6 +1,6 @@
-
 class ClientConstants {
   static const String baseUrl = "https://cycleon.onrender.com";
+  static const String socketUrl = "https://cycleon-socket.onrender.com";
   static const String url = "$baseUrl/api";
   static const String _baseGoogleMapsURL =
       "https://maps.googleapis.com/maps/api";
@@ -48,8 +48,7 @@ class ClientConstants {
     },
     "weather": {
       // GET @param key
-      "currentWeather":
-          "https://api.openweathermap.org/data/2.5/weather?",
+      "currentWeather": "https://api.openweathermap.org/data/2.5/weather?",
     },
     "googleMaps": {
       "distanceTwoLocate": "$_baseGoogleMapsURL/distancematrix/json?",

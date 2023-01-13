@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:geo_app/Client/client_constants.dart';
 import 'package:geo_app/WebSocket/friends_interface.dart';
@@ -41,16 +43,22 @@ class FriendsController extends ChangeNotifier with IFriends {
 
   @override
   createSocket() async {
-    String? token = applicationUserModel.token;
+    if (applicationUserModel == null) return;
+    String? token = applicationUserModel!.token;
     // Initialize socket
-    //'http://localhost:3000'
-    //ClientConstants.baseUrl
-    socket = io.io(ClientConstants.baseUrl, <String, dynamic>{
+    socket = io.io(ClientConstants.socketUrl, <String, dynamic>{
       'transports': ['websocket'],
       'query': {'token': token},
     });
 
-    print("Socket created");
+    socket.onConnect((_) {
+      print('connected to socket on ${socket.io.uri}');
+      socket.emit('msg', 'test');
+    });
+
+    socket.on('disconnect', (data) {
+      print('disconnect');
+    });
     // Get room Id
     socket.on('take-friend-request', (data) {
       friendRequests = FriendRequests.fromJson(data);

@@ -102,8 +102,10 @@ class PlanRouteViewModelGoogleMaps {
 
   //TODO: Set edilebilir olması lazım. Birden fazla mark olması durumunda
   get lineChartData async {
-    GoogleMapsBasicElevationModel destinationModel = await destinationElevationModel;
-    GoogleMapsBasicElevationModel elevationModel = await destinationElevationModel;
+    GoogleMapsBasicElevationModel destinationModel =
+        await destinationElevationModel;
+    GoogleMapsBasicElevationModel elevationModel =
+        await destinationElevationModel;
 
     double firstValue = destinationModel.elevationList!.first.elevation! -
         elevationModel.elevationList!.first.elevation!;

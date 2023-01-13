@@ -74,18 +74,17 @@ class NotificationsDialog extends HookWidget with LandingPageInteractions {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = useState(true);
     final friendsController = Provider.of<FriendsController>(context);
     final friendList = useState(<UserModel>[]);
-    final currentUser = useState<UserModel?>(null);
     useEffect(() {
       Future.microtask(() async {
         for (String senderId in friendsController.friendRequests.senders) {
           UserModel user = (await getUserById(context, userId: senderId))!;
           friendList.value.add(user);
         }
-        // ignore: use_build_context_synchronously
+        isLoading.value = true;
       });
-      currentUser.value = applicationUserModel;
       return null;
     }, [friendsController.friendRequests]);
 
@@ -93,7 +92,7 @@ class NotificationsDialog extends HookWidget with LandingPageInteractions {
       appBar: AppBar(
         title: const Text("Notifications"),
       ),
-      body: currentUser.value == null
+      body: applicationUserModel == null || isLoading.value
           ? const Center(
               child: CircularProgressIndicator(),
             )
@@ -110,7 +109,7 @@ class NotificationsDialog extends HookWidget with LandingPageInteractions {
                   itemCount: friendList.value.length,
                   itemBuilder: (_, i) => NotificationTile(
                     user: friendList.value[i],
-                    currentUser: currentUser.value!,
+                    currentUser: applicationUserModel!,
                   ),
                 ),
               ],

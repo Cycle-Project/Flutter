@@ -26,8 +26,8 @@ class UserController with IUser {
   @override
   Future<bool> cachedLogin() async {
     try {
-      String? userId = applicationUserModel.id;
-      String? userToken = applicationUserModel.token;
+      String? userId = applicationUserModel?.id;
+      String? userToken = applicationUserModel?.token;
 
       Map map = {};
 
