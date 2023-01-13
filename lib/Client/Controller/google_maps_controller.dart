@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:geo_app/Client/Interfaces/user_interface.dart';
 import 'package:geo_app/Client/Models/GoogleMaps/Elevation/basic_elevation_model.dart';
 import 'package:geo_app/Client/Models/GoogleMaps/TwoDistance/googlemaps_two_distance.dart';
@@ -22,18 +24,16 @@ class GoogleMapsController with IGoogleMaps {
     required double slong,
   }) async {
     try {
-      var str = _requestMap["distanceTwoLocate"] + "destinations=$dlat, $dlong&origins=$slat, $slong&key=${Constants.googleApiKey}";
-      final response = await _client.getMethod(
-          str
-      );
+      var str = _requestMap["distanceTwoLocate"] +
+          "destinations=$dlat, $dlong"
+              "&origins=$slat, $slong"
+              "&key=${Constants.googleApiKey}";
+      final response = await _client.getMethod(str);
       if (response == null) {
         throw Exception("Responded as NULL");
       }
-      GoogleMapsTwoDistanceBasicModel? model =
+      GoogleMapsTwoDistanceBasicModel model =
           GoogleMapsTwoDistanceBasicModel.fromJson(response.data);
-      if (model == null) {
-        throw Exception("An Error Occured!");
-      }
       return model;
     } catch (e) {
       print("$e");
@@ -47,18 +47,15 @@ class GoogleMapsController with IGoogleMaps {
     required double longtitude,
   }) async {
     try {
-      var str = _requestMap["elevation"] + "locations=$latitute, $longtitude&key=${Constants.googleApiKey}";
-      final response = await _client.getMethod(
-          str
-      );
+      var str = _requestMap["elevation"] +
+          "locations=$latitute, $longtitude"
+              "&key=${Constants.googleApiKey}";
+      final response = await _client.getMethod(str);
       if (response == null) {
         throw Exception("Responded as NULL");
       }
-      GoogleMapsBasicElevationModel? model =
-      GoogleMapsBasicElevationModel.fromJson(response.data);
-      if (model == null) {
-        throw Exception("An Error Occured!");
-      }
+      GoogleMapsBasicElevationModel model =
+          GoogleMapsBasicElevationModel.fromJson(response.data);
       return model;
     } catch (e) {
       print("$e");

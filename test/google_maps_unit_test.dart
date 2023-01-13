@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geo_app/Client/Controller/google_maps_controller.dart';
-import 'package:geo_app/Client/Controller/user_controller.dart';
 import 'package:geo_app/Client/Models/GoogleMaps/Elevation/basic_elevation_model.dart';
 import 'package:geo_app/Client/Models/GoogleMaps/TwoDistance/googlemaps_two_distance.dart';
 

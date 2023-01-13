@@ -19,7 +19,7 @@ class PlanRouteCustomDialog extends HookWidget {
     required this.provider,
   }) : super(key: key);
 
-  RouteController _routeController = RouteController();
+  final RouteController _routeController = RouteController();
 
   @override
   build(BuildContext context) {
@@ -60,7 +60,8 @@ class PlanRouteCustomDialog extends HookWidget {
       actions: [
         ElevatedButton(
           onPressed: () async {
-            String? userToken = applicationUserModel.token;
+            if (applicationUserModel == null) return;
+            String? userToken = applicationUserModel!.token;
             _routeController.createRoute({
               "positions": mapsProvider.polylineCoordinates
                   .map((e) => Position.fromLatLng(e)),

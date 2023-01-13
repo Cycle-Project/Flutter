@@ -11,14 +11,12 @@ import 'package:geo_app/Page/utilities/constants.dart';
 import 'package:provider/provider.dart';
 
 class PlanPage extends HookWidget {
-  PlanPage({
+  const PlanPage({
     Key? key,
     required this.color,
   }) : super(key: key);
 
   final Color color;
-
-
 
   @override
   Widget build(BuildContext context) {

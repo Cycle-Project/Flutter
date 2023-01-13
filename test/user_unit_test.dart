@@ -30,52 +30,26 @@ void main() {
     });
 
     test("userlist", () async {
-      UIResult uiResult = await userController.login({
-        "email": "yahya@gmail.com",
-        "password": "qwe123",
-      });
-
-      List<UserModel> list =
-          await userController.getUsers(token: applicationUserModel.token!);
-      expectLater(list.isEmpty, false);
-    });
-
-    test("userlist", () async {
+      expect(applicationUserModel, isNotNull);
       await userController.login({
         "email": "yahya@gmail.com",
         "password": "qwe123",
       });
 
       List<UserModel> list =
-          await userController.getUsers(token: applicationUserModel.token!);
+          await userController.getUsers(token: applicationUserModel!.token!);
       expectLater(list.isEmpty, false);
     });
-
     test("getById", () async {
+      expect(applicationUserModel, isNotNull);
       await userController.login({
         "email": "yahya@gmail.com",
         "password": "qwe123",
       });
 
       UserModel userModel = await userController.getById(
-        id: applicationUserModel.id.toString(),
-        token: applicationUserModel.token.toString(),
-      );
-      
-      expectLater(userModel.id, "63b17cb6e0fec3e19def2359");
-      expectLater(userModel.name, "Yahya Bekir");
-      expectLater(userModel.email, "yahya@gmail.com");
-    });
-
-    test("getById", () async {
-      await userController.login({
-        "email": "yahya@gmail.com",
-        "password": "qwe123",
-      });
-
-      UserModel userModel = await userController.getById(
-        id: applicationUserModel.id.toString(),
-        token: applicationUserModel.token.toString(),
+        id: applicationUserModel!.id.toString(),
+        token: applicationUserModel!.token.toString(),
       );
 
       expectLater(userModel.id, "63b17cb6e0fec3e19def2359");
@@ -84,14 +58,32 @@ void main() {
     });
 
     test("getById", () async {
+      expect(applicationUserModel, isNotNull);
       await userController.login({
         "email": "yahya@gmail.com",
         "password": "qwe123",
       });
 
       UserModel userModel = await userController.getById(
-        id: applicationUserModel.id.toString(),
-        token: applicationUserModel.token.toString(),
+        id: applicationUserModel!.id.toString(),
+        token: applicationUserModel!.token.toString(),
+      );
+
+      expectLater(userModel.id, "63b17cb6e0fec3e19def2359");
+      expectLater(userModel.name, "Yahya Bekir");
+      expectLater(userModel.email, "yahya@gmail.com");
+    });
+
+    test("getById", () async {
+      expect(applicationUserModel, isNotNull);
+      await userController.login({
+        "email": "yahya@gmail.com",
+        "password": "qwe123",
+      });
+
+      UserModel userModel = await userController.getById(
+        id: applicationUserModel!.id.toString(),
+        token: applicationUserModel!.token.toString(),
       );
 
       expectLater(userModel.id, "63b17cb6e0fec3e19def2359");

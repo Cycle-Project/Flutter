@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:geo_app/Client/Interfaces/user_interface.dart';
 import 'package:geo_app/Client/Models/Weather/weather_basic_model.dart';
 import 'package:geo_app/Client/client.dart';
@@ -14,18 +16,18 @@ class WeatherController with IWeather {
   }
 
   @override
-  Future<WeatherBasicModel> getWeatherByLatLang({required double lat, required double lang}) async {
+  Future<WeatherBasicModel> getWeatherByLatLang(
+      {required double lat, required double lang}) async {
     try {
       final response = await _client.getMethod(
-        _requestMap["currentWeather"] + "lat=$lat&lon=$lang&appid=${Constants.openWeatherKey}",
+        _requestMap["currentWeather"] +
+            "lat=$lat&lon=$lang&appid=${Constants.openWeatherKey}",
       );
       if (response == null) {
         throw Exception("Responded as NULL");
       }
-      WeatherBasicModel? weatherBasicModel = WeatherBasicModel.fromJson(response.data);
-      if (weatherBasicModel == null) {
-        throw Exception("An Error Occured!");
-      }
+      WeatherBasicModel weatherBasicModel =
+          WeatherBasicModel.fromJson(response.data);
       return weatherBasicModel;
     } catch (e) {
       print("at -> getUsers: $e");
