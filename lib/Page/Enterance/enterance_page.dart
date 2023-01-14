@@ -15,61 +15,54 @@ class EnterancePage extends HookWidget with EnteranceInteraction {
       return null;
     }, []);
     return Scaffold(
-      body: SingleChildScrollView(
-        child: SizedBox.fromSize(
-          size: MediaQuery.of(context).size,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 40, right: 10, left: 10),
-                  child: EnteranceHeader(showTitle: true),
-                ),
-                LoginOrSignUpPage(),
-                Wrap(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconAvatar(
-                          fileName: 'assets/icon/google.png',
-                          imageSize: 32,
-                          onTap: () async => await googleLogin(context),
-                        ),
-                      ],
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(top: 80, bottom: 60, right: 10, left: 10),
+            child: EnteranceHeader(showTitle: true),
+          ),
+          LoginOrSignUpPage(),
+          const SizedBox(height: 24),
+          Wrap(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconAvatar(
+                    fileName: 'assets/icon/google.png',
+                    imageSize: 32,
+                    onTap: () async => await googleLogin(context),
+                  ),
+                ],
+              ),
+              Center(
+                child: InkWell(
+                  onTap: () async => await guestLogin(context),
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 40,
                     ),
-                    Center(
-                      child: InkWell(
-                        onTap: () async => await guestLogin(context),
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 20),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 40,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.black26,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            "Continue as Guest",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
+                    decoration: BoxDecoration(
+                      color: Colors.black26,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text(
+                      "Continue as Guest",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ),
+        ],
       ),
     );
   }

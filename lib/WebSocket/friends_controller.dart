@@ -43,8 +43,8 @@ class FriendsController extends ChangeNotifier with IFriends {
 
   @override
   createSocket() async {
-    if (applicationUserModel == null) return;
-    String? token = applicationUserModel!.token;
+    //if (applicationUserModel.id == null) return;
+    String? token = applicationUserModel.token;
     // Initialize socket
     socket = io.io(ClientConstants.socketUrl, <String, dynamic>{
       'transports': ['websocket'],

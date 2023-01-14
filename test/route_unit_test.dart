@@ -28,11 +28,11 @@ void main() {
             "city": "TestDeneme"
           }
         ],
-        "userMadeId": applicationUserModel!.id
-      }, token: applicationUserModel!.token!);
+        "userMadeId": applicationUserModel.id
+      }, token: applicationUserModel.token!);
 
       List<Route> routeList =
-          await routeController.getRoutes(token: applicationUserModel!.token!);
+          await routeController.getRoutes(token: applicationUserModel.token!);
 
       expectLater(routeList.last.positions!.last.latitude, "123123");
       expectLater(routeList.last.positions!.last.city, "TestDeneme");
@@ -56,14 +56,14 @@ void main() {
               "city": "omerfaruk",
             }
           ],
-          "userMadeId": applicationUserModel!.id
+          "userMadeId": applicationUserModel.id
         },
-        token: applicationUserModel!.token!,
+        token: applicationUserModel.token!,
         id: "63c0fea2f27855cc5614b686",
       );
 
       List<Route> routeList =
-          await routeController.getRoutes(token: applicationUserModel!.token!);
+          await routeController.getRoutes(token: applicationUserModel.token!);
 
       for (var i in routeList) {
         if (i.id == "63c0fea2f27855cc5614b686") {
@@ -79,7 +79,7 @@ void main() {
           .login({"email": "yahya@gmail.com", "password": "qwe123"});
 
       List<Route> routeList =
-          await routeController.getRoutes(token: applicationUserModel!.token!);
+          await routeController.getRoutes(token: applicationUserModel.token!);
 
       expectLater(routeList.isEmpty, false);
     });

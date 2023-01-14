@@ -12,26 +12,31 @@ class LoginOrSignUpPage extends HookWidget with EnteranceInteraction {
     final isLogin = useState(true);
     return Wrap(
       children: [
-        Text(
-          isLogin.value ? "Welcome!" : "Create Account",
-          style: const TextStyle(
-            fontSize: 36,
-            fontWeight: FontWeight.w800,
-            color: Colors.white,
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 6, bottom: 12),
-          child: Text(
-            isLogin.value
-                ? "To the future of transportation"
-                : "To enter the newest cycling world",
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w400,
-              color: Colors.white,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              isLogin.value ? "Welcome!" : "Create Account",
+              style: const TextStyle(
+                fontSize: 36,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+              ),
             ),
-          ),
+            Padding(
+              padding: const EdgeInsets.only(top: 6, bottom: 12),
+              child: Text(
+                isLogin.value
+                    ? "To the future of transportation"
+                    : "To enter the newest cycling world",
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
         ),
         isLogin.value
             ? LoginForm(onDontHaveAccount: () => isLogin.value = false)

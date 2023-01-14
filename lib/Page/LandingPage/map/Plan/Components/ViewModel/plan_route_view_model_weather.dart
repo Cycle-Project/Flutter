@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:geo_app/Client/Controller/weather_controller.dart';
 import 'package:geo_app/Client/Models/Weather/weather_basic_model.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
@@ -10,10 +9,8 @@ class PlanRouteViewModelWeather {
   late WeatherController weatherController;
   final MapsProvider mapsProvider;
   final PlanRouteProvider provider;
-  final BuildContext context;
 
   PlanRouteViewModelWeather({
-    required this.context,
     required this.mapsProvider,
     required this.provider,
   }) {
@@ -38,61 +35,27 @@ class PlanRouteViewModelWeather {
         ? currentLocation
         : provider.source!.toLatLng();
   }
-  ///---------------------------------------------------------------------------
 
-  Future<WeatherBasicModel> get destinationWeatherModel async {
-    return await weatherController.getWeatherByLatLang(
-      lat: destinationProvider.latitude,
-      lang: destinationProvider.longitude,
-    );
-  }
+  String sourceName(WeatherBasicModel model) => model.name!;
 
-  Future<WeatherBasicModel> get sourceWeather async {
-    return await weatherController.getWeatherByLatLang(
-      lat: sourceProvider.latitude,
-      lang: sourceProvider.longitude,
-    );
-  }
+  String destinationTemp(WeatherBasicModel model) =>
+      (model.mainModel!.temp! - 273).toStringAsFixed(2);
 
-  ///---------------------------------------------------------------------------
+  String sourceTemp(WeatherBasicModel model) =>
+      (model.mainModel!.temp! - 273).toStringAsFixed(2);
 
-  Future<String> get sourceName async {
-    WeatherBasicModel model = await destinationWeatherModel;
-    return model.name!;
-  }
+  String sourceIcon(WeatherBasicModel model) => model.weatherModel!.first.icon!;
 
-  Future<String> get destinationTemp async {
-    WeatherBasicModel model = await destinationWeatherModel;
-    return (model.mainModel!.temp! - 273).toStringAsFixed(2);
-  }
+  String sourceMain(WeatherBasicModel model) => model.weatherModel!.first.main!;
 
-  Future<String> get sourceTemp async {
-    WeatherBasicModel model = await sourceWeather;
-    return (model.mainModel!.temp! - 273).toStringAsFixed(2);
-  }
+  String sourceWindSpeed(WeatherBasicModel model) =>
+      "${model.windModel!.speed!} km/h";
 
-  Future<String> get sourceIcon async {
-    WeatherBasicModel model = await sourceWeather;
-    return model.weatherModel!.first.icon!;
-  }
-
-  Future<String> get sourceMain async {
-    WeatherBasicModel model = await sourceWeather;
-    return model.weatherModel!.first.main!;
-  }
-
-  Future<String> get sourceWindSpeed async {
-    WeatherBasicModel model = await sourceWeather;
-    return "${model.windModel!.speed!} km/h";
-  }
-
-  Future<String> get sourceHum async {
-    WeatherBasicModel model = await sourceWeather;
-    return "${model.mainModel!.humidity!} %";
-  }
+  String sourceHum(WeatherBasicModel model) =>
+      "${model.mainModel!.humidity!} %";
 
   String get dateToday {
     DateTime now = DateTime.now();
-    return DateFormat('EEEE, d MMMM').format(now);
+    return DateFormat('d MMMM (EEEE)').format(now);
   }
 }

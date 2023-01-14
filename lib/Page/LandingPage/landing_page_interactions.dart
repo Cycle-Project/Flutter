@@ -14,7 +14,7 @@ mixin LandingPageInteractions {
 
   Future<UserModel?> getUserById(context, {required String userId}) async {
     String? id = userId;
-    String? token = applicationUserModel?.token;
+    String? token = applicationUserModel.token;
     if (token == null) {
       return null;
     }
@@ -22,13 +22,13 @@ mixin LandingPageInteractions {
   }
 
   Future<List<UserModel>?> getUsers(context, bool withoutCurrent) async {
-    String? token = applicationUserModel?.token;
+    String? token = applicationUserModel.token;
     if (token == null) {
       return null;
     }
     List<UserModel>? users = await _userController.getUsers(token: token);
     if (withoutCurrent) {
-      users.removeWhere((e) => e.id == applicationUserModel!.id);
+      users.removeWhere((e) => e.id == applicationUserModel.id);
     }
     return users;
   }
@@ -51,8 +51,8 @@ mixin LandingPageInteractions {
   }
 
   Future<List<UserModel>?> getFriends() async {
-    String? id = applicationUserModel?.id;
-    String? token = applicationUserModel?.token;
+    String? id = applicationUserModel.id;
+    String? token = applicationUserModel.token;
     if (id == null || token == null) {
       return null;
     }
@@ -60,8 +60,8 @@ mixin LandingPageInteractions {
   }
 
   Future removeFriend(context, String friendId) async {
-    String? id = applicationUserModel?.id;
-    String? token = applicationUserModel?.token;
+    String? id = applicationUserModel.id;
+    String? token = applicationUserModel.token;
     if (id == null || token == null) {
       return;
     }
