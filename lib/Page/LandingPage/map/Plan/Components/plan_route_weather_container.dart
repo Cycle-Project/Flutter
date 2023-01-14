@@ -1,102 +1,150 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geo_app/Client/Models/Weather/weather_basic_model.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/Components/ViewModel/plan_route_view_model_weather.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:provider/provider.dart';
+
+class WeatherState {
+  final String destinationTemp;
+  final String sourceTemp;
+  final String sourceName;
+  final String sourceIcon;
+  final String sourceMain;
+  final String sourceWindSpeed;
+  final String sourceHum;
+
+  WeatherState({
+    this.destinationTemp = "",
+    this.sourceTemp = "",
+    this.sourceName = "",
+    this.sourceIcon = "",
+    this.sourceMain = "",
+    this.sourceWindSpeed = "",
+    this.sourceHum = "",
+  });
+}
 
 class WeatherContainer extends HookWidget {
-  final MapsProvider mapsProvider;
-  final PlanRouteProvider provider;
-
-  const WeatherContainer({
-    Key? key,
-    required this.mapsProvider,
-    required this.provider,
-  }) : super(key: key);
+  const WeatherContainer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final mapsProvider = Provider.of<MapsProvider>(context);
+    final provider = Provider.of<PlanRouteProvider>(context);
+    final destinationWeather = useState<WeatherBasicModel?>(null);
+    final sourceWeather = useState<WeatherBasicModel?>(null);
+
     PlanRouteViewModelWeather vmWeather = PlanRouteViewModelWeather(
-      context: context,
       provider: provider,
       mapsProvider: mapsProvider,
     );
-
-    final destinationTemp = useState("");
-    final sourceTemp = useState("");
-    final sourceName = useState("");
-    final sourceIcon = useState("");
-    final sourceMain = useState("");
-    final sourceWindSpeed = useState("");
-    final sourceHum = useState("");
+    final state = useState(WeatherState());
 
     useEffect(() {
-      Future.microtask(() async {
-        destinationTemp.value = await vmWeather.destinationTemp;
-        sourceTemp.value = await vmWeather.sourceTemp;
-        sourceName.value = await vmWeather.sourceName;
-        sourceIcon.value = await vmWeather.sourceIcon;
-        sourceMain.value = await vmWeather.sourceMain;
-        sourceWindSpeed.value = await vmWeather.sourceWindSpeed;
-        sourceHum.value = await vmWeather.sourceHum;
-      });
+      if (sourceWeather.value == null) {
+        state.value = WeatherState();
+        Future.microtask(() async {
+          sourceWeather.value =
+              await vmWeather.weatherController.getWeatherByLatLang(
+            lat: vmWeather.sourceProvider.latitude,
+            lang: vmWeather.sourceProvider.longitude,
+          );
+          destinationWeather.value =
+              await vmWeather.weatherController.getWeatherByLatLang(
+            lat: vmWeather.destinationProvider.latitude,
+            lang: vmWeather.destinationProvider.longitude,
+          );
+        });
+      } else {
+        state.value = WeatherState(
+          destinationTemp: vmWeather.destinationTemp(sourceWeather.value!),
+          sourceTemp: vmWeather.sourceTemp(sourceWeather.value!),
+          sourceName: vmWeather.sourceName(sourceWeather.value!),
+          sourceIcon: vmWeather.sourceIcon(sourceWeather.value!),
+          sourceMain: vmWeather.sourceMain(sourceWeather.value!),
+          sourceWindSpeed: vmWeather.sourceWindSpeed(sourceWeather.value!),
+          sourceHum: vmWeather.sourceHum(sourceWeather.value!),
+        );
+      }
       return null;
-    }, []);
+    }, [sourceWeather.value]);
+
+    const style16 = TextStyle(fontSize: 16);
+    const style24 = TextStyle(fontSize: 24);
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-      decoration: const BoxDecoration(
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            blurRadius: 5.0,
-          ),
-        ],
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            flex: 2,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    const Icon(Icons.my_location, color: Colors.greenAccent),
-                    Text(sourceName.value),
-                  ],
-                ),
+                Text(state.value.sourceName),
+                const Spacer(),
                 Text(vmWeather.dateToday),
-                Text("${sourceTemp.value}°C"),
               ],
             ),
           ),
-          Expanded(
-            flex: 3,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.network(
-                  'https://openweathermap.org/img/w/${sourceIcon.value}.png',
+          Stack(
+            children: [
+              SizedBox(
+                width: double.maxFinite,
+                height: 140,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: state.value.sourceIcon == ""
+                      ? const SizedBox.square(dimension: 160)
+                      : Image.network(
+                          'https://openweathermap.org/img/wn/'
+                          '${state.value.sourceIcon}'
+                          '@4x.png',
+                          width: 160,
+                          height: 160,
+                          fit: BoxFit.fitWidth,
+                        ),
                 ),
-                Text(sourceMain.value),
-                Row(
+              ),
+              Positioned(
+                top: 0,
+                bottom: 0,
+                right: 0,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    const Icon(Icons.cloud),
-                    const Text("Wind"),
-                    Text(sourceWindSpeed.value),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(state.value.sourceWindSpeed),
+                        const SizedBox(width: 8),
+                        const Icon(PhosphorIcons.windBold),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(state.value.sourceHum),
+                        const SizedBox(width: 8),
+                        const Icon(PhosphorIcons.dropHalfBottomFill),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(state.value.sourceMain, style: style16),
+                    const Spacer(),
+                    Text("${state.value.sourceTemp} °C", style: style24),
                   ],
                 ),
-                Row(
-                  children: [
-                    const Icon(Icons.water_drop_sharp),
-                    const Text("Hum"),
-                    Text(sourceHum.value),
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),

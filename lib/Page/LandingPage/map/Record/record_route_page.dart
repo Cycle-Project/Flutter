@@ -25,7 +25,6 @@ class RecordPage extends HookWidget {
     final timer = useState<Timer?>(
       recordProvider.startTime == null ? null : Timer(const Duration(), () {}),
     );
-    final align = useState(true);
 
     record() {
       recording.value = !recording.value;
@@ -57,96 +56,65 @@ class RecordPage extends HookWidget {
     }, [recording.value]);
 
     return Scaffold(
-      backgroundColor: color,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
-        title: AnimatedCrossFade(
-          crossFadeState: initialAnimation.value
-              ? CrossFadeState.showFirst
-              : CrossFadeState.showSecond,
-          duration: const Duration(seconds: 2),
-          firstChild: const Text("Recording a New Route"),
-          sizeCurve: Curves.easeOutQuint,
-          firstCurve: Curves.easeOutQuint,
-          secondCurve: Curves.easeOutQuint,
-          secondChild:
-              Text(recording.value ? "Recording..." : "Start Recording"),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              align.value = !align.value;
-            },
-            icon: const Icon(
-              Icons.map_rounded,
-              size: 32,
+      body: Stack(
+        children: [
+          SizedBox.expand(
+            child: MapWidget(
+              shouldClearMark: true,
+              shouldAddMark: (latLng) => false,
+            ),
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: SafeArea(
+              child: InkWell(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Constants.darkBluishGreyColor,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Icon(
+                    Icons.keyboard_arrow_left,
+                    color: Constants.primaryColor,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: const Alignment(0, .9),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: InkWell(
+                onTap: () => record(),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(80),
+                    color: Constants.darkBluishGreyColor,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _RecordButton(
+                        isRecording: recording.value,
+                        color: color,
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: TimerText(isRecording: recording.value),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         ],
       ),
-      body: align.value
-          ? Column(
-              children: [
-                Expanded(
-                  flex: 8,
-                  child: Align(
-                    alignment: const Alignment(0, .3),
-                    child: TimerText(
-                      isRecording: recording.value,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 4,
-                  child: Center(
-                    child: InkWell(
-                      onTap: () => record(),
-                      child: _RecordButton(
-                        isRecording: recording.value,
-                        color: color,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            )
-          : Stack(
-              children: [
-                SizedBox.expand(
-                  child: MapWidget(
-                    shouldClearMark: true,
-                    shouldAddMark: (latLng) => false,
-                  ),
-                ),
-                Align(
-                  alignment: const Alignment(0, .8),
-                  child: InkWell(
-                    onTap: () => record(),
-                    child: Container(
-                      width: 280,
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(80),
-                        color: Constants.darkBluishGreyColor,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _RecordButton(
-                            isRecording: recording.value,
-                            color: color,
-                          ),
-                          const SizedBox(width: 20),
-                          TimerText(isRecording: recording.value),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
     );
   }
 }
@@ -218,6 +186,7 @@ class TimerText extends HookWidget {
     return Text(
       printDuration(),
       style: const TextStyle(color: Colors.white, fontSize: 32),
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

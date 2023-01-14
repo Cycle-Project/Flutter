@@ -83,7 +83,7 @@ class NotificationsDialog extends HookWidget with LandingPageInteractions {
           UserModel user = (await getUserById(context, userId: senderId))!;
           friendList.value.add(user);
         }
-        isLoading.value = true;
+        isLoading.value = false;
       });
       return null;
     }, [friendsController.friendRequests]);
@@ -92,7 +92,7 @@ class NotificationsDialog extends HookWidget with LandingPageInteractions {
       appBar: AppBar(
         title: const Text("Notifications"),
       ),
-      body: applicationUserModel == null || isLoading.value
+      body: isLoading.value
           ? const Center(
               child: CircularProgressIndicator(),
             )
@@ -109,7 +109,7 @@ class NotificationsDialog extends HookWidget with LandingPageInteractions {
                   itemCount: friendList.value.length,
                   itemBuilder: (_, i) => NotificationTile(
                     user: friendList.value[i],
-                    currentUser: applicationUserModel!,
+                    currentUser: applicationUserModel,
                   ),
                 ),
               ],

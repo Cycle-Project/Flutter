@@ -37,7 +37,7 @@ void main() {
       });
 
       List<UserModel> list =
-          await userController.getUsers(token: applicationUserModel!.token!);
+          await userController.getUsers(token: applicationUserModel.token!);
       expectLater(list.isEmpty, false);
     });
     test("getById", () async {
@@ -48,8 +48,8 @@ void main() {
       });
 
       UserModel userModel = await userController.getById(
-        id: applicationUserModel!.id.toString(),
-        token: applicationUserModel!.token.toString(),
+        id: applicationUserModel.id.toString(),
+        token: applicationUserModel.token.toString(),
       );
 
       expectLater(userModel.id, "63b17cb6e0fec3e19def2359");
@@ -65,8 +65,8 @@ void main() {
       });
 
       UserModel userModel = await userController.getById(
-        id: applicationUserModel!.id.toString(),
-        token: applicationUserModel!.token.toString(),
+        id: applicationUserModel.id.toString(),
+        token: applicationUserModel.token.toString(),
       );
 
       expectLater(userModel.id, "63b17cb6e0fec3e19def2359");
@@ -82,8 +82,8 @@ void main() {
       });
 
       UserModel userModel = await userController.getById(
-        id: applicationUserModel!.id.toString(),
-        token: applicationUserModel!.token.toString(),
+        id: applicationUserModel.id.toString(),
+        token: applicationUserModel.token.toString(),
       );
 
       expectLater(userModel.id, "63b17cb6e0fec3e19def2359");
