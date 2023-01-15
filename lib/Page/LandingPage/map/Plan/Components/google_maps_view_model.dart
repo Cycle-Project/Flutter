@@ -1,65 +1,56 @@
-import 'package:flutter/material.dart';
 import 'package:geo_app/Client/Controller/google_maps_controller.dart';
+import 'package:geo_app/Client/Controller/weather_controller.dart';
 import 'package:geo_app/Client/Models/GoogleMaps/Elevation/basic_elevation_model.dart';
 import 'package:geo_app/Client/Models/GoogleMaps/TwoDistance/googlemaps_two_distance.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 
-class PlanRouteViewModelGoogleMaps {
-  late GoogleMapsController googleMapsController;
+class GMViewModel {
+  final googleMapsController = GoogleMapsController();
+  final _weatherController = WeatherController();
+
   final MapsProvider mapsProvider;
   final PlanRouteProvider provider;
-  final BuildContext context;
 
-  PlanRouteViewModelGoogleMaps({
-    required this.context,
+  GMViewModel({
     required this.mapsProvider,
     required this.provider,
-  }) {
-    googleMapsController = GoogleMapsController();
-  }
+  });
 
-  get currentLocation {
-    return LatLng(
-      mapsProvider.currentLocation!.latitude!,
-      mapsProvider.currentLocation!.longitude!,
-    );
-  }
+  LatLng get currentLocation => LatLng(
+        mapsProvider.currentLocation!.latitude!,
+        mapsProvider.currentLocation!.longitude!,
+      );
 
-  get destinationProvider {
-    return provider.isDestinationPinned
-        ? currentLocation
-        : provider.destination!.toLatLng();
-  }
+  LatLng get destinationProvider => provider.isDestinationPinned
+      ? currentLocation
+      : provider.destination!.toLatLng();
 
-  get sourceProvider {
-    return provider.isDestinationPinned
-        ? currentLocation
-        : provider.source!.toLatLng();
-  }
+  LatLng get sourceProvider => provider.isDestinationPinned
+      ? currentLocation
+      : provider.source!.toLatLng();
+
+  String dateToday() => DateFormat('d MMMM (EEEE)').format(DateTime.now());
 
   ///---------------------------------------------------------------------------
 
-  Future<GoogleMapsTwoDistanceBasicModel>
-      get googleMapsTwoDistanceBasicModel async {
-    return await googleMapsController.getDistanceTwoLocation(
-      dlat: destinationProvider.latitude,
-      dlong: destinationProvider.longitude,
-      slat: sourceProvider.latitude,
-      slong: sourceProvider.longitude,
-    );
-  }
+  Future<GMDistanceBetween> get googleMapsTwoDistanceBasicModel async =>
+      await googleMapsController.getDistanceTwoLocation(
+        dlat: destinationProvider.latitude,
+        dlong: destinationProvider.longitude,
+        slat: sourceProvider.latitude,
+        slong: sourceProvider.longitude,
+      );
 
   Future<String> get twoDistanceKilometres async {
-    GoogleMapsTwoDistanceBasicModel model =
-        await googleMapsTwoDistanceBasicModel;
+    GMDistanceBetween model = await googleMapsTwoDistanceBasicModel;
     return "${model.rowsModel!.first.elements!.first.distance!.text}";
   }
 
   Future<String> get twoDistanceDuration async {
-    GoogleMapsTwoDistanceBasicModel model =
-        await googleMapsTwoDistanceBasicModel;
+    GMDistanceBetween model = await googleMapsTwoDistanceBasicModel;
     return "${model.rowsModel!.first.elements!.first.duration!.text}";
   }
 
@@ -75,13 +66,18 @@ class PlanRouteViewModelGoogleMaps {
     return "${speed.toStringAsFixed(1)} km/h";
   }
 
-  Future<GoogleMapsBasicElevationModel> getElevationModel(LatLng latLng) async {
+  Future<GMElevations> getElevationModel(LatLng latLng) async {
     return await googleMapsController.getElevation(
       latitute: latLng.latitude,
       longtitude: latLng.longitude,
     );
   }
 
-  String elevation(GoogleMapsBasicElevationModel model) =>
+  String elevation(GMElevations model) =>
       model.elevationList!.first.elevation!.toStringAsFixed(2);
+
+  getWeather(LatLng latLng) => _weatherController.getWeatherByLatLang(
+        lat: latLng.latitude,
+        lang: latLng.longitude,
+      );
 }

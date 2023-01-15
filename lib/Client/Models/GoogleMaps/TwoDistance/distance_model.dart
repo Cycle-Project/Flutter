@@ -1,9 +1,9 @@
-class DistanceModel {
+class GMDistance {
   String? text;
 
-  DistanceModel({this.text});
+  GMDistance({this.text});
 
-  DistanceModel.fromJson(Map<String, dynamic> json) {
+  GMDistance.fromJson(Map<String, dynamic> json) {
     text = json['text'];
   }
 

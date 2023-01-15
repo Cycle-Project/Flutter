@@ -1,23 +1,23 @@
 import 'package:geo_app/Client/Models/GoogleMaps/TwoDistance/rows_model.dart';
 
-class GoogleMapsTwoDistanceBasicModel {
+class GMDistanceBetween {
   List<String>? destinationAddresses;
   List<String>? originAddresses;
-  List<RowsModel>? rowsModel;
+  List<GMRows>? rowsModel;
 
-  GoogleMapsTwoDistanceBasicModel({
+  GMDistanceBetween({
     this.destinationAddresses,
     this.originAddresses,
     this.rowsModel,
   });
 
-  GoogleMapsTwoDistanceBasicModel.fromJson(Map<String, dynamic> json) {
+  GMDistanceBetween.fromJson(Map<String, dynamic> json) {
     destinationAddresses = json['destination_addresses'].cast<String>();
     originAddresses = json['origin_addresses'].cast<String>();
     if (json['rows'] != null) {
-      rowsModel = <RowsModel>[];
+      rowsModel = <GMRows>[];
       json['rows'].forEach((v) {
-        rowsModel!.add(RowsModel.fromJson(v));
+        rowsModel!.add(GMRows.fromJson(v));
       });
     }
   }
@@ -32,10 +32,3 @@ class GoogleMapsTwoDistanceBasicModel {
     return data;
   }
 }
-
-
-
-
-
-
-

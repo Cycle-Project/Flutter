@@ -17,7 +17,7 @@ class GoogleMapsController with IGoogleMaps {
   }
 
   @override
-  Future<GoogleMapsTwoDistanceBasicModel> getDistanceTwoLocation({
+  Future<GMDistanceBetween> getDistanceTwoLocation({
     required double dlat,
     required double dlong,
     required double slat,
@@ -32,17 +32,16 @@ class GoogleMapsController with IGoogleMaps {
       if (response == null) {
         throw Exception("Responded as NULL");
       }
-      GoogleMapsTwoDistanceBasicModel model =
-          GoogleMapsTwoDistanceBasicModel.fromJson(response.data);
+      GMDistanceBetween model = GMDistanceBetween.fromJson(response.data);
       return model;
     } catch (e) {
       print("$e");
     }
-    return GoogleMapsTwoDistanceBasicModel();
+    return GMDistanceBetween();
   }
 
   @override
-  Future<GoogleMapsBasicElevationModel> getElevation({
+  Future<GMElevations> getElevation({
     required double latitute,
     required double longtitude,
   }) async {
@@ -54,13 +53,12 @@ class GoogleMapsController with IGoogleMaps {
       if (response == null) {
         throw Exception("Responded as NULL");
       }
-      GoogleMapsBasicElevationModel model =
-          GoogleMapsBasicElevationModel.fromJson(response.data);
+      GMElevations model = GMElevations.fromJson(response.data);
       return model;
     } catch (e) {
       print("$e");
     }
-    return GoogleMapsBasicElevationModel();
+    return GMElevations();
   }
 }
 

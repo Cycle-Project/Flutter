@@ -26,12 +26,18 @@ abstract class MapAction extends ChangeNotifier {
 
   Future<void> getPolyPoints() async {
     try {
-      if (destination != null) {
+      if (source != null && destination != null) {
         PolylinePoints polylinePoints = PolylinePoints();
         PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
           Constants.googleApiKey,
-          PointLatLng(double.parse(source!.latitude!), double.parse(source!.longitude!)),
-          PointLatLng(double.parse(destination!.latitude!), double.parse(destination!.longitude!)),
+          PointLatLng(
+            double.parse(source!.latitude!),
+            double.parse(source!.longitude!),
+          ),
+          PointLatLng(
+            double.parse(destination!.latitude!),
+            double.parse(destination!.longitude!),
+          ),
           travelMode: TravelMode.walking,
         );
         mapsProvider.polylineCoordinates = [];

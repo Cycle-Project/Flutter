@@ -1,15 +1,15 @@
 import 'package:geo_app/Client/Models/GoogleMaps/TwoDistance/elements_model.dart';
 
-class RowsModel {
-  List<ElementsModel>? elements;
+class GMRows {
+  List<GMElements>? elements;
 
-  RowsModel({this.elements});
+  GMRows({this.elements});
 
-  RowsModel.fromJson(Map<String, dynamic> json) {
+  GMRows.fromJson(Map<String, dynamic> json) {
     if (json['elements'] != null) {
-      elements = <ElementsModel>[];
+      elements = <GMElements>[];
       json['elements'].forEach((v) {
-        elements!.add(ElementsModel.fromJson(v));
+        elements!.add(GMElements.fromJson(v));
       });
     }
   }

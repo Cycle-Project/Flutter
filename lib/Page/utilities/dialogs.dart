@@ -134,18 +134,21 @@ class DialogButton extends StatelessWidget {
   }
 }
 
-showSuccessDialog(context, message) async {
-  Timer timer = Timer(
-    const Duration(seconds: 1),
-    () => Navigator.of(context).pop(true),
-  );
+showSuccessDialog(context, message, {actions, bool delay = true}) async {
+  Timer? timer = delay
+      ? Timer(
+          const Duration(seconds: 1),
+          () => Navigator.of(context).pop(true),
+        )
+      : null;
   return await showDialog(
     context: context,
     builder: (_) => CustomDialog(
       message: message,
       icon: Icons.done,
       color: Colors.green,
-      onEnd: () => timer.cancel(),
+      onEnd: () => timer?.cancel(),
+      actions: actions,
     ),
   );
 }
@@ -228,7 +231,7 @@ class CustomSearchDialog<T> extends HookWidget {
       searchController.text = "";
       return null;
     }, []);
-    return ListView(
+    return Column(
       children: [
         const SizedBox(height: 40),
         Row(
@@ -259,17 +262,18 @@ class CustomSearchDialog<T> extends HookWidget {
                 padding: EdgeInsets.all(8.0),
                 child: Text(
                   "Cancel",
-                  style: TextStyle(color: Colors.white, fontSize: 20),
+                  style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
             ),
           ],
         ),
-        ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          shrinkWrap: true,
-          itemCount: list.value.length,
-          itemBuilder: (context, i) => itemBuilder(context, list.value[i]),
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            itemCount: list.value.length,
+            itemBuilder: (context, i) => itemBuilder(context, list.value[i]),
+          ),
         ),
       ],
     );

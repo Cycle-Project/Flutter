@@ -4,6 +4,10 @@ mixin IRoute {
   Future<List<Route>> getRoutes({
     required String token,
   });
+  Future<List<Route>> getRoutesOf({
+    required String id,
+    required String token,
+  });
   Future<Route> createRoute(
     Map map, {
     required String token,

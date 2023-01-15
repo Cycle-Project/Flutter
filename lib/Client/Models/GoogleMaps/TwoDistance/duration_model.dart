@@ -1,9 +1,9 @@
-class DurationModel {
+class GMDuration {
   String? text;
 
-  DurationModel({this.text});
+  GMDuration({this.text});
 
-  DurationModel.fromJson(Map<String, dynamic> json) {
+  GMDuration.fromJson(Map<String, dynamic> json) {
     text = json['text'];
   }
 

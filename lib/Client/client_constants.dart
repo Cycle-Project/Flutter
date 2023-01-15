@@ -34,6 +34,9 @@ class ClientConstants {
       // GET
       "list": "$url/route/list",
 
+      // GET
+      "routes-of": "$url/route/routes-of",
+
       // POST @body{Route}
       "create-route": "$url/route/create-route",
 

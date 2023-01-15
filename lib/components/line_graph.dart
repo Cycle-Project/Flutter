@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 class PointLine {
   final double x;
@@ -8,36 +9,68 @@ class PointLine {
   PointLine({required this.x, required this.y});
 }
 
-class LineChartWidget extends StatelessWidget {
+class LineChartWidget extends HookWidget {
   final List<PointLine> points;
+  final Function(int) onTouch;
 
-  const LineChartWidget({Key? key, required this.points}) : super(key: key);
+  const LineChartWidget({
+    Key? key,
+    required this.points,
+    required this.onTouch,
+  }) : super(key: key);
+
+  double max(double a, double b) => a > b ? a : b;
+  double min(double a, double b) => a < b ? a : b;
 
   double maxY() {
-    double max = points[0].y;
-    if (points.length > 1) {
-      for (var i = 1; i < points.length; i++) {
-        double y = points[i].y;
-        max = y > max ? y : max;
+    int l = 0, r = points.length - 1;
+    double maxValue = points[0].y;
+    while (l < r) {
+      int m = (l + r) ~/ 2;
+      maxValue = max(maxValue, max(points[m].y, points[m + 1].y));
+      if (points[m].y > points[m + 1].y) {
+        r = m;
+      } else {
+        l = m + 1;
       }
     }
-    return max;
+    return maxValue;
   }
 
   double minY() {
-    double min = points[0].y;
-    if (points.length > 1) {
-      for (var i = 1; i < points.length; i++) {
-        double y = points[i].y;
-        min = y < min ? y : min;
+    int l = 0, r = points.length - 1;
+    double minValue = points[0].y;
+    while (l < r) {
+      int m = (l + r) ~/ 2;
+      minValue = min(minValue, min(points[m].y, points[m + 1].y));
+      if (points[m].y < points[m + 1].y) {
+        r = m;
+      } else {
+        l = m + 1;
       }
     }
-    return min;
+    return minValue;
   }
 
   @override
   Widget build(BuildContext context) {
+    final spotIndex = useState(0);
     const style = TextStyle(fontSize: 16);
+    final lineBarsData = [
+      LineChartBarData(
+        isCurved: false,
+        dotData: FlDotData(show: false),
+        spots: points.map((p) => FlSpot(p.x, p.y)).toList(),
+      ),
+    ];
+
+    touch(event, response) {
+      if (response?.lineBarSpots != null && event is FlTapUpEvent) {
+        spotIndex.value = response?.lineBarSpots?[0].spotIndex ?? 0;
+        onTouch(spotIndex.value);
+      }
+    }
+
     return AspectRatio(
       aspectRatio: 2,
       child: Row(
@@ -46,7 +79,7 @@ class LineChartWidget extends StatelessWidget {
             padding: const EdgeInsets.only(right: 4),
             child: Column(
               children: [
-                Text(maxY().ceil().toString(), style: style),
+                Text(maxY().floor().toString(), style: style),
                 const Spacer(),
                 Text(minY().floor().toString(), style: style),
               ],
@@ -55,19 +88,21 @@ class LineChartWidget extends StatelessWidget {
           Expanded(
             child: LineChart(
               LineChartData(
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: points
-                        .map((point) => FlSpot(point.x, point.y))
-                        .toList(),
-                    isCurved: false,
-                    dotData: FlDotData(show: false),
-                  ),
+                lineBarsData: lineBarsData,
+                showingTooltipIndicators: [
+                  ShowingTooltipIndicators([
+                    LineBarSpot(
+                      lineBarsData[0],
+                      spotIndex.value,
+                      lineBarsData[0].spots[spotIndex.value],
+                    )
+                  ])
                 ],
+                lineTouchData:
+                    LineTouchData(enabled: true, touchCallback: touch),
                 gridData: FlGridData(show: false),
                 titlesData: FlTitlesData(show: false),
-                borderData:
-                    FlBorderData(border: const Border(left: BorderSide())),
+                borderData: FlBorderData(show: false),
               ),
             ),
           ),

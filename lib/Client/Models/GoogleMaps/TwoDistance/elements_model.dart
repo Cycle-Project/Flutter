@@ -1,15 +1,15 @@
 import 'package:geo_app/Client/Models/GoogleMaps/TwoDistance/distance_model.dart';
 import 'package:geo_app/Client/Models/GoogleMaps/TwoDistance/duration_model.dart';
 
-class ElementsModel {
-  DistanceModel? distance;
-  DurationModel? duration;
+class GMElements {
+  GMDistance? distance;
+  GMDuration? duration;
 
-  ElementsModel({this.distance, this.duration});
+  GMElements({this.distance, this.duration});
 
-  ElementsModel.fromJson(Map<String, dynamic> json) {
-    distance = DistanceModel.fromJson(json['distance']);
-    duration = DurationModel.fromJson(json['duration']);
+  GMElements.fromJson(Map<String, dynamic> json) {
+    distance = GMDistance.fromJson(json['distance']);
+    duration = GMDuration.fromJson(json['duration']);
   }
 
   Map<String, dynamic> toJson() {

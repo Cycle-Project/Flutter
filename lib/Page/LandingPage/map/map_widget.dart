@@ -4,7 +4,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/Client/Models/Route/position.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +13,7 @@ class MapWidget extends HookWidget {
     Key? key,
     required this.shouldClearMark,
     required this.shouldAddMark,
+    this.gesturesEnabled = true,
   }) : super(key: key) {
     Future.microtask(() async {
       const size = Size(120, 120);
@@ -32,6 +32,7 @@ class MapWidget extends HookWidget {
   }
   final bool Function(LatLng) shouldAddMark;
   final bool shouldClearMark;
+  final bool gesturesEnabled;
 
   late BitmapDescriptor sourceIcon;
   late BitmapDescriptor destinationIcon;
@@ -45,22 +46,61 @@ class MapWidget extends HookWidget {
     final markers = useState<Set<Marker>>({});
     const markId = MarkerId("mark");
 
-    Future<void> zoomToLocation(LatLng? target) async {
-      if (target != null) {
-        await googleMapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target: target,
-              zoom: 16,
-            ),
-          ),
+    getCurrentLocation() => LatLng(
+          mapsProvider.currentLocation!.latitude!,
+          mapsProvider.currentLocation!.longitude!,
         );
+
+    getRouteLocation() {
+      double latitude = 0;
+      double longitude = 0;
+      int n = mapsProvider.polylineCoordinates.length;
+
+      for (LatLng point in mapsProvider.polylineCoordinates) {
+        latitude += point.latitude;
+        longitude += point.longitude;
       }
+
+      return LatLng(latitude / n, longitude / n);
     }
 
     if (shouldClearMark) {
       markers.value.removeWhere((e) => e.markerId == markId);
     }
+
+    Future<void> zoomToLocation(LatLng? target) async {
+      if (mapsProvider.polylineCoordinates.isNotEmpty &&
+          mapsProvider.mapAction != null) {
+        googleMapController.moveCamera(CameraUpdate.newLatLngBounds(
+          MapUtils.boundsFromLatLngList(mapsProvider.polylineCoordinates),
+          4.0,
+        ));
+      }
+      if (target != null) {
+        var zoom = mapsProvider.polylineCoordinates.isEmpty
+            ? 16
+            : await googleMapController.getZoomLevel();
+        await googleMapController.animateCamera(
+          CameraUpdate.newCameraPosition(CameraPosition(
+            target: target,
+            zoom: zoom - .5,
+          )),
+        );
+      }
+    }
+
+    useEffect(() {
+      Future.microtask(() async {
+        googleMapController = await controller.future;
+
+        LatLng? target = mapsProvider.polylineCoordinates.isNotEmpty &&
+                mapsProvider.mapAction != null
+            ? getRouteLocation()
+            : getCurrentLocation();
+        await zoomToLocation(target);
+      });
+      return null;
+    }, [mapsProvider]);
 
     onTapMap(latLng) async {
       bool shouldMark = shouldAddMark(latLng);
@@ -77,26 +117,6 @@ class MapWidget extends HookWidget {
       }
     }
 
-    getCurrentLocation() => LatLng(
-          mapsProvider.currentLocation!.latitude!,
-          mapsProvider.currentLocation!.longitude!,
-        );
-
-    getRouteLocation() => Position.middlePoint(
-            mapsProvider.mapAction!.source!,
-            mapsProvider.mapAction!.destination!)
-        .toLatLng();
-
-    useEffect(() {
-      Future.microtask(() async {
-        googleMapController = await controller.future;
-        await zoomToLocation(mapsProvider.mapAction != null
-            ? getRouteLocation()
-            : getCurrentLocation());
-      });
-      return null;
-    }, [mapsProvider]);
-
     if (mapsProvider.currentLocation == null) {
       return const Center(child: CircularProgressIndicator.adaptive());
     }
@@ -107,9 +127,12 @@ class MapWidget extends HookWidget {
       ),
       onMapCreated: (map) => controller.complete(map),
       onTap: (latLng) => onTapMap(latLng),
-      zoomGesturesEnabled: true,
-      zoomControlsEnabled: false,
+      zoomGesturesEnabled: gesturesEnabled,
+      tiltGesturesEnabled: gesturesEnabled,
+      scrollGesturesEnabled: gesturesEnabled,
+      rotateGesturesEnabled: gesturesEnabled,
       myLocationEnabled: true,
+      zoomControlsEnabled: false,
       myLocationButtonEnabled: false,
       markers: markers.value,
       polylines: {
@@ -120,6 +143,27 @@ class MapWidget extends HookWidget {
           width: 4,
         ),
       },
+    );
+  }
+}
+
+class MapUtils {
+  static LatLngBounds boundsFromLatLngList(List<LatLng> list) {
+    double? x0, x1, y0, y1;
+    for (LatLng latLng in list) {
+      if (x0 == null) {
+        x0 = x1 = latLng.latitude;
+        y0 = y1 = latLng.longitude;
+      } else {
+        if (latLng.latitude > x1!) x1 = latLng.latitude;
+        if (latLng.latitude < x0) x0 = latLng.latitude;
+        if (latLng.longitude > y1!) y1 = latLng.longitude;
+        if (latLng.longitude < y0!) y0 = latLng.longitude;
+      }
+    }
+    return LatLngBounds(
+      northeast: LatLng(x1!, y1!),
+      southwest: LatLng(x0!, y0!),
     );
   }
 }

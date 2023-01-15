@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:geo_app/Client/Models/User/user_model.dart';
 import 'package:geo_app/Page/LandingPage/Pages/profile_page.dart';
 import 'package:geo_app/Page/LandingPage/landing_page_interactions.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
 import 'package:geo_app/WebSocket/friends_controller.dart';
 import 'package:geo_app/components/image_avatar.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +19,8 @@ class SearchUserCard extends StatelessWidget with LandingPageInteractions {
 
   @override
   Widget build(BuildContext context) {
+    final mapsProvider = Provider.of<MapsProvider>(context);
+    final provider = Provider.of<PlanRouteProvider>(context);
     final friendsController = Provider.of<FriendsController>(context);
 
     return InkWell(
@@ -24,8 +28,15 @@ class SearchUserCard extends StatelessWidget with LandingPageInteractions {
         MaterialPageRoute(
           builder: (_) => ChangeNotifierProvider.value(
             value: friendsController,
-            child: Scaffold(
-              body: ProfilePage(profiledUser: user),
+            child: MultiProvider(
+              providers: [
+                ChangeNotifierProvider.value(value: mapsProvider),
+                ChangeNotifierProvider.value(value: provider),
+                ChangeNotifierProvider.value(value: friendsController),
+              ],
+              child: Scaffold(
+                body: ProfilePage(profiledUser: user),
+              ),
             ),
           ),
         ),

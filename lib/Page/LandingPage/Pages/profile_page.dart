@@ -3,7 +3,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:geo_app/Client/Models/User/user_model.dart';
 import 'package:geo_app/Page/LandingPage/Profile/components/profile_widget.dart';
 import 'package:geo_app/Page/LandingPage/Profile/others_profile.dart';
-import 'package:geo_app/Page/LandingPage/Profile/profile_favorites.dart';
 import 'package:geo_app/Page/LandingPage/Profile/profile_friends.dart';
 import 'package:geo_app/Page/LandingPage/Profile/profile_qr.dart';
 import 'package:geo_app/Page/LandingPage/Profile/profile_routes.dart';
@@ -79,6 +78,28 @@ class ProfilePage extends HookWidget with LandingPageInteractions {
         children: [
           TopBar(
             username: user.value?.name ?? "-",
+            friendCount: user.value?.friends?.length ?? 0,
+            topWidget: Align(
+              alignment: Alignment.bottomCenter,
+              child: Visibility(
+                visible: profiledUser != null,
+                child: Row(
+                  children: [
+                    const Spacer(),
+                    InkWell(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        child: Text(
+                          "Back",
+                          style: TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             child: profiledUser == null
                 ? null
                 : Padding(
@@ -99,9 +120,9 @@ class ProfilePage extends HookWidget with LandingPageInteractions {
               boxShadow: boxShadow,
             ),
             child: Column(
-              children: const [
-                ProfileRoutes(),
-                ProfileFavorites(),
+              children: [
+                ProfileRoutes(userId: user.value!.id!),
+                //const ProfileFavorites(),
               ],
             ),
           ),

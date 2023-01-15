@@ -4,6 +4,8 @@ class Route {
   String? id;
   List<Position>? positions;
   String? userMadeId;
+  String? title;
+  String? notes;
 
   Route({this.id, this.positions, this.userMadeId});
 
@@ -16,11 +18,15 @@ class Route {
       });
     }
     userMadeId = json['userMadeId'];
+    title = json['title'];
+    notes = json['notes'];
   }
 
   Map<String, dynamic> toJson() => {
         '_id': id,
         'positions': positions?.map((v) => v.toJson()).toList() ?? [],
         'userMadeId': userMadeId,
+        'title': title,
+        'notes': notes,
       };
 }

@@ -1,25 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/Page/LandingPage/map/Plan/Components/ViewModel/plan_route_view_model_googlemaps.dart';
-import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
-import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:geo_app/Page/LandingPage/map/Plan/Components/google_maps_view_model.dart';
 
 class SpeedTimeContainer extends HookWidget {
-  const SpeedTimeContainer({Key? key}) : super(key: key);
+  const SpeedTimeContainer({
+    Key? key,
+    required this.gmvm,
+  }) : super(key: key);
+  final GMViewModel gmvm;
 
   @override
   Widget build(BuildContext context) {
     const style1 = TextStyle(fontSize: 12, color: Colors.black45);
     const style2 = TextStyle(fontSize: 16, color: Colors.black);
-    final mapsProvider = Provider.of<MapsProvider>(context);
-    final provider = Provider.of<PlanRouteProvider>(context);
-
-    PlanRouteViewModelGoogleMaps vmGoogleMaps = PlanRouteViewModelGoogleMaps(
-      context: context,
-      provider: provider,
-      mapsProvider: mapsProvider,
-    );
 
     final twoDistanceKilometres = useState("");
     final twoDistanceDuration = useState("");
@@ -27,10 +20,9 @@ class SpeedTimeContainer extends HookWidget {
 
     useEffect(() {
       Future.microtask(() async {
-        twoDistanceKilometres.value = await vmGoogleMaps.twoDistanceKilometres;
-        twoDistanceDuration.value = await vmGoogleMaps.twoDistanceDuration;
-        twoDistanceEstimateSpeed.value =
-            await vmGoogleMaps.twoDistanceEstimateSpeed;
+        twoDistanceKilometres.value = await gmvm.twoDistanceKilometres;
+        twoDistanceDuration.value = await gmvm.twoDistanceDuration;
+        twoDistanceEstimateSpeed.value = await gmvm.twoDistanceEstimateSpeed;
       });
       return null;
     }, []);
@@ -39,7 +31,7 @@ class SpeedTimeContainer extends HookWidget {
       children: [
         Column(
           children: [
-            const Text("Estimated Speed", style: style1),
+            const Text("Speed", style: style1),
             const SizedBox(height: 8),
             Text(
               twoDistanceEstimateSpeed.value,
@@ -63,7 +55,7 @@ class SpeedTimeContainer extends HookWidget {
         ),
         Column(
           children: [
-            const Text("Height", style: style1),
+            const Text("Distance", style: style1),
             const SizedBox(height: 8),
             Text(
               twoDistanceKilometres.value,

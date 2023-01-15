@@ -6,10 +6,13 @@ class TopBar extends StatelessWidget {
   const TopBar({
     Key? key,
     required this.username,
+    required this.friendCount,
     this.child,
+    this.topWidget,
   }) : super(key: key);
   final String username;
-  final Widget? child;
+  final int friendCount;
+  final Widget? child, topWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +21,7 @@ class TopBar extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 50),
+          SizedBox(height: 60, child: topWidget),
           ProfileImage(),
           Padding(
             padding: const EdgeInsets.all(8),
@@ -34,10 +37,9 @@ class TopBar extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  /* ${user.friends} */
-                  "0 Friends",
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+                Text(
+                  "$friendCount Friends",
+                  style: const TextStyle(fontSize: 20, color: Colors.white),
                 ),
                 const SizedBox(height: 8),
               ],
