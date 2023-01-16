@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:geo_app/Page/LandingPage/map/Plan/location_dialog.dart';
+import 'package:geo_app/Page/LandingPage/map/Plan/Components/location_dialog.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
 import 'package:provider/provider.dart';

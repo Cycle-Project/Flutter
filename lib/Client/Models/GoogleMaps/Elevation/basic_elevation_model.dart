@@ -1,15 +1,15 @@
 import 'package:geo_app/Client/Models/GoogleMaps/Elevation/elevation_model.dart';
 
-class GoogleMapsBasicElevationModel {
-  List<ElevationModel>? elevationList;
+class GMElevations {
+  List<GMElevation>? elevationList;
 
-  GoogleMapsBasicElevationModel({this.elevationList});
+  GMElevations({this.elevationList});
 
-  GoogleMapsBasicElevationModel.fromJson(Map<String, dynamic> json) {
+  GMElevations.fromJson(Map<String, dynamic> json) {
     if (json['results'] != null) {
-      elevationList = <ElevationModel>[];
+      elevationList = <GMElevation>[];
       json['results'].forEach((v) {
-        elevationList!.add(ElevationModel.fromJson(v));
+        elevationList!.add(GMElevation.fromJson(v));
       });
     }
   }
@@ -22,4 +22,3 @@ class GoogleMapsBasicElevationModel {
     return data;
   }
 }
-

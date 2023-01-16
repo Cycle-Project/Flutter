@@ -37,6 +37,29 @@ class RouteController with IRoute {
     return [];
   }
 
+  ///MARK: GET ROUTES OF USER
+  @override
+  Future<List<Route>> getRoutesOf({required id, required token}) async {
+    try {
+      final response = await _client.getMethod(
+        _requestMap["routes-of"] + "/$id",
+        token: token,
+      );
+      if (response == null) {
+        throw Exception("Responded as NULL");
+      }
+      List? list = response.data['data'];
+      if (list == null) {
+        throw Exception("An Error Occured!");
+      }
+      List<Route>? routes = list.map((e) => Route.fromJson(e)).toList();
+      return routes;
+    } catch (e) {
+      print("at -> getUsers: $e");
+    }
+    return [];
+  }
+
   @override
   Future<Route> createRoute(
     Map map, {
@@ -51,7 +74,7 @@ class RouteController with IRoute {
       if (response == null) {
         throw Exception("An Error Occured!");
       }
-      return Route.fromJson(response.data);
+      return Route.fromJson(response.data['data']);
     } catch (e) {
       print("Error at -> getById: $e");
     }
@@ -73,7 +96,7 @@ class RouteController with IRoute {
       if (response == null) {
         throw Exception("An Error Occured!");
       }
-      return Route.fromJson(response.data);
+      return Route.fromJson(response.data['data']);
     } catch (e) {
       print("Error at -> getById: $e");
     }

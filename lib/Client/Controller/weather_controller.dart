@@ -26,9 +26,7 @@ class WeatherController with IWeather {
       if (response == null) {
         throw Exception("Responded as NULL");
       }
-      WeatherBasicModel weatherBasicModel =
-          WeatherBasicModel.fromJson(response.data);
-      return weatherBasicModel;
+      return WeatherBasicModel.fromJson(response.data);
     } catch (e) {
       print("at -> getUsers: $e");
     }

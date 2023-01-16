@@ -1,9 +1,9 @@
-class ElevationModel {
+class GMElevation {
   double? elevation;
 
-  ElevationModel({this.elevation});
+  GMElevation({this.elevation});
 
-  ElevationModel.fromJson(Map<String, dynamic> json) {
+  GMElevation.fromJson(Map<String, dynamic> json) {
     elevation = json['elevation'];
   }
 

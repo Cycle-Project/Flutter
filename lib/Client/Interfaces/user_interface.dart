@@ -46,14 +46,14 @@ mixin IWeather {
 }
 
 mixin IGoogleMaps {
-  Future<GoogleMapsTwoDistanceBasicModel> getDistanceTwoLocation({
+  Future<GMDistanceBetween> getDistanceTwoLocation({
     required double dlat,
     required double dlong,
     required double slat,
     required double slong,
   });
 
-  Future<GoogleMapsBasicElevationModel> getElevation({
+  Future<GMElevations> getElevation({
     required double latitute,
     required double longtitude,
   });

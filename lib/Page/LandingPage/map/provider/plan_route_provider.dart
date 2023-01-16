@@ -11,6 +11,7 @@ class PlanRouteProvider extends MapAction {
     if (!isPinned) {
       isSourcePinned = false;
       source = newSorce;
+      if (source == null) mapsProvider.polylineCoordinates = [];
     } else {
       isSourcePinned = true;
       source = Position.fromLocationData(mapsProvider.currentLocation!);
@@ -25,10 +26,10 @@ class PlanRouteProvider extends MapAction {
     if (!isPinned) {
       isDestinationPinned = false;
       destination = newDestination;
+      if (destination == null) mapsProvider.polylineCoordinates = [];
     } else {
       isDestinationPinned = true;
-      destination =
-          Position.fromLocationData(mapsProvider.currentLocation!);
+      destination = Position.fromLocationData(mapsProvider.currentLocation!);
     }
     mapsProvider.mapAction = this;
 
@@ -42,8 +43,7 @@ class PlanRouteProvider extends MapAction {
       source = Position.fromLocationData(mapsProvider.currentLocation!);
     }
     if (isDestinationPinned) {
-      destination =
-          Position.fromLocationData(mapsProvider.currentLocation!);
+      destination = Position.fromLocationData(mapsProvider.currentLocation!);
     }
     await getPolyPoints();
   }

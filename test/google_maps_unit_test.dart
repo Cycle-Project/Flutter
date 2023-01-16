@@ -12,7 +12,7 @@ void main() {
     });
 
     test("Distance matrix", () async {
-      GoogleMapsTwoDistanceBasicModel model =
+      GMDistanceBetween model =
           await googleMapsController.getDistanceTwoLocation(
         dlat: 39.763384170515536,
         dlong: 30.52484817802906,
@@ -31,8 +31,7 @@ void main() {
     });
 
     test("Elevation", () async {
-      GoogleMapsBasicElevationModel model =
-          await googleMapsController.getElevation(
+      GMElevations model = await googleMapsController.getElevation(
         latitute: 39.146971,
         longtitude: 34.157752,
       );

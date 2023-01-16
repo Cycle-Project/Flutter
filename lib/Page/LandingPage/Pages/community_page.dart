@@ -5,6 +5,8 @@ import 'package:geo_app/Page/LandingPage/Community/group_card.dart';
 import 'package:geo_app/Page/LandingPage/Discover/discover_page.dart';
 import 'package:geo_app/Page/LandingPage/Profile/components/search_user_card.dart';
 import 'package:geo_app/Page/LandingPage/landing_page_interactions.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
+import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 import 'package:geo_app/Page/utilities/dialogs.dart';
 import 'package:geo_app/WebSocket/friends_controller.dart';
@@ -17,6 +19,8 @@ class CommunityPage extends HookWidget with LandingPageInteractions {
 
   @override
   Widget build(BuildContext context) {
+    final mapsProvider = Provider.of<MapsProvider>(context);
+    final provider = Provider.of<PlanRouteProvider>(context);
     final friendsController = Provider.of<FriendsController>(context);
     final list = useState<List?>(null);
     final activeIndex = useState(0);
@@ -113,6 +117,11 @@ class CommunityPage extends HookWidget with LandingPageInteractions {
                               isScrollControlled: true,
                               builder: (_) => MultiProvider(
                                 providers: [
+                                  ChangeNotifierProvider.value(
+                                      value: mapsProvider),
+                                  ChangeNotifierProvider.value(
+                                    value: provider,
+                                  ),
                                   ChangeNotifierProvider.value(
                                     value: friendsController,
                                   ),

@@ -44,22 +44,6 @@ class Position {
         double.parse(longitude!),
       );
 
-  Position.middlePoint(Position a, Position b) {
-    latitude = (double.parse(a.latitude!) +
-            (double.parse(b.latitude!) - double.parse(a.latitude!)) * 0.5)
-        .toString();
-    longitude = (double.parse(a.longitude!) +
-            (double.parse(b.longitude!) - double.parse(a.longitude!)) * 0.5)
-        .toString();
-  }
-
-  LatLng get latLng {
-    return LatLng(
-      double.parse(latitude!),
-      double.parse(longitude!),
-    );
-  }
-
   void setFromLocationData(LocationData locationData) => this
     ..latitude = locationData.latitude.toString()
     ..longitude = locationData.longitude.toString()

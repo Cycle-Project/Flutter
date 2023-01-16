@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:geo_app/Page/LandingPage/Profile/components/profile_sublist.dart';
 import 'package:geo_app/Page/LandingPage/Profile/components/profile_widget.dart';
 
 class ProfileFavorites extends StatelessWidget {
@@ -13,13 +12,13 @@ class ProfileFavorites extends StatelessWidget {
       onTap: () {
         List list = List.generate(20, (i) => "Favorite ${i + 1}");
         if (list.isNotEmpty) {
-          showGeneralDialog(
+          /* showGeneralDialog(
             context: context,
             pageBuilder: (_, __, ___) => ProfileSubList(
               list: list,
               title: "Favorites",
             ),
-          );
+          ); */
         }
       },
     );
