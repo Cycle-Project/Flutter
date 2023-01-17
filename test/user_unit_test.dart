@@ -40,6 +40,8 @@ void main() {
           await userController.getUsers(token: applicationUserModel!.token!);
       expectLater(list.isEmpty, false);
     });
+
+
     test("getById", () async {
       expect(applicationUserModel, isNotNull);
       await userController.login({

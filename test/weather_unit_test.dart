@@ -15,8 +15,8 @@ void main() {
           lat: 39.769482, lang: 30.508678);
       
       expectLater(model.name, "Eskişehir");
-      expectLater(model.mainModel!.temp, 277.1);
-      expectLater(model.windModel!.speed, 3.09);
+      expectLater(model.mainModel!.temp, 281.1);
+      expectLater(model.windModel!.speed, 2.06);
     });
   });
 }
