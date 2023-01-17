@@ -5,25 +5,24 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:geo_app/main.dart';
+import 'package:geo_app/Page/OnboardingPage/on_boarding_page.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const App());
+  testWidgets('Navigator test', (WidgetTester tester) async {
+    // Build the app
+    await tester.pumpWidget(OnboardingPage());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Find the "Skip" button
+    final skipButton = find.text('Skip');
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Tap the button
+    await tester.tap(skipButton);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Find the "Let's Start" button
+    final letsStartButton = find.text("Let's Start");
+
+    // Check that the new page is displayed
+    expect(find.text('Entrance Page'), letsStartButton);
   });
 }
