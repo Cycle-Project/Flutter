@@ -52,8 +52,7 @@ class RouteController with IRoute {
       if (list == null) {
         throw Exception("An Error Occured!");
       }
-      List<Route>? routes = list.map((e) => Route.fromJson(e)).toList();
-      return routes;
+      return list.map((e) => Route.fromJson(e)).toList();
     } catch (e) {
       print("at -> getUsers: $e");
     }

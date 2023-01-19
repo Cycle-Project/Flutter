@@ -35,7 +35,7 @@ class LoginForm extends HookWidget with EnteranceInteraction {
               labelText: "Email Address",
               hintText: "Enter your email here...",
               isPassword: false,
-              validatorFunc: (val) {
+              validator: (val) {
                 if (val!.isEmpty) {
                   return 'Please enter your email';
                 } else {
@@ -49,7 +49,7 @@ class LoginForm extends HookWidget with EnteranceInteraction {
               labelText: "Password",
               hintText: "Enter your password here...",
               isPassword: true,
-              validatorFunc: (val) {
+              validator: (val) {
                 if (val!.isEmpty) {
                   return 'Please enter your password';
                 } else {

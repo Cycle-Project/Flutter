@@ -36,7 +36,7 @@ class SignupForm extends HookWidget with EnteranceInteraction {
               labelText: "Name",
               hintText: "Enter your name here...",
               isPassword: false,
-              validatorFunc: (val) {
+              validator: (val) {
                 if (val!.isEmpty) {
                   return 'Please enter your name';
                 } else {
@@ -50,7 +50,7 @@ class SignupForm extends HookWidget with EnteranceInteraction {
               labelText: "Email",
               hintText: "Enter your email here...",
               isPassword: false,
-              validatorFunc: (val) {
+              validator: (val) {
                 if (val!.isEmpty) {
                   return 'Please enter your email adress';
                 } else {
@@ -64,7 +64,7 @@ class SignupForm extends HookWidget with EnteranceInteraction {
               labelText: "Password",
               hintText: "Enter your password here...",
               isPassword: true,
-              validatorFunc: (val) {
+              validator: (val) {
                 if (val!.isEmpty) {
                   return 'Please enter your password';
                 } else if (val != repassword.text) {
@@ -80,7 +80,7 @@ class SignupForm extends HookWidget with EnteranceInteraction {
               labelText: "Confirm Password",
               hintText: "Re-Enter your password here...",
               isPassword: true,
-              validatorFunc: (val) {
+              validator: (val) {
                 if (val!.isEmpty) {
                   return 'Please enter your repassword';
                 } else if (val != password.text) {

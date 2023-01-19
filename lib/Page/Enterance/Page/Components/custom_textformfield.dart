@@ -6,27 +6,35 @@ class CustomTextFormField extends HookWidget {
   const CustomTextFormField({
     Key? key,
     required this.controller,
-    required this.labelText,
-    required this.hintText,
-    required this.isPassword,
-    required this.validatorFunc,
+    this.labelText,
+    this.hintText,
+    this.isPassword = false,
+    required this.validator,
     this.keyboardType = TextInputType.text,
+    this.minLines = 1,
+    this.maxLines = 1,
+    this.showBorder = true,
   }) : super(key: key);
 
-  final String labelText;
-  final String hintText;
+  final String? labelText;
+  final String? hintText;
   final bool isPassword;
-  final Function(String?) validatorFunc;
+  final Function(String?) validator;
   final TextEditingController controller;
   final TextInputType keyboardType;
+  final int minLines;
+  final int maxLines;
+  final bool showBorder;
 
   @override
   Widget build(BuildContext context) {
     final obscureText = useState(true);
-    final border = OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Constants.darkBluishGreyColor),
-    );
+    final border = showBorder
+        ? OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Constants.darkBluishGreyColor),
+          )
+        : const OutlineInputBorder(borderSide: BorderSide.none);
     final errorBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(10),
       borderSide: BorderSide(
@@ -55,13 +63,14 @@ class CustomTextFormField extends HookWidget {
               )
             : null,
       ),
-      validator: (val) => validatorFunc(val),
+      validator: (val) => validator(val),
       obscureText: isPassword ? obscureText.value : false,
       style: const TextStyle(
         fontWeight: FontWeight.w400,
         fontSize: 16,
       ),
-      maxLines: 1,
+      minLines: minLines,
+      maxLines: maxLines,
     );
   }
 }

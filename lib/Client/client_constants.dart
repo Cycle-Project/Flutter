@@ -49,6 +49,28 @@ class ClientConstants {
       // DELETE @param id
       "deletebyid": "$url/route/deletebyid",
     },
+    "post": {
+      // GET
+      "list": "$url/post/list",
+
+      // GET
+      "post": "$url/post/post",
+
+      // POST
+      "add-post": "$url/post/add-post",
+
+      // PUT @param id @body{Route}
+      "update": "$url/post/update",
+
+      // PUT @param id @body{Route}
+      "like": "$url/post/like",
+
+      // PUT @param id @body{Route}
+      "comment": "$url/post/comment",
+
+      // DELETE @param id
+      "deletebyid": "$url/route/deletebyid",
+    },
     "weather": {
       // GET @param key
       "currentWeather": "https://api.openweathermap.org/data/2.5/weather?",
