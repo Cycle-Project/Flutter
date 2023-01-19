@@ -7,7 +7,7 @@ class Route {
   String? title;
   String? notes;
 
-  Route({this.id, this.positions, this.userMadeId});
+  Route({this.id, this.positions, this.userMadeId, this.title, this.notes});
 
   Route.fromJson(Map<String, dynamic> json) {
     id = json['_id'];

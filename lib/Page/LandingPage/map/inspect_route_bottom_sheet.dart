@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:geo_app/Client/Models/Route/position.dart';
 import 'package:geo_app/Client/Models/Route/route.dart' as r;
 import 'package:geo_app/Client/Models/Weather/weather_basic_model.dart';
+import 'package:geo_app/Page/Enterance/Page/Components/custom_textformfield.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/Components/google_maps_view_model.dart';
 import 'package:geo_app/Page/LandingPage/map/Plan/Components/elevation_container.dart';
 import 'package:geo_app/Page/LandingPage/map/route_mixin.dart';
@@ -11,6 +13,7 @@ import 'package:geo_app/Page/LandingPage/map/provider/map_provider.dart';
 import 'package:geo_app/Page/LandingPage/map/provider/plan_route_provider.dart';
 import 'package:geo_app/Page/utilities/constants.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:geo_app/main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +27,7 @@ class InspectRouteBottomSheet extends HookWidget with RouteMixin {
   final bool isPlanning;
   final r.Route? route;
 
+  static final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     final mapsProvider = Provider.of<MapsProvider>(context);
@@ -33,6 +37,8 @@ class InspectRouteBottomSheet extends HookWidget with RouteMixin {
       mapsProvider: mapsProvider,
     );
     final weather = useState<WeatherBasicModel>(WeatherBasicModel());
+    final titleController = useTextEditingController(text: route?.title ?? "");
+    final notesController = useTextEditingController(text: route?.notes ?? "");
 
     useEffect(() {
       Future.microtask(() async {
@@ -65,6 +71,35 @@ class InspectRouteBottomSheet extends HookWidget with RouteMixin {
               else ...[
                 SpeedTimeContainer(gmvm: gmvm),
                 if (isPlanning) const PlanningCard(),
+                Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      _Field(
+                        child: CustomTextFormField(
+                          controller: titleController,
+                          hintText: 'A Beautiful scenery',
+                          labelText: 'Title',
+                          showBorder: true,
+                          validator: (value) =>
+                              value!.isEmpty ? "Enter a Title" : null,
+                        ),
+                      ),
+                      _Field(
+                        child: CustomTextFormField(
+                          controller: notesController,
+                          hintText: 'Must take a Camera with you...',
+                          labelText: 'Notes',
+                          showBorder: true,
+                          minLines: 3,
+                          maxLines: 6,
+                          validator: (value) =>
+                              value!.isEmpty ? "Give Some Notes" : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 WeatherContainer(
                   dateToday: gmvm.dateToday(),
                   state: WeatherState(weather.value),
@@ -82,11 +117,31 @@ class InspectRouteBottomSheet extends HookWidget with RouteMixin {
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                   child: InkWell(
                     onTap: () async {
-                      if (isPlanning) {
-                        await save(context, mapsProvider: mapsProvider);
-                      } else {
-                        await sharePage(context, route);
-                      }
+                      if (!(formKey.currentState!.validate())) return;
+                      r.Route newRoute = (route ?? r.Route())
+                        ..positions = mapsProvider.polylineCoordinates
+                            .map((e) => Position.fromLatLng(e))
+                            .toList()
+                        ..userMadeId = applicationUserModel.id
+                        ..title = titleController.text
+                        ..notes = notesController.text;
+                      await showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: const Text('Route'),
+                          content: SingleChildScrollView(
+                            child: Text(
+                              newRoute.toJson().toString(),
+                            ),
+                          ),
+                        ),
+                      ).then((value) async {
+                        if (isPlanning) {
+                          await save(context, newRoute);
+                        } else {
+                          await share(context, newRoute);
+                        }
+                      });
                     },
                     child: Container(
                       height: 60,
@@ -119,6 +174,25 @@ class InspectRouteBottomSheet extends HookWidget with RouteMixin {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _Field extends StatelessWidget {
+  const _Field({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.maxFinite,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      margin: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+      child: child,
     );
   }
 }
