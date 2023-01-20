@@ -16,23 +16,26 @@ class OnboardingPage extends HookWidget with EnteranceInteraction {
   Widget build(BuildContext context) {
     final pages = [
       OnboardingModel(
-        lottie: "https://assets6.lottiefiles.com/packages/lf20_8fz0xapf.json",
-        title: "Bisiklet Sürme",
-        subtitle: "Ebenin kilometresi kadar bisiklet sürebilirsin",
+        lottie: "https://assets1.lottiefiles.com/packages/lf20_8Gr1sc.json",
+        title: "Cycling made easy",
+        subtitle: "Plan your rides, share routes, "
+            "connect with other cyclists and join groups with our app",
         counter: 1,
         bgColor: Constants.lightSalmonColor,
       ),
       OnboardingModel(
-        lottie: "https://assets10.lottiefiles.com/packages/lf20_ryzjgsfe.json",
-        title: "Tanışma",
-        subtitle: "Erkekler için Kız bulma platformu",
+        lottie: "https://assets2.lottiefiles.com/packages/lf20_5e7wgehs.json",
+        title: "Ride together",
+        subtitle: "Join our cycling community, create and share routes, "
+            "plan rides, and connect with like-minded individuals",
         counter: 2,
         bgColor: Constants.generateMaterialColor(Constants.tealColor).shade400,
       ),
       OnboardingModel(
-        lottie: "https://assets6.lottiefiles.com/packages/lf20_hbhjkeay.json",
-        title: "Öyle işte",
-        subtitle: "Bir şeyler bir şeler hacım işte. Uygulamaya like atın",
+        lottie: "https://assets6.lottiefiles.com/packages/lf20_8fz0xapf.json",
+        title: "Get ready to ride!",
+        subtitle: "Create your own routes, or follow those made by others. "
+            "Join groups, add friends and participate in activities",
         counter: 3,
         bgColor: Constants.generateMaterialColor(Constants.lilaColor).shade300,
       ),
@@ -123,7 +126,7 @@ class OnboardingPage extends HookWidget with EnteranceInteraction {
               count: 3,
               activeIndex: currentPage.value,
               effect: const WormEffect(
-                dotColor: Constants.backgroundColor,
+                dotColor: Colors.white,
                 activeDotColor: Constants.darkBluishGreyColor,
                 dotHeight: 12,
               ),
@@ -157,18 +160,30 @@ class OnboardingAPage extends StatelessWidget {
             height: size.height * .4,
             width: size.width,
           ),
-          Column(
-            children: [
-              Text(
-                onboardingModel.title,
-                style: Theme.of(context).textTheme.headline4,
-              ),
-              Text(
-                onboardingModel.subtitle,
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.black54),
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 36),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  onboardingModel.title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 32,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  onboardingModel.subtitle,
+                  textAlign: TextAlign.justify,
+                  maxLines: 3,
+                  style: const TextStyle(
+                    color: Colors.white54,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 80),
         ],
